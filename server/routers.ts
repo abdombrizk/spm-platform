@@ -9,18 +9,35 @@ import { createSessionToken, hashPassword, hashSessionToken, sessionExpiresAt, v
 import { userRoles, UserRole } from "../drizzle/schema";
 
 const roleSchema = z.enum(userRoles);
-const passwordSchema = z.string().min(12);
+const loginPasswordSchema = z.string().min(8);
+const strongPasswordSchema = z.string().min(12);
 
 function clientIp(req: { ip?: string; headers: Record<string, unknown> }) {
   const forwarded = req.headers["x-forwarded-for"];
   return typeof forwarded === "string" ? forwarded.split(",")[0]?.trim() : req.ip;
 }
 
+function safeUser(user: NonNullable<Awaited<ReturnType<typeof db.getUserById>>>) {
+  return {
+    id: user.id,
+    openId: user.openId,
+    name: user.name,
+    email: user.email,
+    loginMethod: user.loginMethod,
+    role: user.role,
+    mustChangePassword: user.mustChangePassword,
+    isActive: user.isActive,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+    lastSignedIn: user.lastSignedIn,
+  };
+}
+
 export const appRouter = router({
   system: systemRouter,
   auth: router({
-    me: publicProcedure.query(opts => opts.ctx.user),
-    login: publicProcedure.input(z.object({ email: z.string().email(), password: passwordSchema })).mutation(async ({ ctx, input }) => {
+    me: publicProcedure.query(opts => opts.ctx.user ? safeUser(opts.ctx.user) : null),
+    login: publicProcedure.input(z.object({ email: z.string().email(), password: loginPasswordSchema })).mutation(async ({ ctx, input }) => {
       const email = input.email.toLowerCase().trim();
       const user = await db.getUserByEmail(email);
       if (!user || user.loginMethod !== "internal" || !user.passwordHash) {
@@ -51,7 +68,7 @@ export const appRouter = router({
       if (ctx.user) await db.addAuditLog({ actorUserId: ctx.user.id, action: "logout", entityType: "user", entityId: String(ctx.user.id), ipAddress: clientIp(ctx.req) });
       return { success: true } as const;
     }),
-    changePassword: protectedProcedure.input(z.object({ currentPassword: passwordSchema, newPassword: passwordSchema })).mutation(async ({ ctx, input }) => {
+    changePassword: protectedProcedure.input(z.object({ currentPassword: loginPasswordSchema, newPassword: strongPasswordSchema })).mutation(async ({ ctx, input }) => {
       if (!ctx.user.passwordHash || !(await verifyPassword(input.currentPassword, ctx.user.passwordHash))) throw new TRPCError({ code: "UNAUTHORIZED", message: "Current password is incorrect." });
       const issue = validatePassword(input.newPassword);
       if (issue) throw new TRPCError({ code: "BAD_REQUEST", message: issue });
@@ -62,7 +79,7 @@ export const appRouter = router({
   }),
   owner: router({
     listUsers: ownerProcedure.query(async () => db.listInternalUsers()),
-    createUser: ownerProcedure.input(z.object({ name: z.string().min(2), email: z.string().email(), role: roleSchema, password: passwordSchema })).mutation(async ({ ctx, input }) => {
+    createUser: ownerProcedure.input(z.object({ name: z.string().min(2), email: z.string().email(), role: roleSchema, password: strongPasswordSchema })).mutation(async ({ ctx, input }) => {
       const issue = validatePassword(input.password);
       if (issue) throw new TRPCError({ code: "BAD_REQUEST", message: issue });
       try {
@@ -84,7 +101,7 @@ export const appRouter = router({
       await db.addAuditLog({ actorUserId: ctx.user.id, action: "user_updated", entityType: "user", entityId: String(input.id), metadata: input, ipAddress: clientIp(ctx.req) });
       return { success: true } as const;
     }),
-    resetPassword: ownerProcedure.input(z.object({ id: z.number().int().positive(), password: passwordSchema })).mutation(async ({ ctx, input }) => {
+    resetPassword: ownerProcedure.input(z.object({ id: z.number().int().positive(), password: strongPasswordSchema })).mutation(async ({ ctx, input }) => {
       const issue = validatePassword(input.password);
       if (issue) throw new TRPCError({ code: "BAD_REQUEST", message: issue });
       const target = await db.getUserById(input.id);

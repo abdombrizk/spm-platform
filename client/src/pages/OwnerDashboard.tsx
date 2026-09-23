@@ -19,6 +19,14 @@ function generatePassword() {
   return `SPM-${crypto.randomUUID().replaceAll("-", "").slice(0, 10)}!Aa9`;
 }
 
+function FirstLoginPasswordChange({ onComplete }: { onComplete: () => void }) {
+  const changePassword = trpc.auth.changePassword.useMutation({ onSuccess: onComplete });
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [error, setError] = useState("");
+  return <div className="flex min-h-screen items-center justify-center bg-slate-950 p-6"><Card className="w-full max-w-md"><CardHeader><CardTitle>Change your temporary password</CardTitle><CardDescription>This is required before using the SPM workspace.</CardDescription></CardHeader><CardContent><form className="space-y-4" onSubmit={event => { event.preventDefault(); setError(""); changePassword.mutate({ currentPassword, newPassword }, { onError: err => setError(err.message) }); }}><div className="space-y-2"><Label htmlFor="current-password">Temporary password</Label><Input id="current-password" type="password" value={currentPassword} onChange={event => setCurrentPassword(event.target.value)} required /></div><div className="space-y-2"><Label htmlFor="new-password">New password</Label><Input id="new-password" type="password" value={newPassword} onChange={event => setNewPassword(event.target.value)} placeholder="12+ chars, upper/lower/number/symbol" required /></div>{error ? <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert> : null}<Button className="w-full" disabled={changePassword.isPending}>{changePassword.isPending ? "Saving…" : "Save new password"}</Button></form></CardContent></Card></div>;
+}
+
 export default function OwnerDashboard() {
   const [, setLocation] = useLocation();
   const auth = trpc.auth.me.useQuery();
@@ -38,6 +46,7 @@ export default function OwnerDashboard() {
   if (auth.isLoading || (auth.data && users.isLoading)) return <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white">Loading Owner workspace…</div>;
   if (!auth.data) return null;
   if (auth.data.role !== "owner") return <div className="flex min-h-screen items-center justify-center bg-slate-950 p-6"><Card><CardHeader><CardTitle>Owner access required</CardTitle><CardDescription>This area is restricted to the Owner role.</CardDescription></CardHeader></Card></div>;
+  if (auth.data.mustChangePassword) return <FirstLoginPasswordChange onComplete={() => auth.refetch()} />;
 
   return (
     <div className="min-h-screen bg-[#f5f7fb] text-slate-950">
