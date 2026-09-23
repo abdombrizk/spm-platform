@@ -1,11 +1,18 @@
-import { eq } from "drizzle-orm";
+import { and, desc, eq, gt } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
-import { ENV } from './_core/env';
+import {
+  auditLogs,
+  InsertUser,
+  internalSessions,
+  userPermissions,
+  users,
+  UserRole,
+} from "../drizzle/schema";
+import { ENV } from "./_core/env";
+import { hashSessionToken } from "./internalAuth";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
-// Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
@@ -19,74 +26,171 @@ export async function getDb() {
 }
 
 export async function upsertUser(user: InsertUser): Promise<void> {
-  if (!user.openId) {
-    throw new Error("User openId is required for upsert");
-  }
-
+  if (!user.openId) throw new Error("User openId is required for upsert");
   const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot upsert user: database not available");
-    return;
+  if (!db) return;
+  const values: InsertUser = { openId: user.openId };
+  const updateSet: Record<string, unknown> = {};
+  for (const field of ["name", "email", "loginMethod"] as const) {
+    const value = user[field];
+    if (value !== undefined && value !== null) {
+      values[field] = value;
+      updateSet[field] = value;
+    }
   }
-
-  try {
-    const values: InsertUser = {
-      openId: user.openId,
-    };
-    const updateSet: Record<string, unknown> = {};
-
-    const textFields = ["name", "email", "loginMethod"] as const;
-    type TextField = (typeof textFields)[number];
-
-    const assignNullable = (field: TextField) => {
-      const value = user[field];
-      if (value === undefined) return;
-      const normalized = value ?? null;
-      values[field] = normalized;
-      updateSet[field] = normalized;
-    };
-
-    textFields.forEach(assignNullable);
-
-    if (user.lastSignedIn !== undefined) {
-      values.lastSignedIn = user.lastSignedIn;
-      updateSet.lastSignedIn = user.lastSignedIn;
-    }
-    if (user.role !== undefined) {
-      values.role = user.role;
-      updateSet.role = user.role;
-    } else if (user.openId === ENV.ownerOpenId) {
-      values.role = 'admin';
-      updateSet.role = 'admin';
-    }
-
-    if (!values.lastSignedIn) {
-      values.lastSignedIn = new Date();
-    }
-
-    if (Object.keys(updateSet).length === 0) {
-      updateSet.lastSignedIn = new Date();
-    }
-
-    await db.insert(users).values(values).onDuplicateKeyUpdate({
-      set: updateSet,
-    });
-  } catch (error) {
-    console.error("[Database] Failed to upsert user:", error);
-    throw error;
+  if (user.lastSignedIn !== undefined) {
+    values.lastSignedIn = user.lastSignedIn;
+    updateSet.lastSignedIn = user.lastSignedIn;
   }
+  if (user.role !== undefined) {
+    values.role = user.role;
+    updateSet.role = user.role;
+  } else if (user.openId === ENV.ownerOpenId) {
+    values.role = "owner";
+    updateSet.role = "owner";
+  }
+  values.lastSignedIn ??= new Date();
+  updateSet.lastSignedIn ??= new Date();
+  await db.insert(users).values(values).onDuplicateKeyUpdate({ set: updateSet });
 }
 
 export async function getUserByOpenId(openId: string) {
   const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot get user: database not available");
-    return undefined;
-  }
-
+  if (!db) return undefined;
   const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
-
-  return result.length > 0 ? result[0] : undefined;
+  return result[0];
 }
 
-// TODO: add feature queries here as your schema grows.
+export async function getUserById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
+  return result[0];
+}
+
+export async function getUserByEmail(email: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(users).where(eq(users.email, email.toLowerCase())).limit(1);
+  return result[0];
+}
+
+export async function listInternalUsers() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select({
+    id: users.id,
+    name: users.name,
+    email: users.email,
+    role: users.role,
+    isActive: users.isActive,
+    mustChangePassword: users.mustChangePassword,
+    createdAt: users.createdAt,
+    lastSignedIn: users.lastSignedIn,
+  }).from(users).orderBy(desc(users.createdAt));
+}
+
+export async function createInternalUser(input: {
+  name: string;
+  email: string;
+  role: UserRole;
+  passwordHash: string;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const openId = `internal:${input.email.toLowerCase()}`;
+  const result = await db.insert(users).values({
+    openId,
+    name: input.name,
+    email: input.email.toLowerCase(),
+    loginMethod: "internal",
+    role: input.role,
+    passwordHash: input.passwordHash,
+    mustChangePassword: true,
+    isActive: true,
+    failedLoginAttempts: 0,
+  });
+  return Number(result[0].insertId);
+}
+
+export async function updateInternalUser(id: number, input: {
+  name?: string;
+  role?: UserRole;
+  isActive?: boolean;
+  mustChangePassword?: boolean;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(users).set(input).where(eq(users.id, id));
+}
+
+export async function setUserPassword(id: number, passwordHash: string, mustChangePassword: boolean) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(users).set({ passwordHash, mustChangePassword, failedLoginAttempts: 0, lockedUntil: null }).where(eq(users.id, id));
+}
+
+export async function recordFailedLogin(id: number, attempts: number, lockedUntil: Date | null) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(users).set({ failedLoginAttempts: attempts, lockedUntil }).where(eq(users.id, id));
+}
+
+export async function recordSuccessfulLogin(id: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(users).set({ failedLoginAttempts: 0, lockedUntil: null, lastSignedIn: new Date() }).where(eq(users.id, id));
+}
+
+export async function createInternalSession(userId: number, tokenHash: string, expiresAt: Date) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.insert(internalSessions).values({ userId, tokenHash, expiresAt });
+}
+
+export async function getUserBySessionToken(token: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const session = await db.select().from(internalSessions).where(and(eq(internalSessions.tokenHash, hashSessionToken(token)), gt(internalSessions.expiresAt, new Date()))).limit(1);
+  if (!session[0]) return undefined;
+  return getUserById(session[0].userId);
+}
+
+export async function deleteInternalSession(token: string) {
+  const db = await getDb();
+  if (!db) return;
+  await db.delete(internalSessions).where(eq(internalSessions.tokenHash, hashSessionToken(token)));
+}
+
+export async function addAuditLog(input: {
+  actorUserId?: number;
+  action: string;
+  entityType: string;
+  entityId?: string;
+  metadata?: Record<string, unknown>;
+  ipAddress?: string;
+}) {
+  const db = await getDb();
+  if (!db) return;
+  await db.insert(auditLogs).values({
+    actorUserId: input.actorUserId,
+    action: input.action,
+    entityType: input.entityType,
+    entityId: input.entityId,
+    metadata: input.metadata ? JSON.stringify(input.metadata) : undefined,
+    ipAddress: input.ipAddress,
+  });
+}
+
+export async function listPermissions(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(userPermissions).where(eq(userPermissions.userId, userId));
+}
+
+export async function replacePermissions(userId: number, permissions: Array<{ permission: string; granted: boolean }>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.delete(userPermissions).where(eq(userPermissions.userId, userId));
+  if (permissions.length) await db.insert(userPermissions).values(permissions.map(item => ({ userId, ...item })));
+}

@@ -1,33 +1,19 @@
-import { useAuth } from "@/_core/hooks/useAuth";
+import { ArrowRight, Building2, Mail, ShieldCheck, Wrench } from "lucide-react";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { Streamdown } from 'streamdown';
 
-/**
- * All content in this page are only for example, replace with your own feature implementation
- * When building pages, remember your instructions in Frontend Workflow, Frontend Best Practices, Design Guide and Common Pitfalls
- */
+const highlights = [
+  { icon: Building2, title: "Medical imaging technology", text: "A controlled digital presence for SPM's products, services and partnerships." },
+  { icon: Wrench, title: "Structured service intake", text: "Quote, maintenance, spare-parts and contact journeys prepared for operational follow-up." },
+  { icon: ShieldCheck, title: "Controlled administration", text: "Owner-led access, publication, evidence and audit controls from the first release." },
+];
+
 export default function Home() {
-  // The useAuth hook provides authentication state.
-  // To implement login/logout, call logout(), or start login from an event
-  // handler: onClick={() => startLogin()} (imported from "@/const"). Never call
-  // startLogin() during render (no href={startLogin()}) — it mints a one-time
-  // nonce cookie and must run only at the moment of navigation.
-  let { user, loading, error, isAuthenticated, logout } = useAuth();
-
-  // If theme is switchable in App.tsx, we can implement theme toggling like this:
-  // const { theme, toggleTheme } = useTheme();
-
   return (
-    <div className="min-h-screen flex flex-col">
-      <main>
-        {/* Example: lucide-react for icons */}
-        <Loader2 className="animate-spin" />
-        Example Page
-        {/* Example: Streamdown for markdown rendering */}
-        <Streamdown>Any **markdown** content</Streamdown>
-        <Button variant="default">Example Button</Button>
-      </main>
-    </div>
+    <main className="min-h-screen bg-[#f5f7fb] text-slate-950">
+      <header className="border-b bg-white/90 backdrop-blur"><div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5"><div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-cyan-300"><Building2 className="h-5 w-5" /></div><div><p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Systems for projects & maintenance</p><p className="font-semibold tracking-tight">SPM</p></div></div><div className="flex items-center gap-3"><a className="hidden items-center gap-2 text-sm text-slate-600 sm:flex" href="mailto:info@spmhospitals.com"><Mail className="h-4 w-4" />info@spmhospitals.com</a><Link href="/login"><Button variant="outline">Internal access</Button></Link></div></div></header>
+      <section className="mx-auto grid max-w-7xl gap-12 px-6 py-20 lg:grid-cols-[1.05fr_.95fr] lg:items-center lg:py-28"><div><p className="mb-5 text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">Medical imaging technology</p><h1 className="max-w-3xl text-5xl font-semibold leading-[1.04] tracking-tight sm:text-7xl">A stronger digital foundation for SPM.</h1><p className="mt-7 max-w-2xl text-lg leading-8 text-slate-600">The new SPM platform is being built around approved content, structured requests and controlled internal operations—so every public promise has a clear owner behind it.</p><div className="mt-9 flex flex-wrap gap-3"><Button size="lg" asChild><a href="mailto:sales@spmhospitals.com">Request a quote <ArrowRight className="ml-2 h-4 w-4" /></a></Button><Button size="lg" variant="outline" asChild><a href="https://wa.me/201221888395" target="_blank" rel="noreferrer">WhatsApp us</a></Button></div></div><div className="relative overflow-hidden rounded-[2rem] bg-slate-950 p-8 text-white shadow-2xl"><div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-cyan-400/20 blur-3xl" /><div className="relative space-y-8"><div><p className="text-sm text-cyan-200">Release 1 foundation</p><p className="mt-2 text-3xl font-semibold">Public website + request management</p></div><div className="grid gap-4 sm:grid-cols-2"><div className="rounded-2xl border border-white/10 bg-white/5 p-4"><p className="text-2xl font-semibold">4</p><p className="mt-1 text-sm text-slate-300">structured request journeys</p></div><div className="rounded-2xl border border-white/10 bg-white/5 p-4"><p className="text-2xl font-semibold">7</p><p className="mt-1 text-sm text-slate-300">controlled internal roles</p></div></div><p className="text-sm leading-6 text-slate-300">Release 2 extension points for CRM, ERP, WhatsApp Business API and service management are reserved without inventing an external provider.</p></div></div></section>
+      <section className="mx-auto grid max-w-7xl gap-4 px-6 pb-20 md:grid-cols-3">{highlights.map(item => <article key={item.title} className="rounded-3xl border bg-white p-6 shadow-sm"><item.icon className="h-6 w-6 text-cyan-700" /><h2 className="mt-5 text-lg font-semibold">{item.title}</h2><p className="mt-2 leading-7 text-slate-600">{item.text}</p></article>)}</section>
+    </main>
   );
 }

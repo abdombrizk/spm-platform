@@ -1,0 +1,60 @@
+import { useEffect, useMemo, useState } from "react";
+import { Link, useLocation } from "wouter";
+import { ShieldCheck, Users, UserPlus, KeyRound, Power, LogOut, Search, LockKeyhole } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { trpc } from "@/lib/trpc";
+
+const roles = ["owner", "manager", "marketing", "sales", "service", "qa", "ra", "user"] as const;
+type Role = typeof roles[number];
+const roleLabels: Record<Role, string> = { owner: "Owner", manager: "Manager", marketing: "Marketing", sales: "Sales", service: "Service", qa: "QA", ra: "RA", user: "User" };
+
+function generatePassword() {
+  return `SPM-${crypto.randomUUID().replaceAll("-", "").slice(0, 10)}!Aa9`;
+}
+
+export default function OwnerDashboard() {
+  const [, setLocation] = useLocation();
+  const auth = trpc.auth.me.useQuery();
+  const users = trpc.owner.listUsers.useQuery(undefined, { enabled: auth.data?.role === "owner" });
+  const utils = trpc.useUtils();
+  const logout = trpc.auth.logout.useMutation({ onSuccess: () => setLocation("/login") });
+  const createUser = trpc.owner.createUser.useMutation({ onSuccess: () => { utils.owner.listUsers.invalidate(); setMessage("User created. Give the temporary password directly to the user."); setForm({ name: "", email: "", role: "marketing", password: "" }); }, onError: err => setMessage(err.message) });
+  const updateUser = trpc.owner.updateUser.useMutation({ onSuccess: () => utils.owner.listUsers.invalidate(), onError: err => setMessage(err.message) });
+  const resetPassword = trpc.owner.resetPassword.useMutation({ onSuccess: () => { utils.owner.listUsers.invalidate(); setMessage("Password reset. Give the temporary password directly to the user."); }, onError: err => setMessage(err.message) });
+  const [form, setForm] = useState({ name: "", email: "", role: "marketing" as Role, password: "" });
+  const [search, setSearch] = useState("");
+  const [message, setMessage] = useState("");
+
+  useEffect(() => { if (!auth.isLoading && !auth.data) setLocation("/login"); }, [auth.isLoading, auth.data, setLocation]);
+
+  const filteredUsers = useMemo(() => (users.data ?? []).filter(user => `${user.name ?? ""} ${user.email ?? ""} ${user.role}`.toLowerCase().includes(search.toLowerCase())), [users.data, search]);
+  if (auth.isLoading || (auth.data && users.isLoading)) return <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white">Loading Owner workspace…</div>;
+  if (!auth.data) return null;
+  if (auth.data.role !== "owner") return <div className="flex min-h-screen items-center justify-center bg-slate-950 p-6"><Card><CardHeader><CardTitle>Owner access required</CardTitle><CardDescription>This area is restricted to the Owner role.</CardDescription></CardHeader></Card></div>;
+
+  return (
+    <div className="min-h-screen bg-[#f5f7fb] text-slate-950">
+      <header className="border-b bg-white">
+        <div className="mx-auto flex max-w-[1500px] items-center justify-between px-6 py-5">
+          <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-cyan-300"><ShieldCheck className="h-5 w-5" /></div><div><p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">SPM control center</p><h1 className="text-xl font-semibold tracking-tight">Owner Dashboard</h1></div></div>
+          <div className="flex items-center gap-3"><Badge variant="outline" className="border-cyan-200 bg-cyan-50 text-cyan-800"><LockKeyhole className="mr-1 h-3 w-3" /> Owner only</Badge><Button variant="ghost" onClick={() => logout.mutate()}><LogOut className="mr-2 h-4 w-4" />Sign out</Button></div>
+        </div>
+      </header>
+      <main className="mx-auto max-w-[1500px] space-y-6 px-6 py-8">
+        <section className="grid gap-4 md:grid-cols-3"><Card><CardContent className="flex items-center gap-4 p-5"><Users className="h-8 w-8 text-cyan-600" /><div><p className="text-sm text-slate-500">Accounts</p><p className="text-3xl font-semibold">{users.data?.length ?? 0}</p></div></CardContent></Card><Card><CardContent className="flex items-center gap-4 p-5"><ShieldCheck className="h-8 w-8 text-emerald-600" /><div><p className="text-sm text-slate-500">Active accounts</p><p className="text-3xl font-semibold">{users.data?.filter(user => user.isActive).length ?? 0}</p></div></CardContent></Card><Card><CardContent className="flex items-center gap-4 p-5"><Power className="h-8 w-8 text-amber-600" /><div><p className="text-sm text-slate-500">Inactive accounts</p><p className="text-3xl font-semibold">{users.data?.filter(user => !user.isActive).length ?? 0}</p></div></CardContent></Card></section>
+        <div className="grid gap-6 xl:grid-cols-[380px_1fr]">
+          <Card className="h-fit"><CardHeader><CardTitle className="flex items-center gap-2"><UserPlus className="h-5 w-5 text-cyan-600" />Create account</CardTitle><CardDescription>The Owner sets the initial password. The user must change it after first sign in.</CardDescription></CardHeader><CardContent><form className="space-y-4" onSubmit={event => { event.preventDefault(); setMessage(""); createUser.mutate({ ...form }); }}><div className="space-y-2"><Label htmlFor="user-name">Full name</Label><Input id="user-name" value={form.name} onChange={event => setForm({ ...form, name: event.target.value })} required /></div><div className="space-y-2"><Label htmlFor="user-email">Email</Label><Input id="user-email" type="email" value={form.email} onChange={event => setForm({ ...form, email: event.target.value })} required /></div><div className="space-y-2"><Label>Role</Label><Select value={form.role} onValueChange={value => setForm({ ...form, role: value as Role })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{roles.map(role => <SelectItem key={role} value={role}>{roleLabels[role]}</SelectItem>)}</SelectContent></Select></div><div className="space-y-2"><Label htmlFor="user-password">Initial password</Label><div className="flex gap-2"><Input id="user-password" type="password" value={form.password} onChange={event => setForm({ ...form, password: event.target.value })} placeholder="12+ chars, upper/lower/number/symbol" required /><Button type="button" variant="outline" size="icon" aria-label="Generate password" onClick={() => setForm({ ...form, password: generatePassword() })}><KeyRound className="h-4 w-4" /></Button></div></div><Button className="w-full" disabled={createUser.isPending}>{createUser.isPending ? "Creating…" : "Create account"}</Button></form></CardContent></Card>
+          <Card><CardHeader><div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><CardTitle>People and permissions</CardTitle><CardDescription>Only the Owner can create, deactivate, reset and assign roles.</CardDescription></div><div className="relative w-full sm:w-72"><Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" /><Input className="pl-9" placeholder="Search users" value={search} onChange={event => setSearch(event.target.value)} /></div></div></CardHeader><CardContent className="space-y-3">{message ? <Alert><AlertDescription>{message}</AlertDescription></Alert> : null}{filteredUsers.map(user => <div key={user.id} className="rounded-2xl border bg-white p-4"><div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between"><div className="min-w-0"><div className="flex flex-wrap items-center gap-2"><p className="font-semibold">{user.name || "Unnamed user"}</p><Badge variant={user.isActive ? "secondary" : "outline"}>{user.isActive ? "Active" : "Inactive"}</Badge><Badge variant="outline">{roleLabels[user.role as Role] ?? user.role}</Badge>{user.mustChangePassword ? <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">Password change required</Badge> : null}</div><p className="mt-1 truncate text-sm text-slate-500">{user.email}</p></div><div className="flex flex-wrap gap-2"><Select value={user.role} onValueChange={value => updateUser.mutate({ id: user.id, role: value as Role })}><SelectTrigger className="w-36"><SelectValue /></SelectTrigger><SelectContent>{roles.map(role => <SelectItem key={role} value={role}>{roleLabels[role]}</SelectItem>)}</SelectContent></Select><Button variant="outline" onClick={() => { const password = window.prompt("Enter the new temporary password. It will not be shown again:"); if (password) resetPassword.mutate({ id: user.id, password }); }}><KeyRound className="mr-2 h-4 w-4" />Reset password</Button>{user.role !== "owner" ? <Button variant={user.isActive ? "outline" : "default"} onClick={() => updateUser.mutate({ id: user.id, isActive: !user.isActive })}><Power className="mr-2 h-4 w-4" />{user.isActive ? "Deactivate" : "Activate"}</Button> : null}</div></div><Separator className="my-4" /><p className="text-xs text-slate-500">Last sign in: {user.lastSignedIn ? new Date(user.lastSignedIn).toLocaleString() : "Never"}</p></div>)}{filteredUsers.length === 0 ? <div className="rounded-2xl border border-dashed p-10 text-center text-sm text-slate-500">No users match this search.</div> : null}</CardContent></Card>
+        </div>
+        <div className="flex justify-end"><Link href="/"><Button variant="ghost">Back to public website</Button></Link></div>
+      </main>
+    </div>
+  );
+}
