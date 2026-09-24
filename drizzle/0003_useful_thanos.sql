@@ -1,0 +1,1 @@
+ALTER TABLE `homepage_content` ADD `publishedVisible` boolean DEFAULT true NOT NULL;

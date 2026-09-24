@@ -2,6 +2,7 @@ import { and, desc, eq, gt } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   auditLogs,
+  homepageContent,
   InsertUser,
   internalSessions,
   userPermissions,
@@ -188,9 +189,61 @@ export async function listPermissions(userId: number) {
   return db.select().from(userPermissions).where(eq(userPermissions.userId, userId));
 }
 
+export async function hasPermission(userId: number, permission: string) {
+  const db = await getDb();
+  if (!db) return false;
+  const rows = await db.select().from(userPermissions).where(and(eq(userPermissions.userId, userId), eq(userPermissions.permission, permission), eq(userPermissions.granted, true))).limit(1);
+  return rows.length > 0;
+}
+
 export async function replacePermissions(userId: number, permissions: Array<{ permission: string; granted: boolean }>) {
   const db = await getDb();
   if (!db) throw new Error("Database is not available");
   await db.delete(userPermissions).where(eq(userPermissions.userId, userId));
   if (permissions.length) await db.insert(userPermissions).values(permissions.map(item => ({ userId, ...item })));
+}
+
+export async function replaceHomepagePermissions(userId: number, permissions: Array<{ permission: string; granted: boolean }>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const existing = await listPermissions(userId);
+  const preserved = existing.filter(item => !item.permission.startsWith("homepage."));
+  await db.delete(userPermissions).where(eq(userPermissions.userId, userId));
+  const next = [...preserved.map(item => ({ permission: item.permission, granted: item.granted })), ...permissions];
+  if (next.length) await db.insert(userPermissions).values(next.map(item => ({ userId, ...item })));
+}
+
+export async function listHomepageContent() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(homepageContent).orderBy(homepageContent.sortOrder);
+}
+
+export async function listPublishedHomepageContent() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select({
+    contentKey: homepageContent.contentKey,
+    contentType: homepageContent.contentType,
+    publishedValue: homepageContent.publishedValue,
+    isVisible: homepageContent.publishedVisible,
+    sortOrder: homepageContent.sortOrder,
+  }).from(homepageContent).orderBy(homepageContent.sortOrder);
+}
+
+export async function updateHomepageDraft(items: Array<{ contentKey: string; draftValue: string; isVisible?: boolean }>, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  for (const item of items) {
+    await db.update(homepageContent).set({ draftValue: item.draftValue, isVisible: item.isVisible, updatedBy: userId }).where(eq(homepageContent.contentKey, item.contentKey));
+  }
+}
+
+export async function publishHomepage(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const rows = await listHomepageContent();
+  for (const row of rows) {
+    await db.update(homepageContent).set({ publishedValue: row.draftValue, publishedVisible: row.isVisible, publishedBy: userId, publishedAt: new Date() }).where(eq(homepageContent.id, row.id));
+  }
 }

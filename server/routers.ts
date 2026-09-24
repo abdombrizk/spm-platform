@@ -3,10 +3,11 @@ import { TRPCError } from "@trpc/server";
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { ownerProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
+import { ownerProcedure, permissionProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import * as db from "./db";
 import { createSessionToken, hashPassword, hashSessionToken, sessionExpiresAt, validatePassword, verifyPassword, INTERNAL_SESSION_COOKIE } from "./internalAuth";
 import { userRoles, UserRole } from "../drizzle/schema";
+import { storagePut } from "./storage";
 
 const roleSchema = z.enum(userRoles);
 const loginPasswordSchema = z.string().min(8);
@@ -116,6 +117,44 @@ export const appRouter = router({
       await db.replacePermissions(input.userId, input.permissions);
       await db.addAuditLog({ actorUserId: ctx.user.id, action: "permissions_replaced", entityType: "user", entityId: String(input.userId), metadata: { count: input.permissions.length }, ipAddress: clientIp(ctx.req) });
       return { success: true } as const;
+    }),
+    updateHomepagePermissions: ownerProcedure.input(z.object({ userId: z.number().int().positive(), permissions: z.array(z.object({ permission: z.string().min(1), granted: z.boolean() })) })).mutation(async ({ ctx, input }) => {
+      if (input.userId === ctx.user.id) throw new TRPCError({ code: "BAD_REQUEST", message: "The Owner permissions are always retained." });
+      await db.replaceHomepagePermissions(input.userId, input.permissions);
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "homepage_permissions_updated", entityType: "user", entityId: String(input.userId), metadata: { count: input.permissions.length }, ipAddress: clientIp(ctx.req) });
+      return { success: true } as const;
+    }),
+  }),
+  homepage: router({
+    published: publicProcedure.query(() => db.listPublishedHomepageContent()),
+    draft: permissionProcedure("homepage.edit").query(() => db.listHomepageContent()),
+    saveDraft: permissionProcedure("homepage.edit").input(z.object({
+      items: z.array(z.object({ contentKey: z.string().min(1), draftValue: z.string().max(10000), isVisible: z.boolean().optional() })),
+    })).mutation(async ({ ctx, input }) => {
+      await db.updateHomepageDraft(input.items, ctx.user.id);
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "homepage_draft_saved", entityType: "homepage", metadata: { itemCount: input.items.length }, ipAddress: clientIp(ctx.req) });
+      return { success: true } as const;
+    }),
+    publish: permissionProcedure("homepage.publish").mutation(async ({ ctx }) => {
+      await db.publishHomepage(ctx.user.id);
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "homepage_published", entityType: "homepage", ipAddress: clientIp(ctx.req) });
+      return { success: true } as const;
+    }),
+    uploadImage: permissionProcedure("homepage.media").input(z.object({
+      contentKey: z.string().min(1),
+      fileName: z.string().min(1).max(180),
+      contentType: z.enum(["image/jpeg", "image/png", "image/webp"]),
+      dataUrl: z.string().startsWith("data:image/"),
+    })).mutation(async ({ ctx, input }) => {
+      const encoded = input.dataUrl.split(",")[1];
+      if (!encoded) throw new TRPCError({ code: "BAD_REQUEST", message: "Image data is missing." });
+      const buffer = Buffer.from(encoded, "base64");
+      if (buffer.byteLength > 8 * 1024 * 1024) throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: "Image must be 8 MB or smaller." });
+      const extension = input.contentType.split("/")[1];
+      const uploaded = await storagePut(`homepage/${input.contentKey}.${extension}`, buffer, input.contentType);
+      await db.updateHomepageDraft([{ contentKey: input.contentKey, draftValue: uploaded.url }], ctx.user.id);
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "homepage_image_uploaded", entityType: "homepage", entityId: input.contentKey, metadata: { fileName: input.fileName, contentType: input.contentType }, ipAddress: clientIp(ctx.req) });
+      return { url: uploaded.url };
     }),
   }),
 });

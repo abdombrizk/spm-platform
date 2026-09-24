@@ -47,8 +47,26 @@ export const auditLogs = mysqlTable("audit_logs", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 }, table => ({ auditActorIdx: index("audit_logs_actor_idx").on(table.actorUserId) }));
 
+export const homepageContent = mysqlTable("homepage_content", {
+  id: int("id").autoincrement().primaryKey(),
+  contentKey: varchar("contentKey", { length: 128 }).notNull().unique(),
+  contentType: mysqlEnum("contentType", ["text", "image", "url", "number"]).notNull(),
+  label: varchar("label", { length: 255 }).notNull(),
+  description: text("description"),
+  draftValue: text("draftValue").notNull(),
+  publishedValue: text("publishedValue").notNull(),
+  isVisible: boolean("isVisible").default(true).notNull(),
+  publishedVisible: boolean("publishedVisible").default(true).notNull(),
+  sortOrder: int("sortOrder").default(0).notNull(),
+  updatedBy: int("updatedBy"),
+  publishedBy: int("publishedBy"),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  publishedAt: timestamp("publishedAt"),
+});
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 export type InternalSession = typeof internalSessions.$inferSelect;
 export type UserPermission = typeof userPermissions.$inferSelect;
 export type AuditLog = typeof auditLogs.$inferSelect;
+export type HomepageContent = typeof homepageContent.$inferSelect;
