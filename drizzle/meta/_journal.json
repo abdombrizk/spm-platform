@@ -29,6 +29,13 @@
       "when": 1790231023018,
       "tag": "0003_useful_thanos",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1790245136149,
+      "tag": "0004_condemned_richard_fisk",
+      "breakpoints": true
     }
   ]
 }

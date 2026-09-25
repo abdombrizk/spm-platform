@@ -5,6 +5,7 @@ import {
   homepageContent,
   InsertUser,
   internalSessions,
+  products,
   userPermissions,
   users,
   UserRole,
@@ -213,6 +214,16 @@ export async function replaceHomepagePermissions(userId: number, permissions: Ar
   if (next.length) await db.insert(userPermissions).values(next.map(item => ({ userId, ...item })));
 }
 
+export async function replaceScopedPermissions(userId: number, scope: string, permissions: Array<{ permission: string; granted: boolean }>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const existing = await listPermissions(userId);
+  const preserved = existing.filter(item => !item.permission.startsWith(`${scope}.`));
+  await db.delete(userPermissions).where(eq(userPermissions.userId, userId));
+  const next = [...preserved.map(item => ({ permission: item.permission, granted: item.granted })), ...permissions];
+  if (next.length) await db.insert(userPermissions).values(next.map(item => ({ userId, ...item })));
+}
+
 export async function listHomepageContent() {
   const db = await getDb();
   if (!db) return [];
@@ -246,4 +257,86 @@ export async function publishHomepage(userId: number) {
   for (const row of rows) {
     await db.update(homepageContent).set({ publishedValue: row.draftValue, publishedVisible: row.isVisible, publishedBy: userId, publishedAt: new Date() }).where(eq(homepageContent.id, row.id));
   }
+}
+
+export async function listProducts(includeArchived = true) {
+  const db = await getDb();
+  if (!db) return [];
+  const rows = await db.select().from(products).orderBy(products.displayOrder, desc(products.updatedAt));
+  return includeArchived ? rows : rows.filter(row => row.workflowStatus !== "archived");
+}
+
+export async function listPublishedProducts() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select({
+    id: products.id,
+    slug: products.slug,
+    productType: products.productType,
+    publishedData: products.publishedData,
+    publishedVisible: products.publishedVisible,
+    displayOrder: products.displayOrder,
+    publishedAt: products.publishedAt,
+  }).from(products).where(and(eq(products.workflowStatus, "published"), eq(products.publishedVisible, true))).orderBy(products.displayOrder, desc(products.publishedAt));
+}
+
+export async function getProductById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(products).where(eq(products.id, id)).limit(1);
+  return rows[0];
+}
+
+export async function getPublishedProductBySlug(slug: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(products).where(and(eq(products.slug, slug), eq(products.workflowStatus, "published"), eq(products.publishedVisible, true))).limit(1);
+  return rows[0];
+}
+
+export async function createProduct(input: {
+  slug: string;
+  productType: "medical_device" | "spare_part" | "accessory";
+  draftData: string;
+  draftVisible: boolean;
+  displayOrder: number;
+  createdBy: number;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const result = await db.insert(products).values({ ...input, publishedData: input.draftData, publishedVisible: false, workflowStatus: "draft" });
+  return Number(result[0].insertId);
+}
+
+export async function updateProduct(id: number, input: { slug?: string; productType?: "medical_device" | "spare_part" | "accessory"; draftData?: string; draftVisible?: boolean; displayOrder?: number; updatedBy: number }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(products).set(input).where(eq(products.id, id));
+}
+
+export async function publishProduct(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const product = await getProductById(id);
+  if (!product) return false;
+  await db.update(products).set({ publishedData: product.draftData, publishedVisible: product.draftVisible, workflowStatus: "published", publishedBy: userId, publishedAt: new Date(), archivedAt: null }).where(eq(products.id, id));
+  return true;
+}
+
+export async function archiveProduct(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(products).set({ workflowStatus: "archived", archivedAt: new Date(), updatedBy: userId }).where(eq(products.id, id));
+}
+
+export async function restoreProduct(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(products).set({ workflowStatus: "draft", archivedAt: null, updatedBy: userId, draftVisible: false }).where(eq(products.id, id));
+}
+
+export async function deleteProduct(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.delete(products).where(eq(products.id, id));
 }

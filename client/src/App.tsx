@@ -6,7 +6,10 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import OwnerDashboard from "./pages/OwnerDashboard";
+import OwnerDashboard from "@/pages/OwnerDashboard";
+import ProductManager from "@/pages/ProductManager";
+import Catalogue from "@/pages/Catalogue";
+import ProductDetails from "@/pages/ProductDetails";
 
 function Router() {
   return (
@@ -14,6 +17,9 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/login" component={Login} />
       <Route path="/owner" component={OwnerDashboard} />
+      <Route path="/owner/products" component={ProductManager} />
+      <Route path="/catalogue" component={Catalogue} />
+      <Route path="/catalogue/:slug" component={ProductDetails} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

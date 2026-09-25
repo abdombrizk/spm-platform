@@ -64,9 +64,29 @@ export const homepageContent = mysqlTable("homepage_content", {
   publishedAt: timestamp("publishedAt"),
 });
 
+export const products = mysqlTable("products", {
+  id: int("id").autoincrement().primaryKey(),
+  slug: varchar("slug", { length: 180 }).notNull().unique(),
+  productType: mysqlEnum("productType", ["medical_device", "spare_part", "accessory"]).notNull(),
+  draftData: text("draftData").notNull(),
+  publishedData: text("publishedData").notNull(),
+  draftVisible: boolean("draftVisible").default(true).notNull(),
+  publishedVisible: boolean("publishedVisible").default(true).notNull(),
+  workflowStatus: mysqlEnum("workflowStatus", ["draft", "published", "archived"]).default("draft").notNull(),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  createdBy: int("createdBy"),
+  updatedBy: int("updatedBy"),
+  publishedBy: int("publishedBy"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  publishedAt: timestamp("publishedAt"),
+  archivedAt: timestamp("archivedAt"),
+});
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 export type InternalSession = typeof internalSessions.$inferSelect;
 export type UserPermission = typeof userPermissions.$inferSelect;
 export type AuditLog = typeof auditLogs.$inferSelect;
 export type HomepageContent = typeof homepageContent.$inferSelect;
+export type Product = typeof products.$inferSelect;

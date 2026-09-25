@@ -1,0 +1,20 @@
+CREATE TABLE `products` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`slug` varchar(180) NOT NULL,
+	`productType` enum('medical_device','spare_part','accessory') NOT NULL,
+	`draftData` text NOT NULL,
+	`publishedData` text NOT NULL,
+	`draftVisible` boolean NOT NULL DEFAULT true,
+	`publishedVisible` boolean NOT NULL DEFAULT true,
+	`workflowStatus` enum('draft','published','archived') NOT NULL DEFAULT 'draft',
+	`displayOrder` int NOT NULL DEFAULT 0,
+	`createdBy` int,
+	`updatedBy` int,
+	`publishedBy` int,
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	`publishedAt` timestamp,
+	`archivedAt` timestamp,
+	CONSTRAINT `products_id` PRIMARY KEY(`id`),
+	CONSTRAINT `products_slug_unique` UNIQUE(`slug`)
+);

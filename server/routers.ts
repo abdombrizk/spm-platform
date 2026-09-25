@@ -12,6 +12,48 @@ import { storagePut } from "./storage";
 const roleSchema = z.enum(userRoles);
 const loginPasswordSchema = z.string().min(8);
 const strongPasswordSchema = z.string().min(12);
+const productTypeSchema = z.enum(["medical_device", "spare_part", "accessory"]);
+const productDataSchema = z.object({
+  name: z.string().min(2).max(255),
+  code: z.string().max(120).optional().default(""),
+  modelNumber: z.string().max(120).optional().default(""),
+  category: z.string().max(120).optional().default(""),
+  brand: z.string().max(160).optional().default(""),
+  manufacturer: z.string().max(255).optional().default(""),
+  supplier: z.string().max(255).optional().default(""),
+  countryOfOrigin: z.string().max(120).optional().default(""),
+  shortDescription: z.string().max(600).optional().default(""),
+  fullDescription: z.string().max(12000).optional().default(""),
+  features: z.array(z.string().max(500)).max(30).optional().default([]),
+  applications: z.array(z.string().max(500)).max(30).optional().default([]),
+  technicalSpecifications: z.object({
+    generatorPower: z.string().max(120).optional().default(""),
+    tubeVoltage: z.string().max(120).optional().default(""),
+    tubeCurrent: z.string().max(120).optional().default(""),
+    detectorType: z.string().max(160).optional().default(""),
+    imageReceptor: z.string().max(160).optional().default(""),
+    fluoroscopyModes: z.string().max(300).optional().default(""),
+    dimensions: z.string().max(160).optional().default(""),
+    weight: z.string().max(120).optional().default(""),
+    powerRequirements: z.string().max(160).optional().default(""),
+    warranty: z.string().max(160).optional().default(""),
+  }).optional().default({ generatorPower: "", tubeVoltage: "", tubeCurrent: "", detectorType: "", imageReceptor: "", fluoroscopyModes: "", dimensions: "", weight: "", powerRequirements: "", warranty: "" }),
+  mainImage: z.string().max(2000).optional().default(""),
+  additionalImages: z.array(z.string().max(2000)).max(12).optional().default([]),
+  brochureUrl: z.string().max(2000).optional().default(""),
+  datasheetUrl: z.string().max(2000).optional().default(""),
+  userManualUrl: z.string().max(2000).optional().default(""),
+  videoUrl: z.string().max(2000).optional().default(""),
+  availabilityStatus: z.enum(["available", "on_request", "discontinued", "coming_soon"]).default("on_request"),
+  requestQuote: z.boolean().default(true),
+  ceStatus: z.enum(["available", "not_available", "not_applicable", "under_review"]).default("under_review"),
+  qualityReviewStatus: z.enum(["not_reviewed", "under_review", "approved", "rejected"]).default("not_reviewed"),
+  regulatoryDocumentsPublic: z.boolean().default(false),
+  regulatoryDocumentUrl: z.string().max(2000).optional().default(""),
+  seoTitle: z.string().max(255).optional().default(""),
+  seoDescription: z.string().max(600).optional().default(""),
+  featured: z.boolean().default(false),
+}).strict();
 
 function clientIp(req: { ip?: string; headers: Record<string, unknown> }) {
   const forwarded = req.headers["x-forwarded-for"];
@@ -124,6 +166,12 @@ export const appRouter = router({
       await db.addAuditLog({ actorUserId: ctx.user.id, action: "homepage_permissions_updated", entityType: "user", entityId: String(input.userId), metadata: { count: input.permissions.length }, ipAddress: clientIp(ctx.req) });
       return { success: true } as const;
     }),
+    updateProductPermissions: ownerProcedure.input(z.object({ userId: z.number().int().positive(), permissions: z.array(z.object({ permission: z.string().min(1), granted: z.boolean() })) })).mutation(async ({ ctx, input }) => {
+      if (input.userId === ctx.user.id) throw new TRPCError({ code: "BAD_REQUEST", message: "The Owner permissions are always retained." });
+      await db.replaceScopedPermissions(input.userId, "products", input.permissions);
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "product_permissions_updated", entityType: "user", entityId: String(input.userId), metadata: { count: input.permissions.length }, ipAddress: clientIp(ctx.req) });
+      return { success: true } as const;
+    }),
   }),
   homepage: router({
     published: publicProcedure.query(() => db.listPublishedHomepageContent()),
@@ -154,6 +202,74 @@ export const appRouter = router({
       const uploaded = await storagePut(`homepage/${input.contentKey}.${extension}`, buffer, input.contentType);
       await db.updateHomepageDraft([{ contentKey: input.contentKey, draftValue: uploaded.url }], ctx.user.id);
       await db.addAuditLog({ actorUserId: ctx.user.id, action: "homepage_image_uploaded", entityType: "homepage", entityId: input.contentKey, metadata: { fileName: input.fileName, contentType: input.contentType }, ipAddress: clientIp(ctx.req) });
+      return { url: uploaded.url };
+    }),
+  }),
+  products: router({
+    permissions: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role === "owner") return ["products.view", "products.create", "products.edit", "products.media", "products.quality", "products.publish", "products.archive", "products.delete"];
+      const permissions = await db.listPermissions(ctx.user.id);
+      return permissions.filter(item => item.granted && item.permission.startsWith("products.")).map(item => item.permission);
+    }),
+    published: publicProcedure.query(async () => {
+      const rows = await db.listPublishedProducts();
+      return rows.map(row => ({ ...row, data: JSON.parse(row.publishedData) }));
+    }),
+    publishedBySlug: publicProcedure.input(z.object({ slug: z.string().min(1).max(180) })).query(async ({ input }) => {
+      const row = await db.getPublishedProductBySlug(input.slug);
+      return row ? { ...row, data: JSON.parse(row.publishedData) } : null;
+    }),
+    list: permissionProcedure("products.view").query(async () => db.listProducts()),
+    create: permissionProcedure("products.create").input(z.object({ slug: z.string().min(2).max(180).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/), productType: productTypeSchema, data: productDataSchema, draftVisible: z.boolean().default(true), displayOrder: z.number().int().min(0).max(99999).default(0) })).mutation(async ({ ctx, input }) => {
+      try {
+        const id = await db.createProduct({ slug: input.slug, productType: input.productType, draftData: JSON.stringify(input.data), draftVisible: input.draftVisible, displayOrder: input.displayOrder, createdBy: ctx.user.id });
+        await db.addAuditLog({ actorUserId: ctx.user.id, action: "product_created", entityType: "product", entityId: String(id), metadata: { slug: input.slug, productType: input.productType }, ipAddress: clientIp(ctx.req) });
+        return { id };
+      } catch (error) {
+        if (String(error).includes("Duplicate")) throw new TRPCError({ code: "CONFLICT", message: "A product with this slug already exists." });
+        throw error;
+      }
+    }),
+    update: permissionProcedure("products.edit").input(z.object({ id: z.number().int().positive(), slug: z.string().min(2).max(180).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/), productType: productTypeSchema, data: productDataSchema, draftVisible: z.boolean(), displayOrder: z.number().int().min(0).max(99999) })).mutation(async ({ ctx, input }) => {
+      const target = await db.getProductById(input.id);
+      if (!target) throw new TRPCError({ code: "NOT_FOUND", message: "Product not found." });
+      let data = input.data;
+      if (ctx.user.role !== "owner" && !(await db.hasPermission(ctx.user.id, "products.quality"))) {
+        const current = JSON.parse(target.draftData) as Partial<typeof input.data>;
+        data = { ...input.data, ceStatus: current.ceStatus ?? input.data.ceStatus, qualityReviewStatus: current.qualityReviewStatus ?? input.data.qualityReviewStatus, regulatoryDocumentsPublic: current.regulatoryDocumentsPublic ?? input.data.regulatoryDocumentsPublic, regulatoryDocumentUrl: current.regulatoryDocumentUrl ?? input.data.regulatoryDocumentUrl };
+      }
+      await db.updateProduct(input.id, { slug: input.slug, productType: input.productType, draftData: JSON.stringify(data), draftVisible: input.draftVisible, displayOrder: input.displayOrder, updatedBy: ctx.user.id });
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "product_updated", entityType: "product", entityId: String(input.id), metadata: { slug: input.slug }, ipAddress: clientIp(ctx.req) });
+      return { success: true } as const;
+    }),
+    publish: permissionProcedure("products.publish").input(z.object({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => {
+      const ok = await db.publishProduct(input.id, ctx.user.id);
+      if (!ok) throw new TRPCError({ code: "NOT_FOUND", message: "Product not found." });
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "product_published", entityType: "product", entityId: String(input.id), ipAddress: clientIp(ctx.req) });
+      return { success: true } as const;
+    }),
+    archive: permissionProcedure("products.archive").input(z.object({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => {
+      await db.archiveProduct(input.id, ctx.user.id);
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "product_archived", entityType: "product", entityId: String(input.id), ipAddress: clientIp(ctx.req) });
+      return { success: true } as const;
+    }),
+    restore: permissionProcedure("products.edit").input(z.object({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => {
+      await db.restoreProduct(input.id, ctx.user.id);
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "product_restored", entityType: "product", entityId: String(input.id), ipAddress: clientIp(ctx.req) });
+      return { success: true } as const;
+    }),
+    delete: permissionProcedure("products.delete").input(z.object({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => {
+      await db.deleteProduct(input.id);
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "product_deleted", entityType: "product", entityId: String(input.id), ipAddress: clientIp(ctx.req) });
+      return { success: true } as const;
+    }),
+    uploadMedia: permissionProcedure("products.media").input(z.object({ id: z.number().int().positive(), field: z.enum(["mainImage", "additionalImages", "brochureUrl", "datasheetUrl", "userManualUrl", "regulatoryDocumentUrl"]), fileName: z.string().min(1).max(180), contentType: z.enum(["image/jpeg", "image/png", "image/webp", "application/pdf"]), dataUrl: z.string().startsWith("data:") })).mutation(async ({ ctx, input }) => {
+      const encoded = input.dataUrl.split(",")[1];
+      if (!encoded) throw new TRPCError({ code: "BAD_REQUEST", message: "File data is missing." });
+      const buffer = Buffer.from(encoded, "base64");
+      if (buffer.byteLength > 12 * 1024 * 1024) throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: "File must be 12 MB or smaller." });
+      const extension = input.contentType === "application/pdf" ? "pdf" : input.contentType.split("/")[1];
+      const uploaded = await storagePut(`products/${input.id}/${input.field}.${extension}`, buffer, input.contentType);
       return { url: uploaded.url };
     }),
   }),
