@@ -36,6 +36,13 @@
       "when": 1790245136149,
       "tag": "0004_condemned_richard_fisk",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1790337277078,
+      "tag": "0005_soft_masque",
+      "breakpoints": true
     }
   ]
 }

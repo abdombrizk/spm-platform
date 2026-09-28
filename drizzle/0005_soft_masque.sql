@@ -1,0 +1,22 @@
+CREATE TABLE `services` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`slug` varchar(180) NOT NULL,
+	`serviceType` enum('installation','commissioning','preventive_maintenance','corrective_maintenance','emergency_maintenance','calibration','technical_support','training','spare_parts_supply','maintenance_contract') NOT NULL,
+	`draftData` text NOT NULL,
+	`publishedData` text NOT NULL,
+	`draftVisible` boolean NOT NULL DEFAULT true,
+	`publishedVisible` boolean NOT NULL DEFAULT true,
+	`workflowStatus` enum('draft','pending_review','approved','published','archived') NOT NULL DEFAULT 'draft',
+	`displayOrder` int NOT NULL DEFAULT 0,
+	`createdBy` int,
+	`updatedBy` int,
+	`reviewedBy` int,
+	`publishedBy` int,
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	`reviewedAt` timestamp,
+	`publishedAt` timestamp,
+	`archivedAt` timestamp,
+	CONSTRAINT `services_id` PRIMARY KEY(`id`),
+	CONSTRAINT `services_slug_unique` UNIQUE(`slug`)
+);

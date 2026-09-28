@@ -83,6 +83,27 @@ export const products = mysqlTable("products", {
   archivedAt: timestamp("archivedAt"),
 });
 
+export const services = mysqlTable("services", {
+  id: int("id").autoincrement().primaryKey(),
+  slug: varchar("slug", { length: 180 }).notNull().unique(),
+  serviceType: mysqlEnum("serviceType", ["installation", "commissioning", "preventive_maintenance", "corrective_maintenance", "emergency_maintenance", "calibration", "technical_support", "training", "spare_parts_supply", "maintenance_contract"]).notNull(),
+  draftData: text("draftData").notNull(),
+  publishedData: text("publishedData").notNull(),
+  draftVisible: boolean("draftVisible").default(true).notNull(),
+  publishedVisible: boolean("publishedVisible").default(true).notNull(),
+  workflowStatus: mysqlEnum("workflowStatus", ["draft", "pending_review", "approved", "published", "archived"]).default("draft").notNull(),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  createdBy: int("createdBy"),
+  updatedBy: int("updatedBy"),
+  reviewedBy: int("reviewedBy"),
+  publishedBy: int("publishedBy"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  reviewedAt: timestamp("reviewedAt"),
+  publishedAt: timestamp("publishedAt"),
+  archivedAt: timestamp("archivedAt"),
+});
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 export type InternalSession = typeof internalSessions.$inferSelect;
@@ -90,3 +111,4 @@ export type UserPermission = typeof userPermissions.$inferSelect;
 export type AuditLog = typeof auditLogs.$inferSelect;
 export type HomepageContent = typeof homepageContent.$inferSelect;
 export type Product = typeof products.$inferSelect;
+export type Service = typeof services.$inferSelect;

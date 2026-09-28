@@ -6,6 +6,7 @@ import {
   InsertUser,
   internalSessions,
   products,
+  services,
   userPermissions,
   users,
   UserRole,
@@ -339,4 +340,83 @@ export async function deleteProduct(id: number) {
   const db = await getDb();
   if (!db) throw new Error("Database is not available");
   await db.delete(products).where(eq(products.id, id));
+}
+
+export async function listServices(includeArchived = true) {
+  const db = await getDb();
+  if (!db) return [];
+  const rows = await db.select().from(services).orderBy(services.displayOrder, desc(services.updatedAt));
+  return includeArchived ? rows : rows.filter(row => row.workflowStatus !== "archived");
+}
+
+export async function listPublishedServices() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select({ id: services.id, slug: services.slug, serviceType: services.serviceType, publishedData: services.publishedData, publishedVisible: services.publishedVisible, displayOrder: services.displayOrder, publishedAt: services.publishedAt }).from(services).where(and(eq(services.workflowStatus, "published"), eq(services.publishedVisible, true))).orderBy(services.displayOrder, desc(services.publishedAt));
+}
+
+export async function getServiceById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(services).where(eq(services.id, id)).limit(1);
+  return rows[0];
+}
+
+export async function getPublishedServiceBySlug(slug: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(services).where(and(eq(services.slug, slug), eq(services.workflowStatus, "published"), eq(services.publishedVisible, true))).limit(1);
+  return rows[0];
+}
+
+export async function createService(input: { slug: string; serviceType: string; draftData: string; draftVisible: boolean; displayOrder: number; createdBy: number }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const result = await db.insert(services).values({ ...input, serviceType: input.serviceType as any, publishedData: input.draftData, publishedVisible: false, workflowStatus: "draft" });
+  return Number(result[0].insertId);
+}
+
+export async function updateService(id: number, input: { slug?: string; serviceType?: string; draftData?: string; draftVisible?: boolean; displayOrder?: number; updatedBy: number }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(services).set({ ...input, serviceType: input.serviceType as any }).where(eq(services.id, id));
+}
+
+export async function submitServiceReview(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(services).set({ workflowStatus: "pending_review", updatedBy: userId }).where(eq(services.id, id));
+}
+
+export async function approveService(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(services).set({ workflowStatus: "approved", reviewedBy: userId, reviewedAt: new Date(), updatedBy: userId }).where(eq(services.id, id));
+}
+
+export async function publishService(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const service = await getServiceById(id);
+  if (!service) return false;
+  await db.update(services).set({ publishedData: service.draftData, publishedVisible: service.draftVisible, workflowStatus: "published", publishedBy: userId, publishedAt: new Date(), archivedAt: null }).where(eq(services.id, id));
+  return true;
+}
+
+export async function archiveService(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(services).set({ workflowStatus: "archived", archivedAt: new Date(), updatedBy: userId }).where(eq(services.id, id));
+}
+
+export async function restoreService(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(services).set({ workflowStatus: "draft", archivedAt: null, updatedBy: userId, draftVisible: false }).where(eq(services.id, id));
+}
+
+export async function deleteService(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.delete(services).where(eq(services.id, id));
 }

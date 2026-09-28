@@ -54,6 +54,35 @@ const productDataSchema = z.object({
   seoDescription: z.string().max(600).optional().default(""),
   featured: z.boolean().default(false),
 }).strict();
+const serviceTypeSchema = z.enum(["installation", "commissioning", "preventive_maintenance", "corrective_maintenance", "emergency_maintenance", "calibration", "technical_support", "training", "spare_parts_supply", "maintenance_contract"]);
+const serviceDataSchema = z.object({
+  name: z.string().min(2).max(255),
+  code: z.string().max(120).optional().default(""),
+  shortDescription: z.string().max(600).optional().default(""),
+  fullDescription: z.string().max(12000).optional().default(""),
+  coveredProductIds: z.array(z.number().int().positive()).max(100).optional().default([]),
+  coveredEquipmentManual: z.string().max(2000).optional().default(""),
+  supportedBrands: z.array(z.string().max(160)).max(30).optional().default([]),
+  serviceScope: z.string().max(6000).optional().default(""),
+  includedActivities: z.array(z.string().max(500)).max(30).optional().default([]),
+  excludedActivities: z.array(z.string().max(500)).max(30).optional().default([]),
+  responseTime: z.string().max(160).optional().default(""),
+  countries: z.array(z.string().max(120)).max(100).optional().default([]),
+  availability: z.enum(["available", "on_request", "limited", "not_available"]).default("on_request"),
+  mainImage: z.string().max(2000).optional().default(""),
+  additionalImages: z.array(z.string().max(2000)).max(12).optional().default([]),
+  brochureUrl: z.string().max(2000).optional().default(""),
+  videoUrl: z.string().max(2000).optional().default(""),
+  requestService: z.boolean().default(true),
+  requestQuote: z.boolean().default(true),
+  qualityReviewStatus: z.enum(["not_reviewed", "under_review", "approved", "rejected"]).default("not_reviewed"),
+  serviceProcedureReference: z.string().max(255).optional().default(""),
+  revisionNumber: z.string().max(80).optional().default(""),
+  effectiveDate: z.string().max(40).optional().default(""),
+  internalNotes: z.string().max(5000).optional().default(""),
+  seoTitle: z.string().max(255).optional().default(""),
+  seoDescription: z.string().max(600).optional().default(""),
+}).strict();
 
 function clientIp(req: { ip?: string; headers: Record<string, unknown> }) {
   const forwarded = req.headers["x-forwarded-for"];
@@ -172,6 +201,12 @@ export const appRouter = router({
       await db.addAuditLog({ actorUserId: ctx.user.id, action: "product_permissions_updated", entityType: "user", entityId: String(input.userId), metadata: { count: input.permissions.length }, ipAddress: clientIp(ctx.req) });
       return { success: true } as const;
     }),
+    updateServicePermissions: ownerProcedure.input(z.object({ userId: z.number().int().positive(), permissions: z.array(z.object({ permission: z.string().min(1), granted: z.boolean() })) })).mutation(async ({ ctx, input }) => {
+      if (input.userId === ctx.user.id) throw new TRPCError({ code: "BAD_REQUEST", message: "The Owner permissions are always retained." });
+      await db.replaceScopedPermissions(input.userId, "services", input.permissions);
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "service_permissions_updated", entityType: "user", entityId: String(input.userId), metadata: { count: input.permissions.length }, ipAddress: clientIp(ctx.req) });
+      return { success: true } as const;
+    }),
   }),
   homepage: router({
     published: publicProcedure.query(() => db.listPublishedHomepageContent()),
@@ -271,6 +306,55 @@ export const appRouter = router({
       const extension = input.contentType === "application/pdf" ? "pdf" : input.contentType.split("/")[1];
       const uploaded = await storagePut(`products/${input.id}/${input.field}.${extension}`, buffer, input.contentType);
       return { url: uploaded.url };
+    }),
+  }),
+  services: router({
+    permissions: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role === "owner") return ["services.view", "services.create", "services.edit", "services.media", "services.quality", "services.publish", "services.archive", "services.delete"];
+      const permissions = await db.listPermissions(ctx.user.id);
+      return permissions.filter(item => item.granted && item.permission.startsWith("services.")).map(item => item.permission);
+    }),
+    published: publicProcedure.query(async () => (await db.listPublishedServices()).map(row => ({ ...row, data: JSON.parse(row.publishedData) }))),
+    publishedBySlug: publicProcedure.input(z.object({ slug: z.string().min(1).max(180) })).query(async ({ input }) => {
+      const row = await db.getPublishedServiceBySlug(input.slug);
+      return row ? { ...row, data: JSON.parse(row.publishedData) } : null;
+    }),
+    list: permissionProcedure("services.view").query(async () => db.listServices()),
+    create: permissionProcedure("services.create").input(z.object({ slug: z.string().min(2).max(180).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/), serviceType: serviceTypeSchema, data: serviceDataSchema, draftVisible: z.boolean().default(true), displayOrder: z.number().int().min(0).max(99999).default(0) })).mutation(async ({ ctx, input }) => {
+      try {
+        const id = await db.createService({ slug: input.slug, serviceType: input.serviceType, draftData: JSON.stringify(input.data), draftVisible: input.draftVisible, displayOrder: input.displayOrder, createdBy: ctx.user.id });
+        await db.addAuditLog({ actorUserId: ctx.user.id, action: "service_created", entityType: "service", entityId: String(id), metadata: { slug: input.slug, serviceType: input.serviceType }, ipAddress: clientIp(ctx.req) });
+        return { id };
+      } catch (error) {
+        if (String(error).includes("Duplicate")) throw new TRPCError({ code: "CONFLICT", message: "A service with this slug already exists." });
+        throw error;
+      }
+    }),
+    update: permissionProcedure("services.edit").input(z.object({ id: z.number().int().positive(), slug: z.string().min(2).max(180).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/), serviceType: serviceTypeSchema, data: serviceDataSchema, draftVisible: z.boolean(), displayOrder: z.number().int().min(0).max(99999) })).mutation(async ({ ctx, input }) => {
+      const target = await db.getServiceById(input.id);
+      if (!target) throw new TRPCError({ code: "NOT_FOUND", message: "Service not found." });
+      let data = input.data;
+      if (ctx.user.role !== "owner" && !(await db.hasPermission(ctx.user.id, "services.quality"))) {
+        const current = JSON.parse(target.draftData) as Partial<typeof input.data>;
+        data = { ...input.data, qualityReviewStatus: current.qualityReviewStatus ?? input.data.qualityReviewStatus, serviceProcedureReference: current.serviceProcedureReference ?? input.data.serviceProcedureReference, revisionNumber: current.revisionNumber ?? input.data.revisionNumber, effectiveDate: current.effectiveDate ?? input.data.effectiveDate, internalNotes: current.internalNotes ?? input.data.internalNotes };
+      }
+      await db.updateService(input.id, { slug: input.slug, serviceType: input.serviceType, draftData: JSON.stringify(data), draftVisible: input.draftVisible, displayOrder: input.displayOrder, updatedBy: ctx.user.id });
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "service_updated", entityType: "service", entityId: String(input.id), ipAddress: clientIp(ctx.req) });
+      return { success: true } as const;
+    }),
+    submitReview: permissionProcedure("services.edit").input(z.object({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => { await db.submitServiceReview(input.id, ctx.user.id); await db.addAuditLog({ actorUserId: ctx.user.id, action: "service_submitted_for_review", entityType: "service", entityId: String(input.id), ipAddress: clientIp(ctx.req) }); return { success: true } as const; }),
+    approve: permissionProcedure("services.quality").input(z.object({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => { await db.approveService(input.id, ctx.user.id); await db.addAuditLog({ actorUserId: ctx.user.id, action: "service_approved", entityType: "service", entityId: String(input.id), ipAddress: clientIp(ctx.req) }); return { success: true } as const; }),
+    publish: permissionProcedure("services.publish").input(z.object({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => {
+      const service = await db.getServiceById(input.id);
+      if (!service) throw new TRPCError({ code: "NOT_FOUND", message: "Service not found." });
+      if (ctx.user.role !== "owner" && service.workflowStatus !== "approved") throw new TRPCError({ code: "PRECONDITION_FAILED", message: "Service must be approved before publishing." });
+      await db.publishService(input.id, ctx.user.id); await db.addAuditLog({ actorUserId: ctx.user.id, action: "service_published", entityType: "service", entityId: String(input.id), ipAddress: clientIp(ctx.req) }); return { success: true } as const;
+    }),
+    archive: permissionProcedure("services.archive").input(z.object({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => { await db.archiveService(input.id, ctx.user.id); await db.addAuditLog({ actorUserId: ctx.user.id, action: "service_archived", entityType: "service", entityId: String(input.id), ipAddress: clientIp(ctx.req) }); return { success: true } as const; }),
+    restore: permissionProcedure("services.edit").input(z.object({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => { await db.restoreService(input.id, ctx.user.id); await db.addAuditLog({ actorUserId: ctx.user.id, action: "service_restored", entityType: "service", entityId: String(input.id), ipAddress: clientIp(ctx.req) }); return { success: true } as const; }),
+    delete: permissionProcedure("services.delete").input(z.object({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => { await db.deleteService(input.id); await db.addAuditLog({ actorUserId: ctx.user.id, action: "service_deleted", entityType: "service", entityId: String(input.id), ipAddress: clientIp(ctx.req) }); return { success: true } as const; }),
+    uploadMedia: permissionProcedure("services.media").input(z.object({ id: z.number().int().positive(), field: z.enum(["mainImage", "additionalImages", "brochureUrl"]), fileName: z.string().min(1).max(180), contentType: z.enum(["image/jpeg", "image/png", "image/webp", "application/pdf"]), dataUrl: z.string().startsWith("data:") })).mutation(async ({ ctx, input }) => {
+      const encoded = input.dataUrl.split(",")[1]; if (!encoded) throw new TRPCError({ code: "BAD_REQUEST", message: "File data is missing." }); const buffer = Buffer.from(encoded, "base64"); if (buffer.byteLength > 12 * 1024 * 1024) throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: "File must be 12 MB or smaller." }); const extension = input.contentType === "application/pdf" ? "pdf" : input.contentType.split("/")[1]; const uploaded = await storagePut(`services/${input.id}/${input.field}.${extension}`, buffer, input.contentType); return { url: uploaded.url };
     }),
   }),
 });
