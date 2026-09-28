@@ -12,6 +12,10 @@ import {
   quoteComments,
   quoteItems,
   quoteRequests,
+  serviceRequestAttachments,
+  serviceRequestComments,
+  serviceRequestEquipment,
+  serviceRequests,
   userPermissions,
   users,
   UserRole,
@@ -483,4 +487,67 @@ export async function deleteQuoteRequest(id: number) {
   await db.delete(quoteAttachments).where(eq(quoteAttachments.quoteRequestId, id));
   await db.delete(quoteItems).where(eq(quoteItems.quoteRequestId, id));
   await db.delete(quoteRequests).where(eq(quoteRequests.id, id));
+}
+
+export async function createServiceRequest(input: Omit<typeof serviceRequests.$inferInsert, "id" | "publicNumber" | "publicAccessToken" | "createdAt" | "updatedAt">, equipment: Array<Omit<typeof serviceRequestEquipment.$inferInsert, "id" | "serviceRequestId" | "createdAt">>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const pendingNumber = `PENDING-${randomUUID()}`;
+  const publicAccessToken = `${randomUUID()}${randomUUID()}`;
+  const result = await db.insert(serviceRequests).values({ ...input, publicNumber: pendingNumber, publicAccessToken });
+  const id = Number(result[0].insertId);
+  const publicNumber = `SPM-SR-${new Date().getUTCFullYear()}-${String(id).padStart(6, "0")}`;
+  await db.update(serviceRequests).set({ publicNumber }).where(eq(serviceRequests.id, id));
+  const equipmentIds: number[] = [];
+  for (const item of equipment) {
+    const equipmentResult = await db.insert(serviceRequestEquipment).values({ ...item, serviceRequestId: id });
+    equipmentIds.push(Number(equipmentResult[0].insertId));
+  }
+  return { id, publicNumber, publicAccessToken, equipmentIds };
+}
+
+export async function listServiceRequests() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(serviceRequests).orderBy(desc(serviceRequests.updatedAt));
+}
+
+export async function getServiceRequest(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const requests = await db.select().from(serviceRequests).where(eq(serviceRequests.id, id)).limit(1);
+  if (!requests[0]) return undefined;
+  const equipment = await db.select().from(serviceRequestEquipment).where(eq(serviceRequestEquipment.serviceRequestId, id));
+  const attachments = await db.select().from(serviceRequestAttachments).where(eq(serviceRequestAttachments.serviceRequestId, id)).orderBy(desc(serviceRequestAttachments.createdAt));
+  const comments = await db.select().from(serviceRequestComments).where(eq(serviceRequestComments.serviceRequestId, id)).orderBy(desc(serviceRequestComments.createdAt));
+  return { request: requests[0], equipment, attachments, comments };
+}
+
+export async function updateServiceRequest(id: number, input: Partial<typeof serviceRequests.$inferInsert>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(serviceRequests).set(input).where(eq(serviceRequests.id, id));
+}
+
+export async function addServiceRequestComment(input: Omit<typeof serviceRequestComments.$inferInsert, "id" | "createdAt">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const result = await db.insert(serviceRequestComments).values(input);
+  return Number(result[0].insertId);
+}
+
+export async function addServiceRequestAttachment(input: Omit<typeof serviceRequestAttachments.$inferInsert, "id" | "createdAt">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const result = await db.insert(serviceRequestAttachments).values(input);
+  return Number(result[0].insertId);
+}
+
+export async function deleteServiceRequest(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.delete(serviceRequestComments).where(eq(serviceRequestComments.serviceRequestId, id));
+  await db.delete(serviceRequestAttachments).where(eq(serviceRequestAttachments.serviceRequestId, id));
+  await db.delete(serviceRequestEquipment).where(eq(serviceRequestEquipment.serviceRequestId, id));
+  await db.delete(serviceRequests).where(eq(serviceRequests.id, id));
 }

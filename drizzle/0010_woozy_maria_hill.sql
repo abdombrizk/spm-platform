@@ -1,0 +1,2 @@
+ALTER TABLE `service_requests` ADD `publicAccessToken` varchar(80) NOT NULL;--> statement-breakpoint
+ALTER TABLE `service_requests` ADD CONSTRAINT `service_requests_publicAccessToken_unique` UNIQUE(`publicAccessToken`);

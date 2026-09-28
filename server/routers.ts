@@ -85,6 +85,56 @@ const serviceDataSchema = z.object({
   seoTitle: z.string().max(255).optional().default(""),
   seoDescription: z.string().max(600).optional().default(""),
 }).strict();
+const serviceRequestTypeSchema = z.enum(["corrective_maintenance", "preventive_maintenance", "emergency_maintenance", "installation", "commissioning", "calibration", "technical_support", "spare_parts", "training", "maintenance_contract", "other"]);
+const serviceRequestEquipmentSchema = z.object({
+  productId: z.number().int().positive().optional(),
+  equipmentCategory: z.string().min(2).max(160),
+  manufacturer: z.string().max(255).optional(),
+  model: z.string().max(180).optional(),
+  serialNumber: z.string().max(180).optional(),
+  assetNumber: z.string().max(180).optional(),
+  installationYear: z.number().int().min(1900).max(2200).optional(),
+  lastMaintenanceDate: z.string().max(40).optional(),
+  warrantyStatus: z.enum(["under_warranty", "out_of_warranty", "unknown"]).default("unknown"),
+  equipmentLocation: z.string().max(180).optional(),
+  roomDepartment: z.string().max(180).optional(),
+  deviceAddress: z.string().max(5000).optional(),
+  operationalStatus: z.enum(["yes", "partially", "no", "unknown"]).default("unknown"),
+  problemTitle: z.string().min(2).max(255),
+  problemDescription: z.string().min(2).max(12000),
+  errorCode: z.string().max(255).optional(),
+  alarmMessage: z.string().max(5000).optional(),
+  problemStartedAt: z.string().max(120).optional(),
+  occurrencePattern: z.enum(["continuous", "intermittent", "unknown"]).default("unknown"),
+  precedingEvent: z.string().max(180).optional(),
+  safeToUse: z.enum(["yes", "no", "unknown"]).default("unknown"),
+  previousMaintenance: z.string().max(12000).optional(),
+});
+const serviceRequestCreateSchema = z.object({
+  serviceId: z.number().int().positive().optional(),
+  organizationName: z.string().max(255).optional(),
+  requesterType: z.enum(["doctor", "biomedical_engineer", "technician", "procurement_officer", "hospital", "clinic", "medical_center", "distributor", "private_company", "government_entity", "individual", "other"]).optional(),
+  contactPerson: z.string().min(2).max(255),
+  jobTitle: z.string().max(180).optional(),
+  email: z.string().email(),
+  phone: z.string().min(5).max(80),
+  whatsapp: z.string().max(80).optional(),
+  preferredContactMethod: z.enum(["email", "phone", "whatsapp", "any"]).default("any"),
+  country: z.string().min(2).max(120),
+  city: z.string().max(160).optional(),
+  address: z.string().max(5000).optional(),
+  visitRequired: z.enum(["yes", "no", "not_sure"]).default("not_sure"),
+  preferredVisitDate: z.string().max(40).optional(),
+  preferredVisitTime: z.string().max(80).optional(),
+  siteAccessNotes: z.string().max(12000).optional(),
+  requestType: serviceRequestTypeSchema,
+  source: z.enum(["website", "product_page", "service_page", "whatsapp", "email", "manual", "campaign"]).default("website"),
+  equipment: z.array(serviceRequestEquipmentSchema).min(1).max(20),
+  safetyAcknowledged: z.literal(true),
+  noPatientDataAcknowledged: z.literal(true),
+  honeypot: z.string().max(1).optional().default(""),
+});
+const serviceRequestStatusSchema = z.enum(["new", "under_review", "assigned", "waiting_for_customer", "remote_diagnosis", "site_visit_required", "quotation_required", "awaiting_approval", "scheduled", "in_progress", "waiting_for_parts", "resolved", "customer_confirmation", "closed", "cancelled"]);
 
 function clientIp(req: { ip?: string; headers: Record<string, unknown> }) {
   const forwarded = req.headers["x-forwarded-for"];
@@ -213,6 +263,12 @@ export const appRouter = router({
       if (input.userId === ctx.user.id) throw new TRPCError({ code: "BAD_REQUEST", message: "The Owner permissions are always retained." });
       await db.replaceScopedPermissions(input.userId, "quotes", input.permissions);
       await db.addAuditLog({ actorUserId: ctx.user.id, action: "quote_permissions_updated", entityType: "user", entityId: String(input.userId), metadata: { count: input.permissions.length }, ipAddress: clientIp(ctx.req) });
+      return { success: true } as const;
+    }),
+    updateServiceRequestPermissions: ownerProcedure.input(z.object({ userId: z.number().int().positive(), permissions: z.array(z.object({ permission: z.string().min(1), granted: z.boolean() })) })).mutation(async ({ ctx, input }) => {
+      if (input.userId === ctx.user.id) throw new TRPCError({ code: "BAD_REQUEST", message: "The Owner permissions are always retained." });
+      await db.replaceScopedPermissions(input.userId, "service_requests", input.permissions);
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "service_request_permissions_updated", entityType: "user", entityId: String(input.userId), metadata: { count: input.permissions.length }, ipAddress: clientIp(ctx.req) });
       return { success: true } as const;
     }),
   }),
@@ -364,6 +420,39 @@ export const appRouter = router({
     uploadMedia: permissionProcedure("services.media").input(z.object({ id: z.number().int().positive(), field: z.enum(["mainImage", "additionalImages", "brochureUrl"]), fileName: z.string().min(1).max(180), contentType: z.enum(["image/jpeg", "image/png", "image/webp", "application/pdf"]), dataUrl: z.string().startsWith("data:") })).mutation(async ({ ctx, input }) => {
       const encoded = input.dataUrl.split(",")[1]; if (!encoded) throw new TRPCError({ code: "BAD_REQUEST", message: "File data is missing." }); const buffer = Buffer.from(encoded, "base64"); if (buffer.byteLength > 12 * 1024 * 1024) throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: "File must be 12 MB or smaller." }); const extension = input.contentType === "application/pdf" ? "pdf" : input.contentType.split("/")[1]; const uploaded = await storagePut(`services/${input.id}/${input.field}.${extension}`, buffer, input.contentType); return { url: uploaded.url };
     }),
+  }),
+  serviceRequests: router({
+    create: publicProcedure.input(serviceRequestCreateSchema).mutation(async ({ input }) => {
+      if (input.honeypot) throw new TRPCError({ code: "BAD_REQUEST", message: "Unable to submit this request." });
+      const { equipment, honeypot: _honeypot, ...request } = input;
+      const result = await db.createServiceRequest({ ...request, source: input.source }, equipment);
+      void notifyOwner({ title: `New service request ${result.publicNumber}`, content: `${input.contactPerson} submitted a ${input.requestType.replaceAll("_", " ")} request from ${input.country}. Review it in the SPM workspace.` }).catch(() => undefined);
+      return result;
+    }),
+    uploadAttachment: publicProcedure.input(z.object({ serviceRequestId: z.number().int().positive(), accessToken: z.string().min(20).max(100), equipmentId: z.number().int().positive().optional(), fileName: z.string().min(1).max(255), contentType: z.enum(["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "image/jpeg", "image/png", "image/webp", "video/mp4", "video/quicktime"]), sizeBytes: z.number().int().positive().max(20 * 1024 * 1024), description: z.string().max(255).optional(), dataUrl: z.string().startsWith("data:") })).mutation(async ({ input }) => {
+      const serviceRequest = await db.getServiceRequest(input.serviceRequestId);
+      if (!serviceRequest) throw new TRPCError({ code: "NOT_FOUND", message: "Service request not found." });
+      if (serviceRequest.request.publicAccessToken !== input.accessToken) throw new TRPCError({ code: "FORBIDDEN", message: "The service request access token is invalid." });
+      if (input.equipmentId && !serviceRequest.equipment.some(item => item.id === input.equipmentId)) throw new TRPCError({ code: "BAD_REQUEST", message: "The selected equipment does not belong to this request." });
+      if (serviceRequest.attachments.length >= 10) throw new TRPCError({ code: "BAD_REQUEST", message: "A maximum of 10 files is allowed." });
+      const encoded = input.dataUrl.split(",")[1];
+      if (!encoded) throw new TRPCError({ code: "BAD_REQUEST", message: "File data is missing." });
+      const buffer = Buffer.from(encoded, "base64");
+      if (buffer.byteLength > 20 * 1024 * 1024) throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: "Each file must be 20 MB or smaller." });
+      if (serviceRequest.attachments.reduce((sum, item) => sum + item.sizeBytes, 0) + buffer.byteLength > 100 * 1024 * 1024) throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: "The total attachment size must be 100 MB or smaller." });
+      const extension = input.fileName.split(".").pop()?.toLowerCase() || "bin";
+      const uploaded = await storagePut(`service-requests/${input.serviceRequestId}/${randomUUID()}.${extension}`, buffer, input.contentType);
+      const id = await db.addServiceRequestAttachment({ serviceRequestId: input.serviceRequestId, equipmentId: input.equipmentId, fileName: input.fileName, contentType: input.contentType, sizeBytes: buffer.byteLength, storageUrl: uploaded.url, description: input.description });
+      return { id, url: uploaded.url };
+    }),
+    list: permissionProcedure("service_requests.view").query(async () => db.listServiceRequests()),
+    assignees: permissionProcedure("service_requests.assign").query(async () => (await db.listInternalUsers()).filter(user => user.isActive && ["owner", "manager", "sales", "service"].includes(user.role))),
+    get: permissionProcedure("service_requests.view").input(z.object({ id: z.number().int().positive() })).query(async ({ input }) => { const result = await db.getServiceRequest(input.id); if (!result) throw new TRPCError({ code: "NOT_FOUND", message: "Service request not found." }); return result; }),
+    updateStatus: protectedProcedure.input(z.object({ id: z.number().int().positive(), status: serviceRequestStatusSchema })).mutation(async ({ ctx, input }) => { if (ctx.user.role !== "owner" && !(await db.hasPermission(ctx.user.id, "service_requests.status"))) throw new TRPCError({ code: "FORBIDDEN", message: "Missing permission: service_requests.status" }); if (["closed", "cancelled"].includes(input.status) && ctx.user.role !== "owner" && !(await db.hasPermission(ctx.user.id, "service_requests.close"))) throw new TRPCError({ code: "FORBIDDEN", message: "Missing permission: service_requests.close" }); await db.updateServiceRequest(input.id, { status: input.status, closedAt: ["closed", "cancelled"].includes(input.status) ? new Date() : null }); await db.addAuditLog({ actorUserId: ctx.user.id, action: "service_request_status_updated", entityType: "service_request", entityId: String(input.id), metadata: { status: input.status }, ipAddress: clientIp(ctx.req) }); return { success: true } as const; }),
+    assign: permissionProcedure("service_requests.assign").input(z.object({ id: z.number().int().positive(), assignedServiceUserId: z.number().int().positive().nullable().optional(), assignedSalesUserId: z.number().int().positive().nullable().optional(), priority: z.enum(["low", "normal", "high", "urgent"]).optional() })).mutation(async ({ ctx, input }) => { if (input.priority !== undefined && ctx.user.role !== "owner" && !(await db.hasPermission(ctx.user.id, "service_requests.priority"))) throw new TRPCError({ code: "FORBIDDEN", message: "Missing permission: service_requests.priority" }); await db.updateServiceRequest(input.id, input); await db.addAuditLog({ actorUserId: ctx.user.id, action: "service_request_assignment_updated", entityType: "service_request", entityId: String(input.id), metadata: input, ipAddress: clientIp(ctx.req) }); return { success: true } as const; }),
+    addComment: permissionProcedure("service_requests.comments").input(z.object({ serviceRequestId: z.number().int().positive(), body: z.string().min(1).max(12000) })).mutation(async ({ ctx, input }) => { const request = await db.getServiceRequest(input.serviceRequestId); if (!request) throw new TRPCError({ code: "NOT_FOUND", message: "Service request not found." }); const id = await db.addServiceRequestComment({ serviceRequestId: input.serviceRequestId, userId: ctx.user.id, body: input.body }); await db.addAuditLog({ actorUserId: ctx.user.id, action: "service_request_comment_added", entityType: "service_request", entityId: String(input.serviceRequestId), metadata: { commentId: id }, ipAddress: clientIp(ctx.req) }); return { id }; }),
+    linkQuote: permissionProcedure("service_requests.edit").input(z.object({ id: z.number().int().positive(), quoteRequestId: z.number().int().positive().nullable() })).mutation(async ({ ctx, input }) => { await db.updateServiceRequest(input.id, { quoteRequestId: input.quoteRequestId }); await db.addAuditLog({ actorUserId: ctx.user.id, action: "service_request_quote_linked", entityType: "service_request", entityId: String(input.id), metadata: { quoteRequestId: input.quoteRequestId }, ipAddress: clientIp(ctx.req) }); return { success: true } as const; }),
+    delete: permissionProcedure("service_requests.delete").input(z.object({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => { await db.deleteServiceRequest(input.id); await db.addAuditLog({ actorUserId: ctx.user.id, action: "service_request_deleted", entityType: "service_request", entityId: String(input.id), ipAddress: clientIp(ctx.req) }); return { success: true } as const; }),
   }),
   quotes: router({
     create: publicProcedure.input(z.object({

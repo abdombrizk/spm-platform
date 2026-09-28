@@ -1,0 +1,1 @@
+ALTER TABLE `service_requests` ADD `requestType` enum('corrective_maintenance','preventive_maintenance','emergency_maintenance','installation','commissioning','calibration','technical_support','spare_parts','training','maintenance_contract','other') DEFAULT 'other' NOT NULL;

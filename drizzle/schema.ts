@@ -179,3 +179,95 @@ export const quoteComments = mysqlTable("quote_comments", {
   body: text("body").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
+
+export const serviceRequestTypes = ["corrective_maintenance", "preventive_maintenance", "emergency_maintenance", "installation", "commissioning", "calibration", "technical_support", "spare_parts", "training", "maintenance_contract", "other"] as const;
+export const serviceRequestStatuses = ["new", "under_review", "assigned", "waiting_for_customer", "remote_diagnosis", "site_visit_required", "quotation_required", "awaiting_approval", "scheduled", "in_progress", "waiting_for_parts", "resolved", "customer_confirmation", "closed", "cancelled"] as const;
+export const serviceRequestPriorities = ["low", "normal", "high", "urgent"] as const;
+export const serviceRequestRequesterTypes = quoteRequesterTypes;
+export const serviceRequestWarrantyStatuses = ["under_warranty", "out_of_warranty", "unknown"] as const;
+export const serviceRequestOperationalStatuses = ["yes", "partially", "no", "unknown"] as const;
+export const serviceRequestOccurrencePatterns = ["continuous", "intermittent", "unknown"] as const;
+export const serviceRequestSafeStatuses = ["yes", "no", "unknown"] as const;
+
+export const serviceRequests = mysqlTable("service_requests", {
+  id: int("id").autoincrement().primaryKey(),
+  publicNumber: varchar("publicNumber", { length: 40 }).notNull().unique(),
+  publicAccessToken: varchar("publicAccessToken", { length: 80 }).notNull().unique(),
+  quoteRequestId: int("quoteRequestId"),
+  serviceId: int("serviceId"),
+  requestType: mysqlEnum("requestType", serviceRequestTypes).notNull().default("other"),
+  organizationName: varchar("organizationName", { length: 255 }),
+  requesterType: mysqlEnum("requesterType", serviceRequestRequesterTypes),
+  contactPerson: varchar("contactPerson", { length: 255 }).notNull(),
+  jobTitle: varchar("jobTitle", { length: 180 }),
+  email: varchar("email", { length: 320 }).notNull(),
+  phone: varchar("phone", { length: 80 }).notNull(),
+  whatsapp: varchar("whatsapp", { length: 80 }),
+  preferredContactMethod: mysqlEnum("preferredContactMethod", ["email", "phone", "whatsapp", "any"]).default("any").notNull(),
+  country: varchar("country", { length: 120 }).notNull(),
+  city: varchar("city", { length: 160 }),
+  address: text("address"),
+  visitRequired: mysqlEnum("visitRequired", ["yes", "no", "not_sure"]).default("not_sure").notNull(),
+  preferredVisitDate: varchar("preferredVisitDate", { length: 40 }),
+  preferredVisitTime: varchar("preferredVisitTime", { length: 80 }),
+  siteAccessNotes: text("siteAccessNotes"),
+  safetyAcknowledged: boolean("safetyAcknowledged").default(false).notNull(),
+  noPatientDataAcknowledged: boolean("noPatientDataAcknowledged").default(false).notNull(),
+  status: mysqlEnum("status", serviceRequestStatuses).default("new").notNull(),
+  priority: mysqlEnum("priority", serviceRequestPriorities).default("normal").notNull(),
+  assignedServiceUserId: int("assignedServiceUserId"),
+  assignedSalesUserId: int("assignedSalesUserId"),
+  source: mysqlEnum("source", ["website", "product_page", "service_page", "whatsapp", "email", "manual", "campaign"]).default("website").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  closedAt: timestamp("closedAt"),
+});
+
+export const serviceRequestEquipment = mysqlTable("service_request_equipment", {
+  id: int("id").autoincrement().primaryKey(),
+  serviceRequestId: int("serviceRequestId").notNull(),
+  productId: int("productId"),
+  equipmentCategory: varchar("equipmentCategory", { length: 160 }).notNull(),
+  manufacturer: varchar("manufacturer", { length: 255 }),
+  model: varchar("model", { length: 180 }),
+  serialNumber: varchar("serialNumber", { length: 180 }),
+  assetNumber: varchar("assetNumber", { length: 180 }),
+  installationYear: int("installationYear"),
+  lastMaintenanceDate: varchar("lastMaintenanceDate", { length: 40 }),
+  warrantyStatus: mysqlEnum("warrantyStatus", serviceRequestWarrantyStatuses).default("unknown").notNull(),
+  equipmentLocation: varchar("equipmentLocation", { length: 180 }),
+  roomDepartment: varchar("roomDepartment", { length: 180 }),
+  deviceAddress: text("deviceAddress"),
+  operationalStatus: mysqlEnum("operationalStatus", serviceRequestOperationalStatuses).default("unknown").notNull(),
+  problemTitle: varchar("problemTitle", { length: 255 }).notNull(),
+  problemDescription: text("problemDescription").notNull(),
+  errorCode: varchar("errorCode", { length: 255 }),
+  alarmMessage: text("alarmMessage"),
+  problemStartedAt: varchar("problemStartedAt", { length: 120 }),
+  occurrencePattern: mysqlEnum("occurrencePattern", serviceRequestOccurrencePatterns).default("unknown").notNull(),
+  precedingEvent: varchar("precedingEvent", { length: 180 }),
+  safeToUse: mysqlEnum("safeToUse", serviceRequestSafeStatuses).default("unknown").notNull(),
+  previousMaintenance: text("previousMaintenance"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const serviceRequestAttachments = mysqlTable("service_request_attachments", {
+  id: int("id").autoincrement().primaryKey(),
+  serviceRequestId: int("serviceRequestId").notNull(),
+  equipmentId: int("equipmentId"),
+  uploadedBy: int("uploadedBy"),
+  fileName: varchar("fileName", { length: 255 }).notNull(),
+  contentType: varchar("contentType", { length: 120 }).notNull(),
+  sizeBytes: int("sizeBytes").notNull(),
+  storageUrl: text("storageUrl").notNull(),
+  description: varchar("description", { length: 255 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const serviceRequestComments = mysqlTable("service_request_comments", {
+  id: int("id").autoincrement().primaryKey(),
+  serviceRequestId: int("serviceRequestId").notNull(),
+  userId: int("userId").notNull(),
+  body: text("body").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});

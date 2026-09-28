@@ -27,6 +27,12 @@ This repository contains the current working platform foundation and the impleme
 - Quote attachments with PDF, Office, image, and video formats; up to 5 files, 10 MB per file, and 30 MB total.
 - Quote request number generation, priority, assignment, status workflow, internal comments, and protected operational management.
 - Product and service detail pages linked directly to the structured quote request form.
+- Public Service Request intake supporting one or more devices in one request.
+- Device identity and fault fields covering manufacturer, model, serial number, asset number, warranty, location, operational status, safety status, error code, alarm message, occurrence pattern, previous maintenance, and problem description.
+- Service request attachments for photos, error screens, reports, Office/PDF files, and MP4/MOV videos; up to 10 files, 20 MB per file, and 100 MB total.
+- Per-request access token protection for public attachment uploads, with a no-patient-identifiable-information acknowledgement.
+- Service request number generation, service linkage, priority, assignment, status workflow, internal comments, quote linkage, and protected operational management.
+- Owner-controlled Service Request permissions for viewing, assignment, priority, status, comments, scheduling, closing, attachment management, and deletion.
 - Public catalogue filtering and responsive layouts.
 
 ## Technology stack
@@ -190,7 +196,6 @@ Large media files should be uploaded through the managed storage workflow. Do no
 
 The next implementation modules can build on the current foundation:
 
-- Service and maintenance request intake with attachments and status tracking.
 - Spare-parts requests.
 - Email notification templates and routing.
 - CRM and operational reporting.
