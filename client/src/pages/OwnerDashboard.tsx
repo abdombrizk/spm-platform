@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { ShieldCheck, Users, UserPlus, KeyRound, Power, LogOut, Search, LockKeyhole, PackagePlus, Wrench, ClipboardList } from "lucide-react";
+import { Activity, ShieldCheck, Users, UserPlus, KeyRound, Power, LogOut, Search, LockKeyhole, PackagePlus, Wrench, ClipboardList, RefreshCw } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -159,6 +159,21 @@ function ContentPermissionEditor({ users }: { users: Array<{ id: number; name: s
   return <Card><CardHeader><CardTitle>Content workspace permissions</CardTitle><CardDescription>Owner decides who can edit, review, upload and publish public content.</CardDescription></CardHeader><CardContent className="space-y-4"><Select value={selectedUserId ? String(selectedUserId) : ""} onValueChange={value => setSelectedUserId(Number(value))}><SelectTrigger><SelectValue placeholder="Choose a user" /></SelectTrigger><SelectContent>{users.filter(user => user.role !== "owner").map(user => <SelectItem key={user.id} value={String(user.id)}>{user.name || user.email || `User ${user.id}`} — {roleLabels[user.role as Role] ?? user.role}</SelectItem>)}</SelectContent></Select>{selected ? <div className="space-y-3 rounded-2xl border p-4"><div><p className="font-semibold">{selected.name || "Unnamed user"}</p><p className="text-sm text-slate-500">{selected.email}</p></div>{contentPermissions.map(item => <label key={item.key} className="flex cursor-pointer items-start gap-3 rounded-xl border p-3"><input type="checkbox" className="mt-1 h-4 w-4 accent-cyan-600" checked={current.has(item.key)} disabled={permissionsQuery.isLoading || updatePermissions.isPending} onChange={event => save(item.key, event.target.checked)} /><span><span className="block text-sm font-medium">{item.label}</span><span className="block text-xs text-slate-500">{item.description}</span></span></label>)}</div> : <p className="rounded-xl border border-dashed p-6 text-center text-sm text-slate-500">Select a non-Owner account to manage content permissions.</p>}</CardContent></Card>;
 }
 
+function AuditLogPanel() {
+  const logs = trpc.owner.listAuditLogs.useQuery({ limit: 120 });
+  return <Card>
+    <CardHeader>
+      <div className="flex items-start justify-between gap-4">
+        <div><CardTitle className="flex items-center gap-2"><Activity className="h-5 w-5 text-cyan-600" />User activity and audit trail</CardTitle><CardDescription>Owner-only history of sign-ins, content changes, permission updates, requests and catalogue actions.</CardDescription></div>
+        <Button variant="outline" size="sm" onClick={() => logs.refetch()} disabled={logs.isFetching}><RefreshCw className={`mr-2 h-4 w-4 ${logs.isFetching ? "animate-spin" : ""}`} />Refresh</Button>
+      </div>
+    </CardHeader>
+    <CardContent>
+      {logs.isLoading ? <p className="py-8 text-center text-sm text-slate-500">Loading audit trail…</p> : logs.error ? <Alert variant="destructive"><AlertDescription>Unable to load the audit trail.</AlertDescription></Alert> : <div className="max-h-[520px] overflow-auto rounded-xl border"><div className="divide-y">{(logs.data ?? []).map(log => <div key={log.id} className="grid gap-2 px-4 py-3 text-sm md:grid-cols-[180px_1fr_150px] md:items-center"><div><p className="font-medium text-slate-800">{log.actorName || log.actorEmail || `User ${log.actorUserId ?? "system"}`}</p><p className="text-xs text-slate-500">{log.actorEmail || ""}</p></div><div><p className="font-medium text-[#0a4052]">{log.action.replaceAll("_", " ")}</p><p className="text-xs text-slate-500">{log.entityType}{log.entityId ? ` · ${log.entityId}` : ""}{log.metadata ? ` · ${log.metadata.slice(0, 160)}` : ""}</p></div><p className="text-xs text-slate-500 md:text-right">{new Date(log.createdAt).toLocaleString()}</p></div>)}{(logs.data ?? []).length === 0 ? <p className="p-8 text-center text-sm text-slate-500">No activity has been recorded yet.</p> : null}</div></div>}
+    </CardContent>
+  </Card>;
+}
+
 export default function OwnerDashboard() {
   const [, setLocation] = useLocation();
   const auth = trpc.auth.me.useQuery();
@@ -180,8 +195,8 @@ export default function OwnerDashboard() {
   const role = auth.data?.role;
   const isOwner = role === "owner";
   const isManager = role === "manager";
-  const canAccessHomepage = isOwner || isManager || homepageDraftAccess.isSuccess;
-  const canAccessContent = isOwner || isManager || Boolean(cmsAccess.data?.includes("content.view"));
+  const canAccessHomepage = isOwner || homepageDraftAccess.isSuccess;
+  const canAccessContent = isOwner || Boolean(cmsAccess.data?.includes("content.view"));
   if (auth.isLoading || (auth.data && isOwner && users.isLoading) || (auth.data && homepageDraftAccess.isLoading) || (auth.data && cmsAccess.isLoading)) return <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white">Loading SPM workspace…</div>;
   if (!auth.data) return null;
   if (auth.data.mustChangePassword) return <FirstLoginPasswordChange onComplete={() => auth.refetch()} />;
@@ -209,6 +224,7 @@ export default function OwnerDashboard() {
         {isOwner ? <QuotePermissionEditor users={(users.data ?? []).map(user => ({ id: user.id, name: user.name, email: user.email, role: user.role }))} /> : null}
         {isOwner ? <ServiceRequestPermissionEditor users={(users.data ?? []).map(user => ({ id: user.id, name: user.name, email: user.email, role: user.role }))} /> : null}
         {isOwner ? <ContentPermissionEditor users={(users.data ?? []).map(user => ({ id: user.id, name: user.name, email: user.email, role: user.role }))} /> : null}
+        {isOwner ? <AuditLogPanel /> : null}
         <div className="flex justify-end"><Link href="/"><Button variant="ghost">Back to public website</Button></Link></div>
       </main>
     </div>

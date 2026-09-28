@@ -208,14 +208,6 @@ export async function hasPermission(userId: number, permission: string) {
   if (!db) return false;
   const user = await getUserById(userId);
   if (!user || !user.isActive) return false;
-  if (user.role === "owner" || user.role === "manager") return true;
-  if (user.role === "marketing" && (
-    permission.startsWith("products.") && permission !== "products.delete" ||
-    permission.startsWith("content.") && permission !== "content.delete" ||
-    permission === "homepage.edit" || permission === "homepage.media"
-  )) {
-    return true;
-  }
   const rows = await db.select().from(userPermissions).where(and(eq(userPermissions.userId, userId), eq(userPermissions.permission, permission), eq(userPermissions.granted, true))).limit(1);
   return rows.length > 0;
 }
@@ -245,6 +237,23 @@ export async function replaceScopedPermissions(userId: number, scope: string, pe
   await db.delete(userPermissions).where(eq(userPermissions.userId, userId));
   const next = [...preserved.map(item => ({ permission: item.permission, granted: item.granted })), ...permissions];
   if (next.length) await db.insert(userPermissions).values(next.map(item => ({ userId, ...item })));
+}
+
+export async function listAuditLogs(limit = 200) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select({
+    id: auditLogs.id,
+    actorUserId: auditLogs.actorUserId,
+    actorName: users.name,
+    actorEmail: users.email,
+    action: auditLogs.action,
+    entityType: auditLogs.entityType,
+    entityId: auditLogs.entityId,
+    metadata: auditLogs.metadata,
+    ipAddress: auditLogs.ipAddress,
+    createdAt: auditLogs.createdAt,
+  }).from(auditLogs).leftJoin(users, eq(auditLogs.actorUserId, users.id)).orderBy(desc(auditLogs.createdAt)).limit(limit);
 }
 
 export async function listHomepageContent() {

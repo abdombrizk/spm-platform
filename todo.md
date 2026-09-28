@@ -25,6 +25,9 @@
 - [x] Fixed Marketing permission block: granted default catalogue and CMS permissions and updated role-based dashboard view.
 - [x] Built the comprehensive C-Arm and full X-Ray equipment inventory table with availability indicators, display toggles, search, and quick templates.
 - [x] Seeded high-specification C-Arm and Mobile/Fixed X-Ray systems in both the inventory table and public catalogue.
+- [x] Made database permissions the single source of truth; removed role-based bypasses that prevented Owner from revoking access.
+- [x] Added Owner-only audit trail with actor, action, entity, metadata and timestamp, plus refresh control.
+- [x] Added role protection tests and verified all current real accounts and core module endpoints.
 
 ## Waiting for SPM inputs / production preparation
 

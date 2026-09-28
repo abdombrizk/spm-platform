@@ -63,13 +63,13 @@ export default function ProductManager() {
   const role = auth.data?.role;
   const isOwner = role === "owner";
   const permissions = new Set(permissionsQuery.data ?? []);
-  const canUse = isOwner || role === "marketing" || role === "manager" || permissions.has("products.view");
-  const canCreate = isOwner || role === "marketing" || role === "manager" || permissions.has("products.create");
-  const canEdit = isOwner || role === "marketing" || role === "manager" || permissions.has("products.edit");
-  const canMedia = isOwner || role === "marketing" || role === "manager" || permissions.has("products.media");
-  const canQuality = isOwner || role === "marketing" || role === "manager" || permissions.has("products.quality");
-  const canPublish = isOwner || role === "marketing" || role === "manager" || permissions.has("products.publish");
-  const canArchive = isOwner || role === "marketing" || role === "manager" || permissions.has("products.archive");
+  const canUse = isOwner || permissions.has("products.view");
+  const canCreate = isOwner || permissions.has("products.create");
+  const canEdit = isOwner || permissions.has("products.edit");
+  const canMedia = isOwner || permissions.has("products.media");
+  const canQuality = isOwner || permissions.has("products.quality");
+  const canPublish = isOwner || permissions.has("products.publish");
+  const canArchive = isOwner || permissions.has("products.archive");
   const canDelete = isOwner || permissions.has("products.delete");
 
   const rows = useMemo(() => {

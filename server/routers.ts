@@ -203,6 +203,7 @@ export const appRouter = router({
   }),
   owner: router({
     listUsers: ownerProcedure.query(async () => db.listInternalUsers()),
+    listAuditLogs: ownerProcedure.input(z.object({ limit: z.number().int().min(1).max(500).default(200) }).optional()).query(async ({ input }) => db.listAuditLogs(input?.limit ?? 200)),
     createUser: ownerProcedure.input(z.object({ name: z.string().min(2), email: z.string().email(), role: roleSchema, password: strongPasswordSchema })).mutation(async ({ ctx, input }) => {
       const issue = validatePassword(input.password);
       if (issue) throw new TRPCError({ code: "BAD_REQUEST", message: issue });
@@ -312,8 +313,7 @@ export const appRouter = router({
   }),
   cms: router({
     permissions: protectedProcedure.query(async ({ ctx }) => {
-      if (ctx.user.role === "owner" || ctx.user.role === "manager") return ["content.view", "content.edit", "content.media", "content.review", "content.publish", "content.delete", "content.stats"];
-      if (ctx.user.role === "marketing") return ["content.view", "content.edit", "content.media", "content.review", "content.publish", "content.stats"];
+      if (ctx.user.role === "owner") return ["content.view", "content.edit", "content.media", "content.review", "content.publish", "content.delete", "content.stats"];
       const permissions = await db.listPermissions(ctx.user.id);
       return permissions.filter(item => item.granted && item.permission.startsWith("content.")).map(item => item.permission);
     }),
@@ -366,8 +366,7 @@ export const appRouter = router({
   }),
   products: router({
     permissions: protectedProcedure.query(async ({ ctx }) => {
-      if (ctx.user.role === "owner" || ctx.user.role === "manager") return ["products.view", "products.create", "products.edit", "products.media", "products.quality", "products.publish", "products.archive", "products.delete"];
-      if (ctx.user.role === "marketing") return ["products.view", "products.create", "products.edit", "products.media", "products.quality", "products.publish", "products.archive"];
+      if (ctx.user.role === "owner") return ["products.view", "products.create", "products.edit", "products.media", "products.quality", "products.publish", "products.archive", "products.delete"];
       const permissions = await db.listPermissions(ctx.user.id);
       return permissions.filter(item => item.granted && item.permission.startsWith("products.")).map(item => item.permission);
     }),
