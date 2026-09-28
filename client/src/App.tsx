@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
@@ -6,21 +7,21 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import OwnerDashboard from "@/pages/OwnerDashboard";
-import ProductManager from "@/pages/ProductManager";
-import Catalogue from "@/pages/Catalogue";
-import ProductDetails from "@/pages/ProductDetails";
-import ServiceManager from "@/pages/ServiceManager";
-import Services from "@/pages/Services";
-import ServiceDetails from "@/pages/ServiceDetails";
-import QuoteRequest from "@/pages/QuoteRequest";
-import QuotesManager from "@/pages/QuotesManager";
-import ServiceRequest from "@/pages/ServiceRequest";
-import ServiceRequestsManager from "@/pages/ServiceRequestsManager";
-import ContentLanding from "@/pages/ContentLanding";
+const OwnerDashboard = lazy(() => import("@/pages/OwnerDashboard"));
+const ProductManager = lazy(() => import("@/pages/ProductManager"));
+const Catalogue = lazy(() => import("@/pages/Catalogue"));
+const ProductDetails = lazy(() => import("@/pages/ProductDetails"));
+const ServiceManager = lazy(() => import("@/pages/ServiceManager"));
+const Services = lazy(() => import("@/pages/Services"));
+const ServiceDetails = lazy(() => import("@/pages/ServiceDetails"));
+const QuoteRequest = lazy(() => import("@/pages/QuoteRequest"));
+const QuotesManager = lazy(() => import("@/pages/QuotesManager"));
+const ServiceRequest = lazy(() => import("@/pages/ServiceRequest"));
+const ServiceRequestsManager = lazy(() => import("@/pages/ServiceRequestsManager"));
+const ContentLanding = lazy(() => import("@/pages/ContentLanding"));
 
 function Router() {
-  return (
+  return <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-[#f7fafc] text-sm text-[#617180]">Loading SPM page…</div>}>
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/login" component={Login} />
@@ -50,7 +51,7 @@ function Router() {
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
-  );
+  </Suspense>;
 }
 
 function App() {
