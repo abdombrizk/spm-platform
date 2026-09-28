@@ -26,7 +26,8 @@
 
 - [ ] Replace temporary imagery with SPM-approved assets before production.
 - [ ] Upload and approve the real SPM catalogue, certificates, agency letters and customer evidence.
-- [ ] Complete the final English copy page by page and approve it through the content workflow.
+ - [x] Write and seed initial English copy page by page into Owner CMS drafts for review.
+ - [ ] Review and publish the approved English pages through the Owner Content Workspace.
 - [ ] Add dynamic Downloads, FAQs, News, Events and Careers collections backed by CMS records.
 - [ ] Configure a production email provider for quote/service/contact confirmations.
 - [ ] Configure production domain/DNS, analytics consent and deployment environment variables.
