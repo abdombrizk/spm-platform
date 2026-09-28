@@ -1,4 +1,5 @@
 import { and, desc, eq, gt } from "drizzle-orm";
+import { randomUUID } from "node:crypto";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   auditLogs,
@@ -7,6 +8,10 @@ import {
   internalSessions,
   products,
   services,
+  quoteAttachments,
+  quoteComments,
+  quoteItems,
+  quoteRequests,
   userPermissions,
   users,
   UserRole,
@@ -419,4 +424,63 @@ export async function deleteService(id: number) {
   const db = await getDb();
   if (!db) throw new Error("Database is not available");
   await db.delete(services).where(eq(services.id, id));
+}
+
+export async function createQuoteRequest(input: Omit<typeof quoteRequests.$inferInsert, "id" | "publicNumber" | "createdAt" | "updatedAt">, items: Array<Omit<typeof quoteItems.$inferInsert, "id" | "quoteRequestId" | "createdAt">>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const pendingNumber = `PENDING-${randomUUID()}`;
+  const result = await db.insert(quoteRequests).values({ ...input, publicNumber: pendingNumber });
+  const id = Number(result[0].insertId);
+  const publicNumber = `SPM-Q-${new Date().getUTCFullYear()}-${String(id).padStart(6, "0")}`;
+  await db.update(quoteRequests).set({ publicNumber }).where(eq(quoteRequests.id, id));
+  if (items.length) await db.insert(quoteItems).values(items.map(item => ({ ...item, quoteRequestId: id })));
+  return { id, publicNumber };
+}
+
+export async function listQuoteRequests() {
+  const db = await getDb();
+  if (!db) return [];
+  const rows = await db.select().from(quoteRequests).orderBy(desc(quoteRequests.updatedAt));
+  return rows;
+}
+
+export async function getQuoteRequest(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const requests = await db.select().from(quoteRequests).where(eq(quoteRequests.id, id)).limit(1);
+  if (!requests[0]) return undefined;
+  const items = await db.select().from(quoteItems).where(eq(quoteItems.quoteRequestId, id));
+  const attachments = await db.select().from(quoteAttachments).where(eq(quoteAttachments.quoteRequestId, id)).orderBy(desc(quoteAttachments.createdAt));
+  const comments = await db.select().from(quoteComments).where(eq(quoteComments.quoteRequestId, id)).orderBy(desc(quoteComments.createdAt));
+  return { request: requests[0], items, attachments, comments };
+}
+
+export async function updateQuoteRequest(id: number, input: Partial<typeof quoteRequests.$inferInsert>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(quoteRequests).set(input).where(eq(quoteRequests.id, id));
+}
+
+export async function addQuoteComment(input: Omit<typeof quoteComments.$inferInsert, "id" | "createdAt">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const result = await db.insert(quoteComments).values(input);
+  return Number(result[0].insertId);
+}
+
+export async function addQuoteAttachment(input: Omit<typeof quoteAttachments.$inferInsert, "id" | "createdAt">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const result = await db.insert(quoteAttachments).values(input);
+  return Number(result[0].insertId);
+}
+
+export async function deleteQuoteRequest(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.delete(quoteComments).where(eq(quoteComments.quoteRequestId, id));
+  await db.delete(quoteAttachments).where(eq(quoteAttachments.quoteRequestId, id));
+  await db.delete(quoteItems).where(eq(quoteItems.quoteRequestId, id));
+  await db.delete(quoteRequests).where(eq(quoteRequests.id, id));
 }

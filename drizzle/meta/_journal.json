@@ -43,6 +43,13 @@
       "when": 1790337277078,
       "tag": "0005_soft_masque",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1790600224004,
+      "tag": "0006_silky_monster_badoon",
+      "breakpoints": true
     }
   ]
 }

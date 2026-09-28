@@ -112,3 +112,70 @@ export type AuditLog = typeof auditLogs.$inferSelect;
 export type HomepageContent = typeof homepageContent.$inferSelect;
 export type Product = typeof products.$inferSelect;
 export type Service = typeof services.$inferSelect;
+
+export const quoteStatuses = ["new", "under_review", "assigned_to_sales", "preparing_quotation", "sent_to_customer", "customer_responded", "waiting_for_customer", "waiting_for_technical_review", "waiting_for_supplier", "on_hold", "won", "lost", "closed", "cancelled"] as const;
+export const quotePriorities = ["low", "normal", "high", "urgent"] as const;
+export const quoteItemTypes = ["product", "service", "custom"] as const;
+export const quoteRequesterTypes = ["doctor", "biomedical_engineer", "technician", "procurement_officer", "hospital", "clinic", "medical_center", "distributor", "private_company", "government_entity", "individual", "other"] as const;
+
+export const quoteRequests = mysqlTable("quote_requests", {
+  id: int("id").autoincrement().primaryKey(),
+  publicNumber: varchar("publicNumber", { length: 40 }).notNull().unique(),
+  customerAccountId: int("customerAccountId"),
+  organizationName: varchar("organizationName", { length: 255 }),
+  requesterType: mysqlEnum("requesterType", quoteRequesterTypes),
+  contactPerson: varchar("contactPerson", { length: 255 }).notNull(),
+  jobTitle: varchar("jobTitle", { length: 180 }),
+  email: varchar("email", { length: 320 }).notNull(),
+  phone: varchar("phone", { length: 80 }).notNull(),
+  whatsapp: varchar("whatsapp", { length: 80 }),
+  preferredContactMethod: mysqlEnum("preferredContactMethod", ["email", "phone", "whatsapp", "any"]).default("any").notNull(),
+  country: varchar("country", { length: 120 }).notNull(),
+  city: varchar("city", { length: 160 }),
+  address: text("address"),
+  requiredDeliveryDate: varchar("requiredDeliveryDate", { length: 40 }),
+  installationRequired: mysqlEnum("installationRequired", ["yes", "no", "not_sure"]).default("not_sure").notNull(),
+  trainingRequired: mysqlEnum("trainingRequired", ["yes", "no", "not_sure"]).default("not_sure").notNull(),
+  maintenanceContractRequired: mysqlEnum("maintenanceContractRequired", ["yes", "no", "not_sure"]).default("not_sure").notNull(),
+  message: text("message"),
+  status: mysqlEnum("status", quoteStatuses).default("new").notNull(),
+  priority: mysqlEnum("priority", quotePriorities).default("normal").notNull(),
+  assignedSalesUserId: int("assignedSalesUserId"),
+  assignedServiceUserId: int("assignedServiceUserId"),
+  source: mysqlEnum("source", ["website", "product_page", "service_page", "whatsapp", "email", "manual", "campaign"]).default("website").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  closedAt: timestamp("closedAt"),
+});
+
+export const quoteItems = mysqlTable("quote_items", {
+  id: int("id").autoincrement().primaryKey(),
+  quoteRequestId: int("quoteRequestId").notNull(),
+  itemType: mysqlEnum("itemType", quoteItemTypes).notNull(),
+  productId: int("productId"),
+  serviceId: int("serviceId"),
+  itemName: varchar("itemName", { length: 255 }).notNull(),
+  quantity: int("quantity").default(1).notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const quoteAttachments = mysqlTable("quote_attachments", {
+  id: int("id").autoincrement().primaryKey(),
+  quoteRequestId: int("quoteRequestId").notNull(),
+  uploadedBy: int("uploadedBy"),
+  fileName: varchar("fileName", { length: 255 }).notNull(),
+  contentType: varchar("contentType", { length: 120 }).notNull(),
+  sizeBytes: int("sizeBytes").notNull(),
+  storageUrl: text("storageUrl").notNull(),
+  description: varchar("description", { length: 255 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const quoteComments = mysqlTable("quote_comments", {
+  id: int("id").autoincrement().primaryKey(),
+  quoteRequestId: int("quoteRequestId").notNull(),
+  userId: int("userId").notNull(),
+  body: text("body").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});

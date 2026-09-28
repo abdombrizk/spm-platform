@@ -22,6 +22,11 @@ This repository contains the current working platform foundation and the impleme
 - Service scope, included/excluded activities, response time, countries, supported brands, covered products, media, Request Service, and Request a Quote fields.
 - Service workflow: Draft → Pending Review → Approved → Published → Archived.
 - Service permissions for view, create, edit, media, quality approval, publish, archive, and delete.
+- Request for Quote intake accepting products, services, multiple items, and custom requests.
+- Optional organization and requester type for doctors, technicians, engineers, procurement teams, facilities, companies, and individuals.
+- Quote attachments with PDF, Office, image, and video formats; up to 5 files, 10 MB per file, and 30 MB total.
+- Quote request number generation, priority, assignment, status workflow, internal comments, and protected operational management.
+- Product and service detail pages linked directly to the structured quote request form.
 - Public catalogue filtering and responsive layouts.
 
 ## Technology stack
@@ -185,7 +190,6 @@ Large media files should be uploaded through the managed storage workflow. Do no
 
 The next implementation modules can build on the current foundation:
 
-- Request for Quote intake and sales workflow.
 - Service and maintenance request intake with attachments and status tracking.
 - Spare-parts requests.
 - Email notification templates and routing.

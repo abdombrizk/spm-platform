@@ -13,6 +13,8 @@ import ProductDetails from "@/pages/ProductDetails";
 import ServiceManager from "@/pages/ServiceManager";
 import Services from "@/pages/Services";
 import ServiceDetails from "@/pages/ServiceDetails";
+import QuoteRequest from "@/pages/QuoteRequest";
+import QuotesManager from "@/pages/QuotesManager";
 
 function Router() {
   return (
@@ -26,6 +28,8 @@ function Router() {
       <Route path="/catalogue/:slug" component={ProductDetails} />
       <Route path="/services" component={Services} />
       <Route path="/services/:slug" component={ServiceDetails} />
+      <Route path="/request-a-quote" component={QuoteRequest} />
+      <Route path="/owner/quotes" component={QuotesManager} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

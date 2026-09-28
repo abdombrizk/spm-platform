@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { randomUUID } from "node:crypto";
 import { TRPCError } from "@trpc/server";
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
@@ -8,6 +9,7 @@ import * as db from "./db";
 import { createSessionToken, hashPassword, hashSessionToken, sessionExpiresAt, validatePassword, verifyPassword, INTERNAL_SESSION_COOKIE } from "./internalAuth";
 import { userRoles, UserRole } from "../drizzle/schema";
 import { storagePut } from "./storage";
+import { notifyOwner } from "./_core/notification";
 
 const roleSchema = z.enum(userRoles);
 const loginPasswordSchema = z.string().min(8);
@@ -207,6 +209,12 @@ export const appRouter = router({
       await db.addAuditLog({ actorUserId: ctx.user.id, action: "service_permissions_updated", entityType: "user", entityId: String(input.userId), metadata: { count: input.permissions.length }, ipAddress: clientIp(ctx.req) });
       return { success: true } as const;
     }),
+    updateQuotePermissions: ownerProcedure.input(z.object({ userId: z.number().int().positive(), permissions: z.array(z.object({ permission: z.string().min(1), granted: z.boolean() })) })).mutation(async ({ ctx, input }) => {
+      if (input.userId === ctx.user.id) throw new TRPCError({ code: "BAD_REQUEST", message: "The Owner permissions are always retained." });
+      await db.replaceScopedPermissions(input.userId, "quotes", input.permissions);
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "quote_permissions_updated", entityType: "user", entityId: String(input.userId), metadata: { count: input.permissions.length }, ipAddress: clientIp(ctx.req) });
+      return { success: true } as const;
+    }),
   }),
   homepage: router({
     published: publicProcedure.query(() => db.listPublishedHomepageContent()),
@@ -356,6 +364,27 @@ export const appRouter = router({
     uploadMedia: permissionProcedure("services.media").input(z.object({ id: z.number().int().positive(), field: z.enum(["mainImage", "additionalImages", "brochureUrl"]), fileName: z.string().min(1).max(180), contentType: z.enum(["image/jpeg", "image/png", "image/webp", "application/pdf"]), dataUrl: z.string().startsWith("data:") })).mutation(async ({ ctx, input }) => {
       const encoded = input.dataUrl.split(",")[1]; if (!encoded) throw new TRPCError({ code: "BAD_REQUEST", message: "File data is missing." }); const buffer = Buffer.from(encoded, "base64"); if (buffer.byteLength > 12 * 1024 * 1024) throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: "File must be 12 MB or smaller." }); const extension = input.contentType === "application/pdf" ? "pdf" : input.contentType.split("/")[1]; const uploaded = await storagePut(`services/${input.id}/${input.field}.${extension}`, buffer, input.contentType); return { url: uploaded.url };
     }),
+  }),
+  quotes: router({
+    create: publicProcedure.input(z.object({
+      organizationName: z.string().max(255).optional(), requesterType: z.enum(["doctor", "biomedical_engineer", "technician", "procurement_officer", "hospital", "clinic", "medical_center", "distributor", "private_company", "government_entity", "individual", "other"]).optional(), contactPerson: z.string().min(2).max(255), jobTitle: z.string().max(180).optional(), email: z.string().email(), phone: z.string().min(5).max(80), whatsapp: z.string().max(80).optional(), preferredContactMethod: z.enum(["email", "phone", "whatsapp", "any"]).default("any"), country: z.string().min(2).max(120), city: z.string().max(160).optional(), address: z.string().max(5000).optional(), requiredDeliveryDate: z.string().max(40).optional(), installationRequired: z.enum(["yes", "no", "not_sure"]).default("not_sure"), trainingRequired: z.enum(["yes", "no", "not_sure"]).default("not_sure"), maintenanceContractRequired: z.enum(["yes", "no", "not_sure"]).default("not_sure"), message: z.string().max(10000).optional(), source: z.enum(["website", "product_page", "service_page", "whatsapp", "email", "manual", "campaign"]).default("website"), items: z.array(z.object({ itemType: z.enum(["product", "service", "custom"]), productId: z.number().int().positive().optional(), serviceId: z.number().int().positive().optional(), itemName: z.string().min(1).max(255), quantity: z.number().int().min(1).max(999999).default(1), notes: z.string().max(2000).optional() })).min(1).max(100), honeypot: z.string().max(1).optional().default("")
+    })).mutation(async ({ input }) => {
+      if (input.honeypot) throw new TRPCError({ code: "BAD_REQUEST", message: "Unable to submit this request." });
+      const result = await db.createQuoteRequest({ organizationName: input.organizationName, requesterType: input.requesterType, contactPerson: input.contactPerson, jobTitle: input.jobTitle, email: input.email, phone: input.phone, whatsapp: input.whatsapp, preferredContactMethod: input.preferredContactMethod, country: input.country, city: input.city, address: input.address, requiredDeliveryDate: input.requiredDeliveryDate, installationRequired: input.installationRequired, trainingRequired: input.trainingRequired, maintenanceContractRequired: input.maintenanceContractRequired, message: input.message, source: input.source }, input.items);
+      void notifyOwner({ title: `New quote request ${result.publicNumber}`, content: `${input.contactPerson} submitted a request from ${input.country}. Review it in the SPM workspace.` }).catch(() => undefined);
+      return result;
+    }),
+    uploadAttachment: publicProcedure.input(z.object({ quoteRequestId: z.number().int().positive(), fileName: z.string().min(1).max(255), contentType: z.enum(["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "image/jpeg", "image/png", "image/webp", "video/mp4", "video/quicktime"]), sizeBytes: z.number().int().positive().max(10 * 1024 * 1024), description: z.string().max(255).optional(), dataUrl: z.string().startsWith("data:") })).mutation(async ({ input }) => {
+      const quote = await db.getQuoteRequest(input.quoteRequestId); if (!quote) throw new TRPCError({ code: "NOT_FOUND", message: "Quote request not found." });
+      const encoded = input.dataUrl.split(",")[1]; if (!encoded) throw new TRPCError({ code: "BAD_REQUEST", message: "File data is missing." }); const buffer = Buffer.from(encoded, "base64"); if (buffer.byteLength > 10 * 1024 * 1024) throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: "Each file must be 10 MB or smaller." }); if (quote.attachments.length >= 5) throw new TRPCError({ code: "BAD_REQUEST", message: "A maximum of 5 files is allowed." }); const extension = input.fileName.split(".").pop()?.toLowerCase() || "bin"; const uploaded = await storagePut(`quote-requests/${input.quoteRequestId}/${randomUUID()}.${extension}`, buffer, input.contentType); const id = await db.addQuoteAttachment({ quoteRequestId: input.quoteRequestId, fileName: input.fileName, contentType: input.contentType, sizeBytes: buffer.byteLength, storageUrl: uploaded.url, description: input.description }); return { id, url: uploaded.url };
+    }),
+    list: permissionProcedure("quotes.view").query(async () => db.listQuoteRequests()),
+    assignees: permissionProcedure("quotes.assign").query(async () => (await db.listInternalUsers()).filter(user => user.isActive && ["owner", "manager", "sales", "service"].includes(user.role))),
+    get: permissionProcedure("quotes.view").input(z.object({ id: z.number().int().positive() })).query(async ({ input }) => { const result = await db.getQuoteRequest(input.id); if (!result) throw new TRPCError({ code: "NOT_FOUND", message: "Quote request not found." }); return result; }),
+    updateStatus: protectedProcedure.input(z.object({ id: z.number().int().positive(), status: z.enum(["new", "under_review", "assigned_to_sales", "preparing_quotation", "sent_to_customer", "customer_responded", "waiting_for_customer", "waiting_for_technical_review", "waiting_for_supplier", "on_hold", "won", "lost", "closed", "cancelled"]) })).mutation(async ({ ctx, input }) => { if (ctx.user.role !== "owner" && !(await db.hasPermission(ctx.user.id, "quotes.status"))) throw new TRPCError({ code: "FORBIDDEN", message: "Missing permission: quotes.status" }); if (["closed", "won", "lost", "cancelled"].includes(input.status) && ctx.user.role !== "owner" && !(await db.hasPermission(ctx.user.id, "quotes.close"))) throw new TRPCError({ code: "FORBIDDEN", message: "Missing permission: quotes.close" }); await db.updateQuoteRequest(input.id, { status: input.status, closedAt: ["closed", "won", "lost", "cancelled"].includes(input.status) ? new Date() : null }); await db.addAuditLog({ actorUserId: ctx.user.id, action: "quote_status_updated", entityType: "quote_request", entityId: String(input.id), metadata: { status: input.status }, ipAddress: clientIp(ctx.req) }); return { success: true } as const; }),
+    assign: permissionProcedure("quotes.assign").input(z.object({ id: z.number().int().positive(), assignedSalesUserId: z.number().int().positive().nullable().optional(), assignedServiceUserId: z.number().int().positive().nullable().optional(), priority: z.enum(["low", "normal", "high", "urgent"]).optional() })).mutation(async ({ ctx, input }) => { await db.updateQuoteRequest(input.id, { assignedSalesUserId: input.assignedSalesUserId, assignedServiceUserId: input.assignedServiceUserId, priority: input.priority }); await db.addAuditLog({ actorUserId: ctx.user.id, action: "quote_assignment_updated", entityType: "quote_request", entityId: String(input.id), metadata: input, ipAddress: clientIp(ctx.req) }); return { success: true } as const; }),
+    addComment: permissionProcedure("quotes.edit").input(z.object({ quoteRequestId: z.number().int().positive(), body: z.string().min(1).max(10000) })).mutation(async ({ ctx, input }) => { const id = await db.addQuoteComment({ quoteRequestId: input.quoteRequestId, userId: ctx.user.id, body: input.body }); await db.addAuditLog({ actorUserId: ctx.user.id, action: "quote_comment_added", entityType: "quote_request", entityId: String(input.quoteRequestId), metadata: { commentId: id }, ipAddress: clientIp(ctx.req) }); return { id }; }),
+    delete: permissionProcedure("quotes.delete").input(z.object({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => { await db.deleteQuoteRequest(input.id); await db.addAuditLog({ actorUserId: ctx.user.id, action: "quote_deleted", entityType: "quote_request", entityId: String(input.id), ipAddress: clientIp(ctx.req) }); return { success: true } as const; }),
   }),
 });
 
