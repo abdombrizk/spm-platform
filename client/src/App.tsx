@@ -17,6 +17,7 @@ import QuoteRequest from "@/pages/QuoteRequest";
 import QuotesManager from "@/pages/QuotesManager";
 import ServiceRequest from "@/pages/ServiceRequest";
 import ServiceRequestsManager from "@/pages/ServiceRequestsManager";
+import ContentLanding from "@/pages/ContentLanding";
 
 function Router() {
   return (
@@ -34,6 +35,18 @@ function Router() {
       <Route path="/owner/quotes" component={QuotesManager} />
       <Route path="/request-service" component={ServiceRequest} />
       <Route path="/owner/service-requests" component={ServiceRequestsManager} />
+      <Route path="/about" component={ContentLanding} />
+      <Route path="/maintenance-contracts" component={ContentLanding} />
+      <Route path="/faqs" component={ContentLanding} />
+      <Route path="/downloads" component={ContentLanding} />
+      <Route path="/news" component={ContentLanding} />
+      <Route path="/events" component={ContentLanding} />
+      <Route path="/careers" component={ContentLanding} />
+      <Route path="/spare-parts" component={ContentLanding} />
+      <Route path="/resources" component={ContentLanding} />
+      <Route path="/contact" component={ContentLanding} />
+      <Route path="/privacy" component={ContentLanding} />
+      <Route path="/terms" component={ContentLanding} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
