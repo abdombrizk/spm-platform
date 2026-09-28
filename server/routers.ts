@@ -312,7 +312,8 @@ export const appRouter = router({
   }),
   cms: router({
     permissions: protectedProcedure.query(async ({ ctx }) => {
-      if (ctx.user.role === "owner") return ["content.view", "content.edit", "content.media", "content.review", "content.publish", "content.delete", "content.stats"];
+      if (ctx.user.role === "owner" || ctx.user.role === "manager") return ["content.view", "content.edit", "content.media", "content.review", "content.publish", "content.delete", "content.stats"];
+      if (ctx.user.role === "marketing") return ["content.view", "content.edit", "content.media", "content.review", "content.publish", "content.stats"];
       const permissions = await db.listPermissions(ctx.user.id);
       return permissions.filter(item => item.granted && item.permission.startsWith("content.")).map(item => item.permission);
     }),
@@ -365,7 +366,8 @@ export const appRouter = router({
   }),
   products: router({
     permissions: protectedProcedure.query(async ({ ctx }) => {
-      if (ctx.user.role === "owner") return ["products.view", "products.create", "products.edit", "products.media", "products.quality", "products.publish", "products.archive", "products.delete"];
+      if (ctx.user.role === "owner" || ctx.user.role === "manager") return ["products.view", "products.create", "products.edit", "products.media", "products.quality", "products.publish", "products.archive", "products.delete"];
+      if (ctx.user.role === "marketing") return ["products.view", "products.create", "products.edit", "products.media", "products.quality", "products.publish", "products.archive"];
       const permissions = await db.listPermissions(ctx.user.id);
       return permissions.filter(item => item.granted && item.permission.startsWith("products.")).map(item => item.permission);
     }),
@@ -409,6 +411,16 @@ export const appRouter = router({
     archive: permissionProcedure("products.archive").input(z.object({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => {
       await db.archiveProduct(input.id, ctx.user.id);
       await db.addAuditLog({ actorUserId: ctx.user.id, action: "product_archived", entityType: "product", entityId: String(input.id), ipAddress: clientIp(ctx.req) });
+      return { success: true } as const;
+    }),
+    toggleVisibility: permissionProcedure("products.edit").input(z.object({ id: z.number().int().positive(), publishedVisible: z.boolean() })).mutation(async ({ ctx, input }) => {
+      await db.updateProduct(input.id, { draftVisible: input.publishedVisible, updatedBy: ctx.user.id });
+      const target = await db.getProductById(input.id);
+      if (target?.workflowStatus === "published") {
+        const ok = await db.publishProduct(input.id, ctx.user.id);
+        if (!ok) throw new TRPCError({ code: "NOT_FOUND", message: "Product not found." });
+      }
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "product_visibility_toggled", entityType: "product", entityId: String(input.id), metadata: { publishedVisible: input.publishedVisible }, ipAddress: clientIp(ctx.req) });
       return { success: true } as const;
     }),
     restore: permissionProcedure("products.edit").input(z.object({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => {

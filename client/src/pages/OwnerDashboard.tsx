@@ -177,20 +177,21 @@ export default function OwnerDashboard() {
   useEffect(() => { if (!auth.isLoading && !auth.data) setLocation("/login"); }, [auth.isLoading, auth.data, setLocation]);
 
   const filteredUsers = useMemo(() => (users.data ?? []).filter(user => `${user.name ?? ""} ${user.email ?? ""} ${user.role}`.toLowerCase().includes(search.toLowerCase())), [users.data, search]);
-  const isOwner = auth.data?.role === "owner";
-  const canAccessHomepage = isOwner || homepageDraftAccess.isSuccess;
-  const canAccessContent = isOwner || Boolean(cmsAccess.data?.includes("content.view"));
+  const role = auth.data?.role;
+  const isOwner = role === "owner";
+  const isManager = role === "manager";
+  const canAccessHomepage = isOwner || isManager || homepageDraftAccess.isSuccess;
+  const canAccessContent = isOwner || isManager || Boolean(cmsAccess.data?.includes("content.view"));
   if (auth.isLoading || (auth.data && isOwner && users.isLoading) || (auth.data && homepageDraftAccess.isLoading) || (auth.data && cmsAccess.isLoading)) return <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white">Loading SPM workspace…</div>;
   if (!auth.data) return null;
-  if (!canAccessHomepage) return <div className="flex min-h-screen items-center justify-center bg-slate-950 p-6"><Card><CardHeader><CardTitle>Homepage permission required</CardTitle><CardDescription>The Owner has not granted this account access to the homepage workspace.</CardDescription></CardHeader></Card></div>;
   if (auth.data.mustChangePassword) return <FirstLoginPasswordChange onComplete={() => auth.refetch()} />;
 
   return (
     <div className="min-h-screen bg-[#f5f7fb] text-slate-950">
       <header className="border-b bg-white">
         <div className="mx-auto flex max-w-[1500px] items-center justify-between px-6 py-5">
-          <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-cyan-300"><ShieldCheck className="h-5 w-5" /></div><div><p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">SPM control center</p><h1 className="text-xl font-semibold tracking-tight">Owner Dashboard</h1></div></div>
-          <div className="flex items-center gap-3"><Badge variant="outline" className="border-cyan-200 bg-cyan-50 text-cyan-800"><LockKeyhole className="mr-1 h-3 w-3" /> Owner only</Badge><Button variant="ghost" onClick={() => logout.mutate()}><LogOut className="mr-2 h-4 w-4" />Sign out</Button></div>
+          <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-cyan-300"><ShieldCheck className="h-5 w-5" /></div><div><p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">SPM control center</p><h1 className="text-xl font-semibold tracking-tight">{isOwner ? "Owner Dashboard" : `${roleLabels[role as Role] ?? "Internal"} Workspace`}</h1></div></div>
+          <div className="flex items-center gap-3"><Badge variant="outline" className="border-cyan-200 bg-cyan-50 text-cyan-800"><LockKeyhole className="mr-1 h-3 w-3" /> {roleLabels[role as Role] ?? role}</Badge><Button variant="ghost" onClick={() => logout.mutate()}><LogOut className="mr-2 h-4 w-4" />Sign out</Button></div>
         </div>
       </header>
       <main className="mx-auto max-w-[1500px] space-y-6 px-6 py-8">
@@ -200,7 +201,7 @@ export default function OwnerDashboard() {
           <Card><CardHeader><div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><CardTitle>People and permissions</CardTitle><CardDescription>Only the Owner can create, deactivate, reset and assign roles.</CardDescription></div><div className="relative w-full sm:w-72"><Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" /><Input className="pl-9" placeholder="Search users" value={search} onChange={event => setSearch(event.target.value)} /></div></div></CardHeader><CardContent className="space-y-3">{message ? <Alert><AlertDescription>{message}</AlertDescription></Alert> : null}{filteredUsers.map(user => <div key={user.id} className="rounded-2xl border bg-white p-4"><div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between"><div className="min-w-0"><div className="flex flex-wrap items-center gap-2"><p className="font-semibold">{user.name || "Unnamed user"}</p><Badge variant={user.isActive ? "secondary" : "outline"}>{user.isActive ? "Active" : "Inactive"}</Badge><Badge variant="outline">{roleLabels[user.role as Role] ?? user.role}</Badge>{user.mustChangePassword ? <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">Password change required</Badge> : null}</div><p className="mt-1 truncate text-sm text-slate-500">{user.email}</p></div><div className="flex flex-wrap gap-2"><Select value={user.role} onValueChange={value => updateUser.mutate({ id: user.id, role: value as Role })}><SelectTrigger className="w-36"><SelectValue /></SelectTrigger><SelectContent>{roles.map(role => <SelectItem key={role} value={role}>{roleLabels[role]}</SelectItem>)}</SelectContent></Select><Button variant="outline" onClick={() => { const password = window.prompt("Enter the new temporary password. It will not be shown again:"); if (password) resetPassword.mutate({ id: user.id, password }); }}><KeyRound className="mr-2 h-4 w-4" />Reset password</Button>{user.role !== "owner" ? <Button variant={user.isActive ? "outline" : "default"} onClick={() => updateUser.mutate({ id: user.id, isActive: !user.isActive })}><Power className="mr-2 h-4 w-4" />{user.isActive ? "Deactivate" : "Activate"}</Button> : null}</div></div><Separator className="my-4" /><p className="text-xs text-slate-500">Last sign in: {user.lastSignedIn ? new Date(user.lastSignedIn).toLocaleString() : "Never"}</p></div>)}{filteredUsers.length === 0 ? <div className="rounded-2xl border border-dashed p-10 text-center text-sm text-slate-500">No users match this search.</div> : null}</CardContent></Card>
         </div> : null}
         <div className="flex flex-wrap justify-end gap-2"><Link href="/owner/products"><Button><PackagePlus className="mr-2 h-4 w-4" />Manage Products</Button></Link><Link href="/owner/services"><Button variant="outline"><Wrench className="mr-2 h-4 w-4" />Manage Services</Button></Link><Link href="/owner/quotes"><Button variant="outline"><ClipboardList className="mr-2 h-4 w-4" />Manage Quotes</Button></Link><Link href="/owner/service-requests"><Button variant="outline"><Wrench className="mr-2 h-4 w-4" />Manage Service Requests</Button></Link></div>
-        <HomepageEditor />
+        {canAccessHomepage ? <HomepageEditor /> : <Card><CardHeader><CardTitle>Homepage access</CardTitle><CardDescription>Homepage draft editing is restricted to the Owner and users granted the homepage.edit permission.</CardDescription></CardHeader></Card>}
         {canAccessContent ? <ContentWorkspace /> : null}
         {isOwner ? <PermissionEditor users={(users.data ?? []).map(user => ({ id: user.id, name: user.name, email: user.email, role: user.role }))} /> : null}
         {isOwner ? <ProductPermissionEditor users={(users.data ?? []).map(user => ({ id: user.id, name: user.name, email: user.email, role: user.role }))} /> : null}

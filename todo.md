@@ -21,6 +21,10 @@
 - [x] Verify mobile rendering for the homepage, public CMS pages, login and request forms.
 - [x] Verify robots.txt, sitemap.xml and public CMS APIs return successfully.
 - [x] Run TypeScript check, all tests and production build.
+- [x] Added public Sign in button to website header and mobile navigation.
+- [x] Fixed Marketing permission block: granted default catalogue and CMS permissions and updated role-based dashboard view.
+- [x] Built the comprehensive C-Arm and full X-Ray equipment inventory table with availability indicators, display toggles, search, and quick templates.
+- [x] Seeded high-specification C-Arm and Mobile/Fixed X-Ray systems in both the inventory table and public catalogue.
 
 ## Waiting for SPM inputs / production preparation
 

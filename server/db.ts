@@ -206,6 +206,16 @@ export async function listPermissions(userId: number) {
 export async function hasPermission(userId: number, permission: string) {
   const db = await getDb();
   if (!db) return false;
+  const user = await getUserById(userId);
+  if (!user || !user.isActive) return false;
+  if (user.role === "owner" || user.role === "manager") return true;
+  if (user.role === "marketing" && (
+    permission.startsWith("products.") && permission !== "products.delete" ||
+    permission.startsWith("content.") && permission !== "content.delete" ||
+    permission === "homepage.edit" || permission === "homepage.media"
+  )) {
+    return true;
+  }
   const rows = await db.select().from(userPermissions).where(and(eq(userPermissions.userId, userId), eq(userPermissions.permission, permission), eq(userPermissions.granted, true))).limit(1);
   return rows.length > 0;
 }

@@ -12,8 +12,16 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const utils = trpc.useUtils();
   const login = trpc.auth.login.useMutation({
-    onSuccess: () => setLocation("/owner"),
+    onSuccess: async (result) => {
+      const user = await utils.auth.me.fetch();
+      if (user?.role === "marketing") {
+        setLocation("/owner/products");
+      } else {
+        setLocation("/owner");
+      }
+    },
     onError: (err) => setError(err.message),
   });
 
