@@ -10,18 +10,26 @@
 - [x] Add public structures for Maintenance Contracts, FAQs, Downloads, News, Events and Careers.
 - [x] Add public structures for About, Spare Parts, Resources, Contact, Privacy and Terms.
 - [x] Update published homepage CMS hero copy and hero image to match the approved visual redesign.
-- [x] Run TypeScript check, tests and production build.
+- [x] Build Owner Content Workspace for all seeded public pages.
+- [x] Add Media Library for images, PDFs, certificates, agency letters and temporary asset status.
+- [x] Add page-level Draft → Review → Approve → Publish workflow.
+- [x] Add Owner-controlled content permissions for view, edit, media, review, publish, stats and archive actions.
+- [x] Add editable public statistics and connect published values to the homepage.
+- [x] Add SEO title, description, Open Graph metadata, robots.txt and sitemap.xml.
+- [x] Run TypeScript check, all tests and production build.
+- [x] Capture visual verification screenshots for the homepage, CMS-backed pages and internal login.
 
-## In progress / next implementation
+## Next implementation
 
-- [ ] Build the generic Owner Content Workspace for all new pages.
-- [ ] Add Media Library for images, PDFs, certificates, agency letters and temporary asset status.
-- [ ] Add page-level draft/publish workflow with Marketing, Manager, QA/RA and Owner permissions.
-- [ ] Add editable statistics, trust evidence and resource collections.
 - [ ] Replace temporary imagery with SPM-approved assets before production.
-- [ ] Add SEO metadata, sitemap entries and final content review.
-- [ ] Run accessibility, responsive and end-to-end request-flow verification.
+- [ ] Upload and approve the real SPM catalogue, certificates, agency letters and customer evidence.
+- [ ] Complete the final English copy page by page and approve it through the content workflow.
+- [ ] Add dynamic Downloads, FAQs, News, Events and Careers collections backed by CMS records.
+- [ ] Add production email provider configuration for quote/service/contact confirmations.
+- [ ] Add accessibility audit, responsive mobile verification and end-to-end request-flow verification.
+- [ ] Add code-splitting/performance optimization for the current 1.2 MB minified client bundle.
+- [ ] Configure production domain/DNS, analytics consent and deployment environment variables.
 
 ## Known non-blocking issue
 
-- The production build reports a Vite chunk-size warning because the current application bundle is larger than 500 kB. This does not fail the build; code-splitting can be addressed during performance optimization.
+- The production build reports a Vite chunk-size warning because the current application bundle is larger than 500 kB. The build passes; code-splitting is planned before production launch.

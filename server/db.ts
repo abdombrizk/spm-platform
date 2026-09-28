@@ -3,6 +3,8 @@ import { randomUUID } from "node:crypto";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   auditLogs,
+  cmsMediaAssets,
+  cmsPages,
   homepageContent,
   InsertUser,
   internalSessions,
@@ -16,6 +18,7 @@ import {
   serviceRequestComments,
   serviceRequestEquipment,
   serviceRequests,
+  siteStats,
   userPermissions,
   users,
   UserRole,
@@ -550,4 +553,114 @@ export async function deleteServiceRequest(id: number) {
   await db.delete(serviceRequestAttachments).where(eq(serviceRequestAttachments.serviceRequestId, id));
   await db.delete(serviceRequestEquipment).where(eq(serviceRequestEquipment.serviceRequestId, id));
   await db.delete(serviceRequests).where(eq(serviceRequests.id, id));
+}
+
+
+export async function listCmsPages() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(cmsPages).orderBy(cmsPages.slug);
+}
+
+export async function getCmsPageBySlug(slug: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(cmsPages).where(eq(cmsPages.slug, slug)).limit(1);
+  return rows[0];
+}
+
+export async function getPublishedCmsPageBySlug(slug: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(cmsPages).where(and(eq(cmsPages.slug, slug), eq(cmsPages.workflowStatus, "published"), eq(cmsPages.publishedVisible, true))).limit(1);
+  return rows[0];
+}
+
+export async function upsertCmsPage(input: { slug: string; pageType: "about" | "maintenance_contracts" | "faqs" | "downloads" | "news" | "events" | "careers" | "spare_parts" | "resources" | "contact" | "privacy" | "terms"; draftData: string; draftVisible: boolean; requiresQaReview: boolean; userId: number }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const existing = await getCmsPageBySlug(input.slug);
+  if (existing) {
+    await db.update(cmsPages).set({ pageType: input.pageType, draftData: input.draftData, draftVisible: input.draftVisible, requiresQaReview: input.requiresQaReview, updatedBy: input.userId, workflowStatus: existing.workflowStatus === "published" ? "published" : "draft" }).where(eq(cmsPages.id, existing.id));
+    return existing.id;
+  }
+  const result = await db.insert(cmsPages).values({ slug: input.slug, pageType: input.pageType, draftData: input.draftData, publishedData: input.draftData, draftVisible: input.draftVisible, publishedVisible: false, requiresQaReview: input.requiresQaReview, createdBy: input.userId, updatedBy: input.userId, workflowStatus: "draft" });
+  return Number(result[0].insertId);
+}
+
+export async function submitCmsPageReview(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(cmsPages).set({ workflowStatus: "pending_review", updatedBy: userId }).where(eq(cmsPages.id, id));
+}
+
+export async function reviewCmsPage(id: number, userId: number, approved: boolean) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(cmsPages).set({ workflowStatus: approved ? "approved" : "draft", reviewedBy: userId, reviewedAt: new Date() }).where(eq(cmsPages.id, id));
+}
+
+export async function publishCmsPage(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const page = await db.select().from(cmsPages).where(eq(cmsPages.id, id)).limit(1);
+  if (!page[0]) return false;
+  await db.update(cmsPages).set({ publishedData: page[0].draftData, publishedVisible: page[0].draftVisible, workflowStatus: "published", publishedBy: userId, publishedAt: new Date(), archivedAt: null }).where(eq(cmsPages.id, id));
+  return true;
+}
+
+export async function listCmsMediaAssets() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(cmsMediaAssets).orderBy(desc(cmsMediaAssets.createdAt));
+}
+
+export async function createCmsMediaAsset(input: typeof cmsMediaAssets.$inferInsert) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const result = await db.insert(cmsMediaAssets).values(input);
+  return Number(result[0].insertId);
+}
+
+export async function updateCmsMediaAsset(id: number, input: Partial<typeof cmsMediaAssets.$inferInsert>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(cmsMediaAssets).set(input).where(eq(cmsMediaAssets.id, id));
+}
+
+export async function reviewCmsMediaAsset(id: number, userId: number, approved: boolean) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(cmsMediaAssets).set({ workflowStatus: approved ? "approved" : "draft", reviewedBy: userId, reviewedAt: new Date() }).where(eq(cmsMediaAssets.id, id));
+}
+
+export async function publishCmsMediaAsset(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(cmsMediaAssets).set({ workflowStatus: "published", publishedBy: userId, publishedAt: new Date() }).where(eq(cmsMediaAssets.id, id));
+}
+
+export async function listSiteStats() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(siteStats).orderBy(siteStats.displayOrder);
+}
+
+export async function listPublishedSiteStats() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select({ metricKey: siteStats.metricKey, value: siteStats.publishedValue, label: siteStats.publishedLabel, description: siteStats.publishedDescription, visible: siteStats.publishedVisible, displayOrder: siteStats.displayOrder }).from(siteStats).where(eq(siteStats.publishedVisible, true)).orderBy(siteStats.displayOrder);
+}
+
+export async function updateSiteStat(id: number, input: Partial<typeof siteStats.$inferInsert>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(siteStats).set(input).where(eq(siteStats.id, id));
+}
+
+export async function publishSiteStats(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const rows = await listSiteStats();
+  for (const row of rows) await db.update(siteStats).set({ publishedValue: row.draftValue, publishedLabel: row.draftLabel, publishedDescription: row.draftDescription, publishedVisible: row.draftVisible, publishedBy: userId, publishedAt: new Date() }).where(eq(siteStats.id, row.id));
 }

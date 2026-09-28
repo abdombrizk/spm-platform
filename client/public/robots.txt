@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /owner
+Disallow: /login
+
+Sitemap: https://spmhospitals.com/sitemap.xml

@@ -247,6 +247,12 @@ export const appRouter = router({
       await db.addAuditLog({ actorUserId: ctx.user.id, action: "homepage_permissions_updated", entityType: "user", entityId: String(input.userId), metadata: { count: input.permissions.length }, ipAddress: clientIp(ctx.req) });
       return { success: true } as const;
     }),
+    updateContentPermissions: ownerProcedure.input(z.object({ userId: z.number().int().positive(), permissions: z.array(z.object({ permission: z.string().min(1), granted: z.boolean() })) })).mutation(async ({ ctx, input }) => {
+      if (input.userId === ctx.user.id) throw new TRPCError({ code: "BAD_REQUEST", message: "The Owner permissions are always retained." });
+      await db.replaceScopedPermissions(input.userId, "content", input.permissions);
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "content_permissions_updated", entityType: "user", entityId: String(input.userId), metadata: { count: input.permissions.length }, ipAddress: clientIp(ctx.req) });
+      return { success: true } as const;
+    }),
     updateProductPermissions: ownerProcedure.input(z.object({ userId: z.number().int().positive(), permissions: z.array(z.object({ permission: z.string().min(1), granted: z.boolean() })) })).mutation(async ({ ctx, input }) => {
       if (input.userId === ctx.user.id) throw new TRPCError({ code: "BAD_REQUEST", message: "The Owner permissions are always retained." });
       await db.replaceScopedPermissions(input.userId, "products", input.permissions);
@@ -303,6 +309,59 @@ export const appRouter = router({
       await db.addAuditLog({ actorUserId: ctx.user.id, action: "homepage_image_uploaded", entityType: "homepage", entityId: input.contentKey, metadata: { fileName: input.fileName, contentType: input.contentType }, ipAddress: clientIp(ctx.req) });
       return { url: uploaded.url };
     }),
+  }),
+  cms: router({
+    permissions: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role === "owner") return ["content.view", "content.edit", "content.media", "content.review", "content.publish", "content.delete", "content.stats"];
+      const permissions = await db.listPermissions(ctx.user.id);
+      return permissions.filter(item => item.granted && item.permission.startsWith("content.")).map(item => item.permission);
+    }),
+    publishedBySlug: publicProcedure.input(z.object({ slug: z.string().min(1).max(180) })).query(async ({ input }) => {
+      const page = await db.getPublishedCmsPageBySlug(input.slug);
+      if (!page) return null;
+      return { ...page, data: JSON.parse(page.publishedData) };
+    }),
+    listPages: permissionProcedure("content.view").query(() => db.listCmsPages()),
+    savePage: permissionProcedure("content.edit").input(z.object({
+      slug: z.string().min(1).max(180).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+      pageType: z.enum(["about", "maintenance_contracts", "faqs", "downloads", "news", "events", "careers", "spare_parts", "resources", "contact", "privacy", "terms"]),
+      data: z.string().max(30000),
+      draftVisible: z.boolean().default(true),
+      requiresQaReview: z.boolean().default(false),
+    })).mutation(async ({ ctx, input }) => {
+      try { JSON.parse(input.data); } catch { throw new TRPCError({ code: "BAD_REQUEST", message: "Page data must be valid JSON." }); }
+      const id = await db.upsertCmsPage({ ...input, draftData: input.data, userId: ctx.user.id });
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "cms_page_saved", entityType: "cms_page", entityId: String(id), metadata: { slug: input.slug }, ipAddress: clientIp(ctx.req) });
+      return { id };
+    }),
+    submitPageReview: permissionProcedure("content.edit").input(z.object({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => { await db.submitCmsPageReview(input.id, ctx.user.id); await db.addAuditLog({ actorUserId: ctx.user.id, action: "cms_page_submitted_for_review", entityType: "cms_page", entityId: String(input.id), ipAddress: clientIp(ctx.req) }); return { success: true } as const; }),
+    reviewPage: permissionProcedure("content.review").input(z.object({ id: z.number().int().positive(), approved: z.boolean() })).mutation(async ({ ctx, input }) => {
+      const page = (await db.listCmsPages()).find(item => item.id === input.id);
+      if (!page) throw new TRPCError({ code: "NOT_FOUND", message: "Page not found." });
+      if (page.requiresQaReview && !["owner", "qa", "ra"].includes(ctx.user.role)) throw new TRPCError({ code: "FORBIDDEN", message: "This page requires QA/RA review." });
+      await db.reviewCmsPage(input.id, ctx.user.id, input.approved); await db.addAuditLog({ actorUserId: ctx.user.id, action: input.approved ? "cms_page_approved" : "cms_page_rejected", entityType: "cms_page", entityId: String(input.id), ipAddress: clientIp(ctx.req) }); return { success: true } as const;
+    }),
+    publishPage: permissionProcedure("content.publish").input(z.object({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => {
+      const page = (await db.listCmsPages()).find(item => item.id === input.id);
+      if (!page) throw new TRPCError({ code: "NOT_FOUND", message: "Page not found." });
+      if (ctx.user.role !== "owner" && page.workflowStatus !== "approved") throw new TRPCError({ code: "PRECONDITION_FAILED", message: "Page must be approved before publishing." });
+      await db.publishCmsPage(input.id, ctx.user.id); await db.addAuditLog({ actorUserId: ctx.user.id, action: "cms_page_published", entityType: "cms_page", entityId: String(input.id), ipAddress: clientIp(ctx.req) }); return { success: true } as const;
+    }),
+    listMedia: permissionProcedure("content.view").query(() => db.listCmsMediaAssets()),
+    publishedStats: publicProcedure.query(() => db.listPublishedSiteStats()),
+    uploadMedia: permissionProcedure("content.media").input(z.object({ fileName: z.string().min(1).max(255), contentType: z.enum(["image/jpeg", "image/png", "image/webp", "application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]), assetType: z.enum(["website_image", "product_image", "service_image", "certificate", "ce_document", "quality_document", "agency_letter", "customer_letter", "brochure", "technical_file", "other"]), altText: z.string().max(500).default(""), caption: z.string().max(500).default(""), description: z.string().max(10000).optional(), visibility: z.enum(["public", "internal"]).default("internal"), isTemporary: z.boolean().default(false), linkedPageSlug: z.string().max(180).optional(), dataUrl: z.string().startsWith("data:") })).mutation(async ({ ctx, input }) => {
+      const encoded = input.dataUrl.split(",")[1]; if (!encoded) throw new TRPCError({ code: "BAD_REQUEST", message: "File data is missing." });
+      const buffer = Buffer.from(encoded, "base64"); if (buffer.byteLength > 10 * 1024 * 1024) throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: "Each file must be 10 MB or smaller." });
+      const extension = input.fileName.split(".").pop()?.toLowerCase() || "bin"; const uploaded = await storagePut(`cms/${input.assetType}/${randomUUID()}.${extension}`, buffer, input.contentType);
+      const id = await db.createCmsMediaAsset({ fileKey: uploaded.key, storageUrl: uploaded.url, fileName: input.fileName, contentType: input.contentType, sizeBytes: buffer.byteLength, assetType: input.assetType, altText: input.altText, caption: input.caption, description: input.description, visibility: input.visibility, isTemporary: input.isTemporary, linkedPageSlug: input.linkedPageSlug, uploadedBy: ctx.user.id, workflowStatus: "draft" });
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "cms_media_uploaded", entityType: "cms_media_asset", entityId: String(id), metadata: { fileName: input.fileName, assetType: input.assetType }, ipAddress: clientIp(ctx.req) }); return { id, url: uploaded.url };
+    }),
+    updateMedia: permissionProcedure("content.media").input(z.object({ id: z.number().int().positive(), altText: z.string().max(500).optional(), caption: z.string().max(500).optional(), description: z.string().max(10000).optional(), assetType: z.enum(["website_image", "product_image", "service_image", "certificate", "ce_document", "quality_document", "agency_letter", "customer_letter", "brochure", "technical_file", "other"]).optional(), visibility: z.enum(["public", "internal"]).optional(), isTemporary: z.boolean().optional(), linkedPageSlug: z.string().max(180).optional() })).mutation(async ({ ctx, input }) => { const { id, ...changes } = input; await db.updateCmsMediaAsset(id, changes); await db.addAuditLog({ actorUserId: ctx.user.id, action: "cms_media_updated", entityType: "cms_media_asset", entityId: String(id), ipAddress: clientIp(ctx.req) }); return { success: true } as const; }),
+    reviewMedia: permissionProcedure("content.review").input(z.object({ id: z.number().int().positive(), approved: z.boolean() })).mutation(async ({ ctx, input }) => { const asset = (await db.listCmsMediaAssets()).find(item => item.id === input.id); if (!asset) throw new TRPCError({ code: "NOT_FOUND", message: "Media asset not found." }); if (["ce_document", "quality_document", "agency_letter"].includes(asset.assetType) && !["owner", "qa", "ra"].includes(ctx.user.role)) throw new TRPCError({ code: "FORBIDDEN", message: "This asset requires QA/RA review." }); await db.reviewCmsMediaAsset(input.id, ctx.user.id, input.approved); return { success: true } as const; }),
+    publishMedia: permissionProcedure("content.publish").input(z.object({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => { const asset = (await db.listCmsMediaAssets()).find(item => item.id === input.id); if (!asset) throw new TRPCError({ code: "NOT_FOUND", message: "Media asset not found." }); if (ctx.user.role !== "owner" && asset.workflowStatus !== "approved") throw new TRPCError({ code: "PRECONDITION_FAILED", message: "Media must be approved before publishing." }); await db.publishCmsMediaAsset(input.id, ctx.user.id); return { success: true } as const; }),
+    stats: permissionProcedure("content.stats").query(() => db.listSiteStats()),
+    updateStat: permissionProcedure("content.stats").input(z.object({ id: z.number().int().positive(), draftValue: z.string().max(120).optional(), draftLabel: z.string().max(255).optional(), draftDescription: z.string().max(5000).optional(), draftVisible: z.boolean().optional(), displayOrder: z.number().int().min(0).max(99999).optional() })).mutation(async ({ ctx, input }) => { const { id, ...changes } = input; await db.updateSiteStat(id, { ...changes, updatedBy: ctx.user.id }); return { success: true } as const; }),
+    publishStats: permissionProcedure("content.publish").mutation(async ({ ctx }) => { await db.publishSiteStats(ctx.user.id); return { success: true } as const; }),
   }),
   products: router({
     permissions: protectedProcedure.query(async ({ ctx }) => {

@@ -271,3 +271,77 @@ export const serviceRequestComments = mysqlTable("service_request_comments", {
   body: text("body").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
+
+export const cmsPageStatuses = ["draft", "pending_review", "approved", "published", "archived"] as const;
+export const cmsPageTypes = ["about", "maintenance_contracts", "faqs", "downloads", "news", "events", "careers", "spare_parts", "resources", "contact", "privacy", "terms"] as const;
+
+export const cmsPages = mysqlTable("cms_pages", {
+  id: int("id").autoincrement().primaryKey(),
+  slug: varchar("slug", { length: 180 }).notNull().unique(),
+  pageType: mysqlEnum("pageType", cmsPageTypes).notNull(),
+  draftData: text("draftData").notNull(),
+  publishedData: text("publishedData").notNull(),
+  draftVisible: boolean("draftVisible").default(true).notNull(),
+  publishedVisible: boolean("publishedVisible").default(true).notNull(),
+  workflowStatus: mysqlEnum("workflowStatus", cmsPageStatuses).default("draft").notNull(),
+  requiresQaReview: boolean("requiresQaReview").default(false).notNull(),
+  createdBy: int("createdBy"),
+  updatedBy: int("updatedBy"),
+  reviewedBy: int("reviewedBy"),
+  publishedBy: int("publishedBy"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  reviewedAt: timestamp("reviewedAt"),
+  publishedAt: timestamp("publishedAt"),
+  archivedAt: timestamp("archivedAt"),
+});
+
+export const cmsAssetTypes = ["website_image", "product_image", "service_image", "certificate", "ce_document", "quality_document", "agency_letter", "customer_letter", "brochure", "technical_file", "other"] as const;
+export const cmsAssetStatuses = ["draft", "pending_review", "approved", "published", "archived"] as const;
+
+export const cmsMediaAssets = mysqlTable("cms_media_assets", {
+  id: int("id").autoincrement().primaryKey(),
+  fileKey: varchar("fileKey", { length: 500 }).notNull().unique(),
+  storageUrl: text("storageUrl").notNull(),
+  fileName: varchar("fileName", { length: 255 }).notNull(),
+  contentType: varchar("contentType", { length: 120 }).notNull(),
+  sizeBytes: int("sizeBytes").notNull(),
+  assetType: mysqlEnum("assetType", cmsAssetTypes).default("other").notNull(),
+  altText: varchar("altText", { length: 500 }).default("").notNull(),
+  caption: varchar("caption", { length: 500 }).default("").notNull(),
+  description: text("description"),
+  visibility: mysqlEnum("visibility", ["public", "internal"]).default("internal").notNull(),
+  isTemporary: boolean("isTemporary").default(false).notNull(),
+  workflowStatus: mysqlEnum("workflowStatus", cmsAssetStatuses).default("draft").notNull(),
+  linkedPageSlug: varchar("linkedPageSlug", { length: 180 }),
+  uploadedBy: int("uploadedBy"),
+  reviewedBy: int("reviewedBy"),
+  publishedBy: int("publishedBy"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  reviewedAt: timestamp("reviewedAt"),
+  publishedAt: timestamp("publishedAt"),
+  archivedAt: timestamp("archivedAt"),
+});
+
+export const siteStats = mysqlTable("site_stats", {
+  id: int("id").autoincrement().primaryKey(),
+  metricKey: varchar("metricKey", { length: 120 }).notNull().unique(),
+  draftValue: varchar("draftValue", { length: 120 }).notNull(),
+  publishedValue: varchar("publishedValue", { length: 120 }).notNull(),
+  draftLabel: varchar("draftLabel", { length: 255 }).notNull(),
+  publishedLabel: varchar("publishedLabel", { length: 255 }).notNull(),
+  draftDescription: text("draftDescription"),
+  publishedDescription: text("publishedDescription"),
+  draftVisible: boolean("draftVisible").default(true).notNull(),
+  publishedVisible: boolean("publishedVisible").default(true).notNull(),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  updatedBy: int("updatedBy"),
+  publishedBy: int("publishedBy"),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  publishedAt: timestamp("publishedAt"),
+});
+
+export type CmsPage = typeof cmsPages.$inferSelect;
+export type CmsMediaAsset = typeof cmsMediaAssets.$inferSelect;
+export type SiteStat = typeof siteStats.$inferSelect;

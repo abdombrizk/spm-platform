@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { trpc } from "@/lib/trpc";
 import HomepageEditor from "./HomepageEditor";
+import ContentWorkspace from "./ContentWorkspace";
 
 const roles = ["owner", "manager", "marketing", "sales", "service", "qa", "ra", "user"] as const;
 type Role = typeof roles[number];
@@ -63,6 +64,15 @@ const serviceRequestPermissions = [
   { key: "service_requests.schedule", label: "Schedule site visits", description: "Manage visit scheduling information." },
   { key: "service_requests.close", label: "Close requests", description: "Close resolved or cancelled service requests." },
   { key: "service_requests.delete", label: "Delete requests", description: "Permanently delete service request records." },
+] as const;
+const contentPermissions = [
+  { key: "content.view", label: "View content workspace", description: "Open page drafts, media and controlled numbers." },
+  { key: "content.edit", label: "Edit page drafts", description: "Change page text and structured content." },
+  { key: "content.media", label: "Upload and manage media", description: "Upload images, PDFs, certificates and letters." },
+  { key: "content.review", label: "Review content", description: "Approve or return page and evidence drafts." },
+  { key: "content.publish", label: "Publish content", description: "Move approved pages and media to the public website." },
+  { key: "content.stats", label: "Manage public numbers", description: "Edit and publish approved figures such as hospitals and projects." },
+  { key: "content.delete", label: "Archive content", description: "Archive controlled content after an Owner decision." },
 ] as const;
 
 function PermissionEditor({ users }: { users: Array<{ id: number; name: string | null; email: string | null; role: string }> }) {
@@ -139,10 +149,21 @@ function FirstLoginPasswordChange({ onComplete }: { onComplete: () => void }) {
   return <div className="flex min-h-screen items-center justify-center bg-slate-950 p-6"><Card className="w-full max-w-md"><CardHeader><CardTitle>Change your temporary password</CardTitle><CardDescription>This is required before using the SPM workspace.</CardDescription></CardHeader><CardContent><form className="space-y-4" onSubmit={event => { event.preventDefault(); setError(""); changePassword.mutate({ currentPassword, newPassword }, { onError: err => setError(err.message) }); }}><div className="space-y-2"><Label htmlFor="current-password">Temporary password</Label><Input id="current-password" type="password" value={currentPassword} onChange={event => setCurrentPassword(event.target.value)} required /></div><div className="space-y-2"><Label htmlFor="new-password">New password</Label><Input id="new-password" type="password" value={newPassword} onChange={event => setNewPassword(event.target.value)} placeholder="12+ chars, upper/lower/number/symbol" required /></div>{error ? <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert> : null}<Button className="w-full" disabled={changePassword.isPending}>{changePassword.isPending ? "Saving…" : "Save new password"}</Button></form></CardContent></Card></div>;
 }
 
+function ContentPermissionEditor({ users }: { users: Array<{ id: number; name: string | null; email: string | null; role: string }> }) {
+  const [selectedUserId, setSelectedUserId] = useState<number | undefined>();
+  const permissionsQuery = trpc.owner.getPermissions.useQuery({ userId: selectedUserId ?? 0 }, { enabled: Boolean(selectedUserId) });
+  const updatePermissions = trpc.owner.updateContentPermissions.useMutation({ onSuccess: () => permissionsQuery.refetch() });
+  const current = new Set((permissionsQuery.data ?? []).filter(item => item.granted).map(item => item.permission));
+  const selected = users.find(user => user.id === selectedUserId);
+  const save = (permission: string, granted: boolean) => { const next = new Set(current); if (granted) next.add(permission); else next.delete(permission); updatePermissions.mutate({ userId: selectedUserId!, permissions: contentPermissions.map(item => ({ permission: item.key, granted: next.has(item.key) })) }); };
+  return <Card><CardHeader><CardTitle>Content workspace permissions</CardTitle><CardDescription>Owner decides who can edit, review, upload and publish public content.</CardDescription></CardHeader><CardContent className="space-y-4"><Select value={selectedUserId ? String(selectedUserId) : ""} onValueChange={value => setSelectedUserId(Number(value))}><SelectTrigger><SelectValue placeholder="Choose a user" /></SelectTrigger><SelectContent>{users.filter(user => user.role !== "owner").map(user => <SelectItem key={user.id} value={String(user.id)}>{user.name || user.email || `User ${user.id}`} — {roleLabels[user.role as Role] ?? user.role}</SelectItem>)}</SelectContent></Select>{selected ? <div className="space-y-3 rounded-2xl border p-4"><div><p className="font-semibold">{selected.name || "Unnamed user"}</p><p className="text-sm text-slate-500">{selected.email}</p></div>{contentPermissions.map(item => <label key={item.key} className="flex cursor-pointer items-start gap-3 rounded-xl border p-3"><input type="checkbox" className="mt-1 h-4 w-4 accent-cyan-600" checked={current.has(item.key)} disabled={permissionsQuery.isLoading || updatePermissions.isPending} onChange={event => save(item.key, event.target.checked)} /><span><span className="block text-sm font-medium">{item.label}</span><span className="block text-xs text-slate-500">{item.description}</span></span></label>)}</div> : <p className="rounded-xl border border-dashed p-6 text-center text-sm text-slate-500">Select a non-Owner account to manage content permissions.</p>}</CardContent></Card>;
+}
+
 export default function OwnerDashboard() {
   const [, setLocation] = useLocation();
   const auth = trpc.auth.me.useQuery();
   const homepageDraftAccess = trpc.homepage.draft.useQuery(undefined, { enabled: Boolean(auth.data) });
+  const cmsAccess = trpc.cms.permissions.useQuery(undefined, { enabled: Boolean(auth.data) });
   const users = trpc.owner.listUsers.useQuery(undefined, { enabled: auth.data?.role === "owner" });
   const utils = trpc.useUtils();
   const logout = trpc.auth.logout.useMutation({ onSuccess: () => setLocation("/login") });
@@ -158,7 +179,8 @@ export default function OwnerDashboard() {
   const filteredUsers = useMemo(() => (users.data ?? []).filter(user => `${user.name ?? ""} ${user.email ?? ""} ${user.role}`.toLowerCase().includes(search.toLowerCase())), [users.data, search]);
   const isOwner = auth.data?.role === "owner";
   const canAccessHomepage = isOwner || homepageDraftAccess.isSuccess;
-  if (auth.isLoading || (auth.data && isOwner && users.isLoading) || (auth.data && homepageDraftAccess.isLoading)) return <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white">Loading SPM workspace…</div>;
+  const canAccessContent = isOwner || Boolean(cmsAccess.data?.includes("content.view"));
+  if (auth.isLoading || (auth.data && isOwner && users.isLoading) || (auth.data && homepageDraftAccess.isLoading) || (auth.data && cmsAccess.isLoading)) return <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white">Loading SPM workspace…</div>;
   if (!auth.data) return null;
   if (!canAccessHomepage) return <div className="flex min-h-screen items-center justify-center bg-slate-950 p-6"><Card><CardHeader><CardTitle>Homepage permission required</CardTitle><CardDescription>The Owner has not granted this account access to the homepage workspace.</CardDescription></CardHeader></Card></div>;
   if (auth.data.mustChangePassword) return <FirstLoginPasswordChange onComplete={() => auth.refetch()} />;
@@ -179,11 +201,13 @@ export default function OwnerDashboard() {
         </div> : null}
         <div className="flex flex-wrap justify-end gap-2"><Link href="/owner/products"><Button><PackagePlus className="mr-2 h-4 w-4" />Manage Products</Button></Link><Link href="/owner/services"><Button variant="outline"><Wrench className="mr-2 h-4 w-4" />Manage Services</Button></Link><Link href="/owner/quotes"><Button variant="outline"><ClipboardList className="mr-2 h-4 w-4" />Manage Quotes</Button></Link><Link href="/owner/service-requests"><Button variant="outline"><Wrench className="mr-2 h-4 w-4" />Manage Service Requests</Button></Link></div>
         <HomepageEditor />
+        {canAccessContent ? <ContentWorkspace /> : null}
         {isOwner ? <PermissionEditor users={(users.data ?? []).map(user => ({ id: user.id, name: user.name, email: user.email, role: user.role }))} /> : null}
         {isOwner ? <ProductPermissionEditor users={(users.data ?? []).map(user => ({ id: user.id, name: user.name, email: user.email, role: user.role }))} /> : null}
         {isOwner ? <ServicePermissionEditor users={(users.data ?? []).map(user => ({ id: user.id, name: user.name, email: user.email, role: user.role }))} /> : null}
         {isOwner ? <QuotePermissionEditor users={(users.data ?? []).map(user => ({ id: user.id, name: user.name, email: user.email, role: user.role }))} /> : null}
         {isOwner ? <ServiceRequestPermissionEditor users={(users.data ?? []).map(user => ({ id: user.id, name: user.name, email: user.email, role: user.role }))} /> : null}
+        {isOwner ? <ContentPermissionEditor users={(users.data ?? []).map(user => ({ id: user.id, name: user.name, email: user.email, role: user.role }))} /> : null}
         <div className="flex justify-end"><Link href="/"><Button variant="ghost">Back to public website</Button></Link></div>
       </main>
     </div>
