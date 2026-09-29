@@ -33,6 +33,7 @@
 - [x] Made database permissions the single source of truth; removed role-based bypasses.
 - [x] Added Owner-only audit trail with actor, action, entity, metadata and timestamp.
 - [x] Added role protection tests (16 tests passing), TypeScript checks, and production build verified.
+- [x] Hero Section & Transparent Header rebuilt to match Block Imaging visual hierarchy (full-bleed background, dark right-gradient overlay, right-aligned typography, dual CTAs: solid orange "Contact Us" + ghost "Explore Service", fully dynamic via CMS).
 
 ## Waiting for SPM inputs / production preparation
 
