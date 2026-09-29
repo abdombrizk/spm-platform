@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, Menu, X, ArrowUpRight, LockKeyhole, Activity, Boxes, Layers, Stethoscope, Wrench, Sparkles } from "lucide-react";
+import { ChevronDown, Menu, X, ArrowUpRight, LockKeyhole, Activity, Boxes, Layers, Stethoscope, Wrench, Sparkles, Search } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
@@ -16,7 +16,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Sparkles,
 };
 
-export default function SiteChrome({ children }: { children: React.ReactNode }) {
+export default function SiteChrome({ children, transparentHeader = false }: { children: React.ReactNode; transparentHeader?: boolean }) {
   const [open, setOpen] = useState(false);
   const [activeMega, setActiveMega] = useState(false);
   const [activeCompany, setActiveCompany] = useState(false);
@@ -29,11 +29,13 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
 
   const brands = brandsQuery.data ?? [];
   const items = itemsQuery.data ?? [];
+  const navIdle = transparentHeader ? "text-white/90 hover:text-white" : "text-[#334155] hover:text-[#0f6fae]";
+  const navActive = transparentHeader ? "text-white" : "text-[#0f6fae]";
 
   return (
     <div className="min-h-screen bg-[#f7fafc] text-[#17212b]">
       {/* Requirement 1: Top contact bar removed. Header is minimal and clean. */}
-      <header className="sticky top-0 z-50 border-b border-[#dce7eb]/80 bg-white/95 backdrop-blur-md">
+      <header className={`${transparentHeader ? "absolute inset-x-0 top-0 border-white/15 bg-[#061f2b]/20 text-white" : "sticky top-0 border-b border-[#dce7eb]/80 bg-white/95 text-[#17212b]"} z-50 backdrop-blur-md`}>
         <div className="mx-auto flex h-[82px] max-w-[1280px] items-center justify-between gap-6 px-5 lg:px-8">
           <Link href="/" className="flex shrink-0 items-center gap-3" onClick={() => setOpen(false)}>
             <img src={logo} alt="SPM Medical Imaging Technology" className="h-12 w-auto object-contain" />
@@ -52,14 +54,14 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
                 href="/about"
                 className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-5 text-sm font-semibold transition ${
                   location.startsWith("/about") || location.startsWith("/careers") || location.startsWith("/contact")
-                    ? "text-[#0f6fae]"
-                    : "text-[#334155] hover:text-[#0f6fae]"
+                    ? navActive
+                    : navIdle
                 }`}
                 onFocus={() => setActiveCompany(true)}
                 aria-expanded={activeCompany}
               >
                 Company
-                <ChevronDown className={`h-3.5 w-3.5 text-[#94a3b8] transition-transform duration-200 ${activeCompany ? "rotate-180" : ""}`} />
+                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${transparentHeader ? "text-white/80" : "text-[#94a3b8]"} ${activeCompany ? "rotate-180" : ""}`} />
               </Link>
               <div
                 className={`absolute left-0 top-full w-64 rounded-2xl border border-[#dce7eb] bg-white p-2.5 shadow-2xl transition duration-200 ${
@@ -87,13 +89,13 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
               <Link
                 href="/catalogue"
                 className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-5 text-sm font-semibold transition ${
-                  location.startsWith("/catalogue") ? "text-[#0f6fae]" : "text-[#334155] hover:text-[#0f6fae]"
+                  location.startsWith("/catalogue") ? navActive : navIdle
                 }`}
                 onFocus={() => setActiveMega(true)}
                 aria-expanded={activeMega}
               >
                 Products
-                <ChevronDown className={`h-3.5 w-3.5 text-[#94a3b8] transition-transform duration-200 ${activeMega ? "rotate-180" : ""}`} />
+                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${transparentHeader ? "text-white/80" : "text-[#94a3b8]"} ${activeMega ? "rotate-180" : ""}`} />
               </Link>
 
               {/* Mega Menu Dropdown */}
@@ -188,13 +190,13 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
               <Link
                 href="/services"
                 className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-5 text-sm font-semibold transition ${
-                  location.startsWith("/services") ? "text-[#0f6fae]" : "text-[#334155] hover:text-[#0f6fae]"
+                  location.startsWith("/services") ? navActive : navIdle
                 }`}
                 onFocus={() => setActiveServices(true)}
                 aria-expanded={activeServices}
               >
                 Services
-                <ChevronDown className={`h-3.5 w-3.5 text-[#94a3b8] transition-transform duration-200 ${activeServices ? "rotate-180" : ""}`} />
+                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${transparentHeader ? "text-white/80" : "text-[#94a3b8]"} ${activeServices ? "rotate-180" : ""}`} />
               </Link>
               <div
                 className={`absolute left-0 top-full w-72 rounded-2xl border border-[#dce7eb] bg-white p-2.5 shadow-2xl transition duration-200 ${
@@ -226,14 +228,14 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
                 href="/news"
                 className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-5 text-sm font-semibold transition ${
                   location.startsWith("/news") || location.startsWith("/events") || location.startsWith("/downloads") || location.startsWith("/faqs")
-                    ? "text-[#0f6fae]"
-                    : "text-[#334155] hover:text-[#0f6fae]"
+                    ? navActive
+                    : navIdle
                 }`}
                 onFocus={() => setActiveNews(true)}
                 aria-expanded={activeNews}
               >
                 Events & News
-                <ChevronDown className={`h-3.5 w-3.5 text-[#94a3b8] transition-transform duration-200 ${activeNews ? "rotate-180" : ""}`} />
+                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${transparentHeader ? "text-white/80" : "text-[#94a3b8]"} ${activeNews ? "rotate-180" : ""}`} />
               </Link>
               <div
                 className={`absolute left-0 top-full w-64 rounded-2xl border border-[#dce7eb] bg-white p-2.5 shadow-2xl transition duration-200 ${
@@ -260,21 +262,22 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
           <div className="hidden items-center gap-3 lg:flex">
             <Link
               href="/login"
-              className="inline-flex items-center gap-2 rounded-xl border border-[#dce7eb] bg-white px-3.5 py-2.5 text-xs font-bold text-[#334155] transition hover:border-[#0f6fae] hover:text-[#0f6fae]"
+              className={`inline-flex items-center gap-2 rounded-xl border px-3.5 py-2.5 text-xs font-bold transition ${transparentHeader ? "border-white/40 bg-white/10 text-white hover:border-white hover:bg-white/20" : "border-[#dce7eb] bg-white text-[#334155] hover:border-[#0f6fae] hover:text-[#0f6fae]"}`}
             >
               <LockKeyhole className="h-3.5 w-3.5 text-[#0f6fae]" />
               Sign in
             </Link>
-            <Link href="/request-a-quote">
+            <Link href={transparentHeader ? "/contact" : "/request-a-quote"}>
               <Button className="h-11 rounded-xl bg-[#f36b21] px-5 text-sm font-bold text-white shadow-md transition-all hover:bg-[#d95316] hover:shadow-lg active:scale-95">
-                Request a Quote <ArrowUpRight className="ml-1.5 h-4 w-4" />
+                {transparentHeader ? "Contact Us" : "Request a Quote"} <ArrowUpRight className="ml-1.5 h-4 w-4" />
               </Button>
             </Link>
+            {transparentHeader ? <Link href="/search" aria-label="Search" className="hidden rounded-xl p-2 text-white/90 transition hover:bg-white/15 hover:text-white xl:inline-flex"><Search className="h-5 w-5" /></Link> : null}
           </div>
 
           {/* Mobile Menu Toggle */}
           <button
-            className="rounded-xl border border-[#dce7eb] p-2.5 text-[#334155] lg:hidden"
+            className={`rounded-xl border p-2.5 lg:hidden ${transparentHeader ? "border-white/40 text-white" : "border-[#dce7eb] text-[#334155]"}`}
             onClick={() => setOpen(value => !value)}
             aria-label={open ? "Close menu" : "Open menu"}
           >
