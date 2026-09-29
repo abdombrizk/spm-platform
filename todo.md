@@ -6,6 +6,10 @@
 - [x] Requirement 2: Dynamic Products Mega-Menu with hover activation, visual categories, Italray & Hermann sections, and "View All" links.
 - [x] Requirement 3: Updated Request a Quote routing to automatically inherit product slug, modality, and custom note parameters.
 - [x] Requirement 4: Technical Specifications layout converted into an organized engineering table with controlled ISO document access request workflow.
+- [x] Security Hardening: Secured quote attachments with public access token; added expiring hash download tokens for approved ISO/CE document files with dedicated /api/documents/download streaming.
+- [x] Dynamic Navigation & Accessibility: Rebuilt header with keyboard focus states (Company, Products Mega-Menu, Services, Events & News), and dedicated Contact communication hub.
+- [x] Product Portfolio Experience: ProductDetails upgraded with interactive image gallery thumbnails, organized engineering specs, and multi-parameter quote handoff.
+- [x] Dedicated Contact Hub: Built official ContactPage with direct sales, 24/7 service desk, WhatsApp hotline, Cairo HQ details, and MENA service zones.
 - [x] Spare Parts standalone module created with manufacturer tabs (GE Healthcare, Siemens Healthineers, Ziehm Imaging, Philips Healthcare) and direct quote links.
 - [x] Product Manager workspace expanded with Mega-Menu management, Spare Parts catalog, and Document Requests review tabs.
 - [x] Confirm SPM visual direction, temporary assets and content-page scope.
