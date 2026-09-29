@@ -345,3 +345,101 @@ export const siteStats = mysqlTable("site_stats", {
 export type CmsPage = typeof cmsPages.$inferSelect;
 export type CmsMediaAsset = typeof cmsMediaAssets.$inferSelect;
 export type SiteStat = typeof siteStats.$inferSelect;
+
+export const productBrands = mysqlTable("product_brands", {
+  id: int("id").autoincrement().primaryKey(),
+  slug: varchar("slug", { length: 180 }).notNull().unique(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  logoUrl: text("logoUrl"),
+  menuImageUrl: text("menuImageUrl"),
+  websiteUrl: text("websiteUrl"),
+  authorizedAgentLabel: varchar("authorizedAgentLabel", { length: 255 }),
+  isVisible: boolean("isVisible").default(true).notNull(),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  createdBy: int("createdBy"),
+  updatedBy: int("updatedBy"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const productMenuItems = mysqlTable("product_menu_items", {
+  id: int("id").autoincrement().primaryKey(),
+  brandId: int("brandId"),
+  productId: int("productId"),
+  parentId: int("parentId"),
+  label: varchar("label", { length: 255 }).notNull(),
+  href: varchar("href", { length: 500 }).notNull(),
+  imageUrl: text("imageUrl"),
+  iconName: varchar("iconName", { length: 80 }),
+  itemType: mysqlEnum("itemType", ["brand", "category", "product", "view_all", "custom"]).default("custom").notNull(),
+  isVisible: boolean("isVisible").default(true).notNull(),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  createdBy: int("createdBy"),
+  updatedBy: int("updatedBy"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const sparePartBrands = mysqlTable("spare_part_brands", {
+  id: int("id").autoincrement().primaryKey(),
+  slug: varchar("slug", { length: 180 }).notNull().unique(),
+  name: varchar("name", { length: 255 }).notNull(),
+  introduction: text("introduction"),
+  logoUrl: text("logoUrl"),
+  heroImageUrl: text("heroImageUrl"),
+  authorizedAgentLabel: varchar("authorizedAgentLabel", { length: 255 }),
+  authorizationDocumentUrl: text("authorizationDocumentUrl"),
+  isVisible: boolean("isVisible").default(true).notNull(),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  createdBy: int("createdBy"),
+  updatedBy: int("updatedBy"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const spareParts = mysqlTable("spare_parts", {
+  id: int("id").autoincrement().primaryKey(),
+  brandId: int("brandId"),
+  slug: varchar("slug", { length: 180 }).notNull().unique(),
+  name: varchar("name", { length: 255 }).notNull(),
+  partNumber: varchar("partNumber", { length: 180 }),
+  equipmentCategory: varchar("equipmentCategory", { length: 180 }),
+  description: text("description"),
+  imageUrl: text("imageUrl"),
+  availabilityStatus: mysqlEnum("availabilityStatus", ["available", "on_request", "discontinued", "coming_soon"]).default("on_request").notNull(),
+  isVisible: boolean("isVisible").default(true).notNull(),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  createdBy: int("createdBy"),
+  updatedBy: int("updatedBy"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const documentRequestStatuses = ["pending", "approved", "rejected", "sent"] as const;
+export const documentRequestTypes = ["brochure", "datasheet", "user_manual", "regulatory_document", "technical_file", "other"] as const;
+
+export const documentRequests = mysqlTable("document_requests", {
+  id: int("id").autoincrement().primaryKey(),
+  publicNumber: varchar("publicNumber", { length: 40 }).notNull().unique(),
+  productId: int("productId"),
+  documentType: mysqlEnum("documentType", documentRequestTypes).notNull(),
+  documentUrl: text("documentUrl"),
+  documentName: varchar("documentName", { length: 255 }),
+  requesterName: varchar("requesterName", { length: 255 }).notNull(),
+  requesterEmail: varchar("requesterEmail", { length: 320 }).notNull(),
+  requesterOrganization: varchar("requesterOrganization", { length: 255 }),
+  message: text("message"),
+  status: mysqlEnum("status", documentRequestStatuses).default("pending").notNull(),
+  reviewedBy: int("reviewedBy"),
+  reviewedAt: timestamp("reviewedAt"),
+  sentAt: timestamp("sentAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ProductBrand = typeof productBrands.$inferSelect;
+export type ProductMenuItem = typeof productMenuItems.$inferSelect;
+export type SparePartBrand = typeof sparePartBrands.$inferSelect;
+export type SparePart = typeof spareParts.$inferSelect;
+export type DocumentRequest = typeof documentRequests.$inferSelect;

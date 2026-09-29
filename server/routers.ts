@@ -545,6 +545,140 @@ export const appRouter = router({
     addComment: permissionProcedure("quotes.edit").input(z.object({ quoteRequestId: z.number().int().positive(), body: z.string().min(1).max(10000) })).mutation(async ({ ctx, input }) => { const id = await db.addQuoteComment({ quoteRequestId: input.quoteRequestId, userId: ctx.user.id, body: input.body }); await db.addAuditLog({ actorUserId: ctx.user.id, action: "quote_comment_added", entityType: "quote_request", entityId: String(input.quoteRequestId), metadata: { commentId: id }, ipAddress: clientIp(ctx.req) }); return { id }; }),
     delete: permissionProcedure("quotes.delete").input(z.object({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => { await db.deleteQuoteRequest(input.id); await db.addAuditLog({ actorUserId: ctx.user.id, action: "quote_deleted", entityType: "quote_request", entityId: String(input.id), ipAddress: clientIp(ctx.req) }); return { success: true } as const; }),
   }),
+  menu: router({
+    productBrands: publicProcedure.query(() => db.listProductBrands(true)),
+    productItems: publicProcedure.query(() => db.listProductMenuItems(true)),
+    manageBrands: permissionProcedure("products.edit").query(() => db.listProductBrands(false)),
+    manageItems: permissionProcedure("products.edit").query(() => db.listProductMenuItems(false)),
+    saveBrand: permissionProcedure("products.edit").input(z.object({
+      id: z.number().int().positive().optional(),
+      slug: z.string().min(2).max(180),
+      name: z.string().min(2).max(255),
+      description: z.string().max(3000).optional(),
+      logoUrl: z.string().max(2000).optional(),
+      menuImageUrl: z.string().max(2000).optional(),
+      websiteUrl: z.string().max(2000).optional(),
+      authorizedAgentLabel: z.string().max(255).optional(),
+      isVisible: z.boolean().default(true),
+      displayOrder: z.number().int().min(0).max(99999).default(0),
+    })).mutation(async ({ ctx, input }) => {
+      const id = await db.upsertProductBrand({ ...input, createdBy: ctx.user.id, updatedBy: ctx.user.id });
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "product_brand_saved", entityType: "product_brand", entityId: String(id), metadata: { slug: input.slug }, ipAddress: clientIp(ctx.req) });
+      if (ctx.user.role === "marketing") {
+        void notifyOwner({ title: `Marketing updated brand: ${input.name}`, content: `Brand ${input.name} (${input.slug}) was updated by marketing user ${ctx.user.name || ctx.user.email}.` }).catch(() => undefined);
+      }
+      return { id };
+    }),
+    saveItem: permissionProcedure("products.edit").input(z.object({
+      id: z.number().int().positive().optional(),
+      brandId: z.number().int().positive().optional(),
+      productId: z.number().int().positive().optional(),
+      parentId: z.number().int().positive().optional(),
+      label: z.string().min(2).max(255),
+      href: z.string().min(1).max(500),
+      imageUrl: z.string().max(2000).optional(),
+      iconName: z.string().max(80).optional(),
+      itemType: z.enum(["brand", "category", "product", "view_all", "custom"]).default("custom"),
+      isVisible: z.boolean().default(true),
+      displayOrder: z.number().int().min(0).max(99999).default(0),
+    })).mutation(async ({ ctx, input }) => {
+      const id = await db.upsertProductMenuItem({ ...input, createdBy: ctx.user.id, updatedBy: ctx.user.id });
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "product_menu_item_saved", entityType: "product_menu_item", entityId: String(id), metadata: { label: input.label, href: input.href }, ipAddress: clientIp(ctx.req) });
+      if (ctx.user.role === "marketing") {
+        void notifyOwner({ title: `Marketing updated menu item: ${input.label}`, content: `Menu item ${input.label} (${input.href}) was updated by marketing user ${ctx.user.name || ctx.user.email}.` }).catch(() => undefined);
+      }
+      return { id };
+    }),
+    deleteItem: permissionProcedure("products.edit").input(z.object({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => {
+      await db.deleteProductMenuItem(input.id);
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "product_menu_item_deleted", entityType: "product_menu_item", entityId: String(input.id), ipAddress: clientIp(ctx.req) });
+      if (ctx.user.role === "marketing") {
+        void notifyOwner({ title: `Marketing deleted a menu item (#${input.id})`, content: `Menu item #${input.id} was deleted by marketing user ${ctx.user.name || ctx.user.email}.` }).catch(() => undefined);
+      }
+      return { success: true } as const;
+    }),
+  }),
+  parts: router({
+    brands: publicProcedure.query(() => db.listSparePartBrands(true)),
+    brandBySlug: publicProcedure.input(z.object({ slug: z.string().min(1).max(180) })).query(async ({ input }) => {
+      const brand = await db.getSparePartBrandBySlug(input.slug);
+      if (!brand) return null;
+      const parts = await db.listSpareParts(brand.id, true);
+      return { brand, parts };
+    }),
+    listParts: publicProcedure.input(z.object({ brandId: z.number().int().positive().optional() }).optional()).query(async ({ input }) => db.listSpareParts(input?.brandId, true)),
+    manageBrands: permissionProcedure("products.edit").query(() => db.listSparePartBrands(false)),
+    manageParts: permissionProcedure("products.edit").input(z.object({ brandId: z.number().int().positive().optional() }).optional()).query(async ({ input }) => db.listSpareParts(input?.brandId, false)),
+    saveBrand: permissionProcedure("products.edit").input(z.object({
+      id: z.number().int().positive().optional(),
+      slug: z.string().min(2).max(180),
+      name: z.string().min(2).max(255),
+      introduction: z.string().max(6000).optional(),
+      logoUrl: z.string().max(2000).optional(),
+      heroImageUrl: z.string().max(2000).optional(),
+      authorizedAgentLabel: z.string().max(255).optional(),
+      authorizationDocumentUrl: z.string().max(2000).optional(),
+      isVisible: z.boolean().default(true),
+      displayOrder: z.number().int().min(0).max(99999).default(0),
+    })).mutation(async ({ ctx, input }) => {
+      const id = await db.upsertSparePartBrand({ ...input, createdBy: ctx.user.id, updatedBy: ctx.user.id });
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "spare_part_brand_saved", entityType: "spare_part_brand", entityId: String(id), metadata: { slug: input.slug }, ipAddress: clientIp(ctx.req) });
+      if (ctx.user.role === "marketing") {
+        void notifyOwner({ title: `Marketing updated spare parts brand: ${input.name}`, content: `Spare parts brand ${input.name} was updated by marketing user ${ctx.user.name || ctx.user.email}.` }).catch(() => undefined);
+      }
+      return { id };
+    }),
+    savePart: permissionProcedure("products.edit").input(z.object({
+      id: z.number().int().positive().optional(),
+      brandId: z.number().int().positive().optional(),
+      slug: z.string().min(2).max(180),
+      name: z.string().min(2).max(255),
+      partNumber: z.string().max(180).optional(),
+      equipmentCategory: z.string().max(180).optional(),
+      description: z.string().max(6000).optional(),
+      imageUrl: z.string().max(2000).optional(),
+      availabilityStatus: z.enum(["available", "on_request", "discontinued", "coming_soon"]).default("on_request"),
+      isVisible: z.boolean().default(true),
+      displayOrder: z.number().int().min(0).max(99999).default(0),
+    })).mutation(async ({ ctx, input }) => {
+      const id = await db.upsertSparePart({ ...input, createdBy: ctx.user.id, updatedBy: ctx.user.id });
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "spare_part_saved", entityType: "spare_part", entityId: String(id), metadata: { name: input.name, partNumber: input.partNumber }, ipAddress: clientIp(ctx.req) });
+      if (ctx.user.role === "marketing") {
+        void notifyOwner({ title: `Marketing updated spare part: ${input.name}`, content: `Spare part ${input.name} was updated by marketing user ${ctx.user.name || ctx.user.email}.` }).catch(() => undefined);
+      }
+      return { id };
+    }),
+    deletePart: permissionProcedure("products.edit").input(z.object({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => {
+      await db.deleteSparePart(input.id);
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "spare_part_deleted", entityType: "spare_part", entityId: String(input.id), ipAddress: clientIp(ctx.req) });
+      return { success: true } as const;
+    }),
+  }),
+  documents: router({
+    request: publicProcedure.input(z.object({
+      productId: z.number().int().positive().optional(),
+      documentType: z.enum(["brochure", "datasheet", "user_manual", "regulatory_document", "technical_file", "other"]),
+      documentName: z.string().min(1).max(255),
+      documentUrl: z.string().max(2000).optional(),
+      requesterName: z.string().min(2).max(255),
+      requesterEmail: z.string().email(),
+      requesterOrganization: z.string().max(255).optional(),
+      message: z.string().max(3000).optional(),
+    })).mutation(async ({ input }) => {
+      const result = await db.createDocumentRequest(input);
+      void notifyOwner({ title: `New document request: ${input.documentName}`, content: `${input.requesterName} (${input.requesterEmail}) requested ${input.documentName}. Review and approve from the SPM dashboard.` }).catch(() => undefined);
+      return result;
+    }),
+    list: permissionProcedure("content.review").query(async () => db.listDocumentRequests()),
+    updateStatus: permissionProcedure("content.review").input(z.object({
+      id: z.number().int().positive(),
+      status: z.enum(["pending", "approved", "rejected", "sent"]),
+    })).mutation(async ({ ctx, input }) => {
+      await db.updateDocumentRequestStatus(input.id, input.status, ctx.user.id);
+      await db.addAuditLog({ actorUserId: ctx.user.id, action: "document_request_status_updated", entityType: "document_request", entityId: String(input.id), metadata: { status: input.status }, ipAddress: clientIp(ctx.req) });
+      return { success: true } as const;
+    }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

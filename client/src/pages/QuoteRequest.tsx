@@ -20,6 +20,14 @@ export default function QuoteRequest() {
   const [items, setItems] = useState<Item[]>([{ itemType: "custom", itemName: "", quantity: 1, notes: "" }]); const [files, setFiles] = useState<File[]>([]); const [message, setMessage] = useState(""); const [success, setSuccess] = useState(""); const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({ organizationName: "", requesterType: "", contactPerson: "", jobTitle: "", email: "", phone: "", whatsapp: "", preferredContactMethod: "any", country: "Egypt", city: "", address: "", requiredDeliveryDate: "", installationRequired: "not_sure", trainingRequired: "not_sure", maintenanceContractRequired: "not_sure", message: "" });
   useEffect(() => { const params = new URLSearchParams(window.location.search); const productSlug = params.get("product"); const serviceSlug = params.get("service"); if (productSlug && products.data) { const product = products.data.find(item => item.slug === productSlug); if (product) setItems([{ itemType: "product", productId: product.id, itemName: (product.data as Record<string, string>).name || product.slug, quantity: 1, notes: "" }]); } else if (serviceSlug && services.data) { const service = services.data.find(item => item.slug === serviceSlug); if (service) setItems([{ itemType: "service", serviceId: service.id, itemName: (service.data as Record<string, string>).name || service.slug, quantity: 1, notes: "" }]); } }, [products.data, services.data]);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const customNotes = params.get("custom_notes");
+    if (customNotes) {
+      setItems([{ itemType: "custom", itemName: customNotes, quantity: 1, notes: "Automated reference passed from spare parts & equipment portfolio" }]);
+      setForm(prev => ({ ...prev, message: `Inquiry details: ${customNotes}` }));
+    }
+  }, []);
   const totalSize = useMemo(() => files.reduce((sum, file) => sum + file.size, 0), [files]);
   function setField(key: string, value: string) { setForm(current => ({ ...current, [key]: value })); }
   function setItem(index: number, patch: Partial<Item>) { setItems(current => current.map((item, itemIndex) => itemIndex === index ? { ...item, ...patch } : item)); }

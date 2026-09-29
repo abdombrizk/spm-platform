@@ -19,6 +19,11 @@ import {
   serviceRequestEquipment,
   serviceRequests,
   siteStats,
+  productBrands,
+  productMenuItems,
+  sparePartBrands,
+  spareParts,
+  documentRequests,
   userPermissions,
   users,
   UserRole,
@@ -682,4 +687,128 @@ export async function publishSiteStats(userId: number) {
   if (!db) throw new Error("Database is not available");
   const rows = await listSiteStats();
   for (const row of rows) await db.update(siteStats).set({ publishedValue: row.draftValue, publishedLabel: row.draftLabel, publishedDescription: row.draftDescription, publishedVisible: row.draftVisible, publishedBy: userId, publishedAt: new Date() }).where(eq(siteStats.id, row.id));
+}
+
+export async function listProductBrands(visibleOnly = false) {
+  const db = await getDb();
+  if (!db) return [];
+  if (visibleOnly) return db.select().from(productBrands).where(eq(productBrands.isVisible, true)).orderBy(productBrands.displayOrder, productBrands.name);
+  return db.select().from(productBrands).orderBy(productBrands.displayOrder, productBrands.name);
+}
+
+export async function listProductMenuItems(visibleOnly = false) {
+  const db = await getDb();
+  if (!db) return [];
+  if (visibleOnly) return db.select().from(productMenuItems).where(eq(productMenuItems.isVisible, true)).orderBy(productMenuItems.displayOrder, productMenuItems.label);
+  return db.select().from(productMenuItems).orderBy(productMenuItems.displayOrder, productMenuItems.label);
+}
+
+export async function upsertProductBrand(input: typeof productBrands.$inferInsert) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  if (input.id) {
+    const { id, ...data } = input;
+    await db.update(productBrands).set(data).where(eq(productBrands.id, id));
+    return id;
+  }
+  const result = await db.insert(productBrands).values(input);
+  return Number(result[0].insertId);
+}
+
+export async function upsertProductMenuItem(input: typeof productMenuItems.$inferInsert) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  if (input.id) {
+    const { id, ...data } = input;
+    await db.update(productMenuItems).set(data).where(eq(productMenuItems.id, id));
+    return id;
+  }
+  const result = await db.insert(productMenuItems).values(input);
+  return Number(result[0].insertId);
+}
+
+export async function deleteProductMenuItem(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.delete(productMenuItems).where(eq(productMenuItems.id, id));
+}
+
+export async function listSparePartBrands(visibleOnly = false) {
+  const db = await getDb();
+  if (!db) return [];
+  if (visibleOnly) return db.select().from(sparePartBrands).where(eq(sparePartBrands.isVisible, true)).orderBy(sparePartBrands.displayOrder, sparePartBrands.name);
+  return db.select().from(sparePartBrands).orderBy(sparePartBrands.displayOrder, sparePartBrands.name);
+}
+
+export async function getSparePartBrandBySlug(slug: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(sparePartBrands).where(eq(sparePartBrands.slug, slug)).limit(1);
+  return rows[0];
+}
+
+export async function upsertSparePartBrand(input: typeof sparePartBrands.$inferInsert) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  if (input.id) {
+    const { id, ...data } = input;
+    await db.update(sparePartBrands).set(data).where(eq(sparePartBrands.id, id));
+    return id;
+  }
+  const result = await db.insert(sparePartBrands).values(input);
+  return Number(result[0].insertId);
+}
+
+export async function listSpareParts(brandId?: number, visibleOnly = false) {
+  const db = await getDb();
+  if (!db) return [];
+  if (brandId) {
+    if (visibleOnly) return db.select().from(spareParts).where(and(eq(spareParts.brandId, brandId), eq(spareParts.isVisible, true))).orderBy(spareParts.displayOrder, spareParts.name);
+    return db.select().from(spareParts).where(eq(spareParts.brandId, brandId)).orderBy(spareParts.displayOrder, spareParts.name);
+  }
+  if (visibleOnly) return db.select().from(spareParts).where(eq(spareParts.isVisible, true)).orderBy(spareParts.displayOrder, spareParts.name);
+  return db.select().from(spareParts).orderBy(spareParts.displayOrder, spareParts.name);
+}
+
+export async function upsertSparePart(input: typeof spareParts.$inferInsert) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  if (input.id) {
+    const { id, ...data } = input;
+    await db.update(spareParts).set(data).where(eq(spareParts.id, id));
+    return id;
+  }
+  const result = await db.insert(spareParts).values(input);
+  return Number(result[0].insertId);
+}
+
+export async function deleteSparePart(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.delete(spareParts).where(eq(spareParts.id, id));
+}
+
+export async function createDocumentRequest(input: Omit<typeof documentRequests.$inferInsert, "id" | "publicNumber" | "createdAt" | "updatedAt">) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const publicNumber = `DOC-${new Date().toISOString().slice(0, 10).replaceAll("-", "")}-${randomUUID().slice(0, 6).toUpperCase()}`;
+  const result = await db.insert(documentRequests).values({ ...input, publicNumber });
+  return { id: Number(result[0].insertId), publicNumber };
+}
+
+export async function listDocumentRequests() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(documentRequests).orderBy(desc(documentRequests.createdAt));
+}
+
+export async function updateDocumentRequestStatus(id: number, status: "pending" | "approved" | "rejected" | "sent", reviewedBy: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(documentRequests).set({
+    status,
+    reviewedBy,
+    reviewedAt: new Date(),
+    sentAt: status === "approved" || status === "sent" ? new Date() : null,
+  }).where(eq(documentRequests.id, id));
 }
