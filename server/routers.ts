@@ -533,8 +533,9 @@ export const appRouter = router({
       void notifyOwner({ title: `New quote request ${result.publicNumber}`, content: `${input.contactPerson} submitted a request from ${input.country}. Review it in the SPM workspace.` }).catch(() => undefined);
       return result;
     }),
-    uploadAttachment: publicProcedure.input(z.object({ quoteRequestId: z.number().int().positive(), fileName: z.string().min(1).max(255), contentType: z.enum(["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "image/jpeg", "image/png", "image/webp", "video/mp4", "video/quicktime"]), sizeBytes: z.number().int().positive().max(10 * 1024 * 1024), description: z.string().max(255).optional(), dataUrl: z.string().startsWith("data:") })).mutation(async ({ input }) => {
+    uploadAttachment: publicProcedure.input(z.object({ quoteRequestId: z.number().int().positive(), accessToken: z.string().min(20).max(100), fileName: z.string().min(1).max(255), contentType: z.enum(["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "image/jpeg", "image/png", "image/webp", "video/mp4", "video/quicktime"]), sizeBytes: z.number().int().positive().max(10 * 1024 * 1024), description: z.string().max(255).optional(), dataUrl: z.string().startsWith("data:") })).mutation(async ({ input }) => {
       const quote = await db.getQuoteRequest(input.quoteRequestId); if (!quote) throw new TRPCError({ code: "NOT_FOUND", message: "Quote request not found." });
+      if (quote.request.publicAccessToken && quote.request.publicAccessToken !== input.accessToken) throw new TRPCError({ code: "FORBIDDEN", message: "Invalid quote access token." });
       const encoded = input.dataUrl.split(",")[1]; if (!encoded) throw new TRPCError({ code: "BAD_REQUEST", message: "File data is missing." }); const buffer = Buffer.from(encoded, "base64"); if (buffer.byteLength > 10 * 1024 * 1024) throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: "Each file must be 10 MB or smaller." }); if (quote.attachments.length >= 5) throw new TRPCError({ code: "BAD_REQUEST", message: "A maximum of 5 files is allowed." }); const extension = input.fileName.split(".").pop()?.toLowerCase() || "bin"; const uploaded = await storagePut(`quote-requests/${input.quoteRequestId}/${randomUUID()}.${extension}`, buffer, input.contentType); const id = await db.addQuoteAttachment({ quoteRequestId: input.quoteRequestId, fileName: input.fileName, contentType: input.contentType, sizeBytes: buffer.byteLength, storageUrl: uploaded.url, description: input.description }); return { id, url: uploaded.url };
     }),
     list: permissionProcedure("quotes.view").query(async () => db.listQuoteRequests()),
@@ -674,9 +675,9 @@ export const appRouter = router({
       id: z.number().int().positive(),
       status: z.enum(["pending", "approved", "rejected", "sent"]),
     })).mutation(async ({ ctx, input }) => {
-      await db.updateDocumentRequestStatus(input.id, input.status, ctx.user.id);
+      const result = await db.updateDocumentRequestStatus(input.id, input.status, ctx.user.id);
       await db.addAuditLog({ actorUserId: ctx.user.id, action: "document_request_status_updated", entityType: "document_request", entityId: String(input.id), metadata: { status: input.status }, ipAddress: clientIp(ctx.req) });
-      return { success: true } as const;
+      return { success: true, downloadToken: result.downloadToken, downloadExpiresAt: result.downloadExpiresAt } as const;
     }),
   }),
 });

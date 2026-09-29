@@ -461,12 +461,13 @@ export async function createQuoteRequest(input: Omit<typeof quoteRequests.$infer
   const db = await getDb();
   if (!db) throw new Error("Database is not available");
   const pendingNumber = `PENDING-${randomUUID()}`;
-  const result = await db.insert(quoteRequests).values({ ...input, publicNumber: pendingNumber });
+  const publicAccessToken = `${randomUUID()}${randomUUID()}`;
+  const result = await db.insert(quoteRequests).values({ ...input, publicNumber: pendingNumber, publicAccessToken });
   const id = Number(result[0].insertId);
   const publicNumber = `SPM-Q-${new Date().getUTCFullYear()}-${String(id).padStart(6, "0")}`;
   await db.update(quoteRequests).set({ publicNumber }).where(eq(quoteRequests.id, id));
   if (items.length) await db.insert(quoteItems).values(items.map(item => ({ ...item, quoteRequestId: id })));
-  return { id, publicNumber };
+  return { id, publicNumber, publicAccessToken };
 }
 
 export async function listQuoteRequests() {
@@ -805,10 +806,33 @@ export async function listDocumentRequests() {
 export async function updateDocumentRequestStatus(id: number, status: "pending" | "approved" | "rejected" | "sent", reviewedBy: number) {
   const db = await getDb();
   if (!db) throw new Error("Database is not available");
+  let downloadToken: string | null = null;
+  let downloadTokenHash: string | null = null;
+  let downloadExpiresAt: Date | null = null;
+  if (status === "approved" || status === "sent") {
+    downloadToken = `${randomUUID().replaceAll("-", "")}${randomUUID().replaceAll("-", "")}`;
+    downloadTokenHash = hashSessionToken(downloadToken);
+    downloadExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  }
   await db.update(documentRequests).set({
     status,
     reviewedBy,
     reviewedAt: new Date(),
     sentAt: status === "approved" || status === "sent" ? new Date() : null,
+    downloadTokenHash,
+    downloadExpiresAt,
   }).where(eq(documentRequests.id, id));
+  return { downloadToken, downloadExpiresAt };
+}
+
+export async function getDocumentRequestByToken(token: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const tokenHash = hashSessionToken(token);
+  const rows = await db.select().from(documentRequests).where(eq(documentRequests.downloadTokenHash, tokenHash)).limit(1);
+  const req = rows[0];
+  if (!req) return undefined;
+  if (!req.downloadExpiresAt || req.downloadExpiresAt < new Date()) return undefined;
+  await db.update(documentRequests).set({ downloadedAt: new Date() }).where(eq(documentRequests.id, req.id));
+  return req;
 }

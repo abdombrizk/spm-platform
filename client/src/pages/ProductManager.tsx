@@ -1173,7 +1173,14 @@ export default function ProductManager() {
                               </Button>
                             </>
                           ) : (
-                            <span className="text-[11px] font-semibold text-slate-400">Processed</span>
+                            <div className="inline-flex flex-col items-end gap-1">
+                              <span className="text-[11px] font-semibold text-emerald-700">Approved & Ready</span>
+                              {(req as any).downloadTokenHash ? (
+                                <span className="font-mono text-[9px] text-slate-500">
+                                  Expires: {(req as any).downloadExpiresAt ? new Date((req as any).downloadExpiresAt).toLocaleDateString() : "7 days"}
+                                </span>
+                              ) : null}
+                            </div>
                           )}
                         </td>
                       </tr>

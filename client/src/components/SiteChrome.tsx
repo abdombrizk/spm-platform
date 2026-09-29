@@ -19,6 +19,9 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 export default function SiteChrome({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [activeMega, setActiveMega] = useState(false);
+  const [activeCompany, setActiveCompany] = useState(false);
+  const [activeServices, setActiveServices] = useState(false);
+  const [activeNews, setActiveNews] = useState(false);
   const [location] = useLocation();
 
   const brandsQuery = trpc.menu.productBrands.useQuery();
@@ -40,7 +43,11 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
           {/* Requirement 1 & 2: Navigation order (1. Company, 2. Products with Hover Mega Menu, 3. Services, 4. Events & News) */}
           <nav className="hidden items-center gap-2 lg:flex" aria-label="Main Navigation">
             {/* 1. Company */}
-            <div className="group relative">
+            <div
+              className="relative"
+              onMouseEnter={() => setActiveCompany(true)}
+              onMouseLeave={() => setActiveCompany(false)}
+            >
               <Link
                 href="/about"
                 className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-5 text-sm font-semibold transition ${
@@ -48,11 +55,17 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
                     ? "text-[#0f6fae]"
                     : "text-[#334155] hover:text-[#0f6fae]"
                 }`}
+                onFocus={() => setActiveCompany(true)}
+                aria-expanded={activeCompany}
               >
                 Company
-                <ChevronDown className="h-3.5 w-3.5 text-[#94a3b8] transition-transform duration-200 group-hover:rotate-180" />
+                <ChevronDown className={`h-3.5 w-3.5 text-[#94a3b8] transition-transform duration-200 ${activeCompany ? "rotate-180" : ""}`} />
               </Link>
-              <div className="pointer-events-none absolute left-0 top-full w-64 translate-y-2 rounded-2xl border border-[#dce7eb] bg-white p-2.5 opacity-0 shadow-2xl transition duration-200 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100">
+              <div
+                className={`absolute left-0 top-full w-64 rounded-2xl border border-[#dce7eb] bg-white p-2.5 shadow-2xl transition duration-200 ${
+                  activeCompany ? "pointer-events-auto visible translate-y-0 opacity-100" : "pointer-events-none invisible translate-y-2 opacity-0"
+                }`}
+              >
                 <Link href="/about" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] hover:bg-[#f0f7fb] hover:text-[#0f6fae]">
                   About SPM <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8]" />
                 </Link>
@@ -76,6 +89,7 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
                 className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-5 text-sm font-semibold transition ${
                   location.startsWith("/catalogue") ? "text-[#0f6fae]" : "text-[#334155] hover:text-[#0f6fae]"
                 }`}
+                onFocus={() => setActiveMega(true)}
                 aria-expanded={activeMega}
               >
                 Products
@@ -166,17 +180,27 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
             </div>
 
             {/* 3. Services */}
-            <div className="group relative">
+            <div
+              className="relative"
+              onMouseEnter={() => setActiveServices(true)}
+              onMouseLeave={() => setActiveServices(false)}
+            >
               <Link
                 href="/services"
                 className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-5 text-sm font-semibold transition ${
                   location.startsWith("/services") ? "text-[#0f6fae]" : "text-[#334155] hover:text-[#0f6fae]"
                 }`}
+                onFocus={() => setActiveServices(true)}
+                aria-expanded={activeServices}
               >
                 Services
-                <ChevronDown className="h-3.5 w-3.5 text-[#94a3b8] transition-transform duration-200 group-hover:rotate-180" />
+                <ChevronDown className={`h-3.5 w-3.5 text-[#94a3b8] transition-transform duration-200 ${activeServices ? "rotate-180" : ""}`} />
               </Link>
-              <div className="pointer-events-none absolute left-0 top-full w-72 translate-y-2 rounded-2xl border border-[#dce7eb] bg-white p-2.5 opacity-0 shadow-2xl transition duration-200 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100">
+              <div
+                className={`absolute left-0 top-full w-72 rounded-2xl border border-[#dce7eb] bg-white p-2.5 shadow-2xl transition duration-200 ${
+                  activeServices ? "pointer-events-auto visible translate-y-0 opacity-100" : "pointer-events-none invisible translate-y-2 opacity-0"
+                }`}
+              >
                 <Link href="/services" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] hover:bg-[#f0f7fb] hover:text-[#0f6fae]">
                   All Services <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8]" />
                 </Link>
@@ -193,7 +217,11 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
             </div>
 
             {/* 4. Events & News */}
-            <div className="group relative">
+            <div
+              className="relative"
+              onMouseEnter={() => setActiveNews(true)}
+              onMouseLeave={() => setActiveNews(false)}
+            >
               <Link
                 href="/news"
                 className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-5 text-sm font-semibold transition ${
@@ -201,11 +229,17 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
                     ? "text-[#0f6fae]"
                     : "text-[#334155] hover:text-[#0f6fae]"
                 }`}
+                onFocus={() => setActiveNews(true)}
+                aria-expanded={activeNews}
               >
                 Events & News
-                <ChevronDown className="h-3.5 w-3.5 text-[#94a3b8] transition-transform duration-200 group-hover:rotate-180" />
+                <ChevronDown className={`h-3.5 w-3.5 text-[#94a3b8] transition-transform duration-200 ${activeNews ? "rotate-180" : ""}`} />
               </Link>
-              <div className="pointer-events-none absolute left-0 top-full w-64 translate-y-2 rounded-2xl border border-[#dce7eb] bg-white p-2.5 opacity-0 shadow-2xl transition duration-200 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100">
+              <div
+                className={`absolute left-0 top-full w-64 rounded-2xl border border-[#dce7eb] bg-white p-2.5 shadow-2xl transition duration-200 ${
+                  activeNews ? "pointer-events-auto visible translate-y-0 opacity-100" : "pointer-events-none invisible translate-y-2 opacity-0"
+                }`}
+              >
                 <Link href="/news" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] hover:bg-[#f0f7fb] hover:text-[#0f6fae]">
                   Latest News <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8]" />
                 </Link>

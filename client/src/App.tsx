@@ -20,6 +20,7 @@ const ServiceRequest = lazy(() => import("@/pages/ServiceRequest"));
 const ServiceRequestsManager = lazy(() => import("@/pages/ServiceRequestsManager"));
 const ContentLanding = lazy(() => import("@/pages/ContentLanding"));
 const SparePartsPage = lazy(() => import("@/pages/SparePartsPage"));
+const ContactPage = lazy(() => import("@/pages/ContactPage"));
 
 function Router() {
   return (
@@ -47,7 +48,7 @@ function Router() {
         <Route path="/careers" component={ContentLanding} />
         <Route path="/spare-parts" component={SparePartsPage} />
         <Route path="/resources" component={ContentLanding} />
-        <Route path="/contact" component={ContentLanding} />
+        <Route path="/contact" component={ContactPage} />
         <Route path="/privacy" component={ContentLanding} />
         <Route path="/terms" component={ContentLanding} />
         <Route path="/404" component={NotFound} />

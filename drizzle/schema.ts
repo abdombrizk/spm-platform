@@ -121,6 +121,7 @@ export const quoteRequesterTypes = ["doctor", "biomedical_engineer", "technician
 export const quoteRequests = mysqlTable("quote_requests", {
   id: int("id").autoincrement().primaryKey(),
   publicNumber: varchar("publicNumber", { length: 40 }).notNull().unique(),
+  publicAccessToken: varchar("publicAccessToken", { length: 80 }).unique(),
   customerAccountId: int("customerAccountId"),
   organizationName: varchar("organizationName", { length: 255 }),
   requesterType: mysqlEnum("requesterType", quoteRequesterTypes),
@@ -426,6 +427,9 @@ export const documentRequests = mysqlTable("document_requests", {
   documentType: mysqlEnum("documentType", documentRequestTypes).notNull(),
   documentUrl: text("documentUrl"),
   documentName: varchar("documentName", { length: 255 }),
+  downloadTokenHash: varchar("downloadTokenHash", { length: 128 }).unique(),
+  downloadExpiresAt: timestamp("downloadExpiresAt"),
+  downloadedAt: timestamp("downloadedAt"),
   requesterName: varchar("requesterName", { length: 255 }).notNull(),
   requesterEmail: varchar("requesterEmail", { length: 320 }).notNull(),
   requesterOrganization: varchar("requesterOrganization", { length: 255 }),

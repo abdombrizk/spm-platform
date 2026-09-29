@@ -8,6 +8,8 @@ import { registerStorageProxy } from "./storageProxy";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import * as db from "../db";
+import { storageGetSignedUrl } from "../storage";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -36,6 +38,34 @@ async function startServer() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   registerStorageProxy(app);
   registerOAuthRoutes(app);
+
+  // Secure controlled document download endpoint
+  app.get("/api/documents/download", async (req, res) => {
+    const token = typeof req.query.token === "string" ? req.query.token.trim() : "";
+    if (!token) {
+      res.status(400).send("Document download token is missing.");
+      return;
+    }
+    try {
+      const documentReq = await db.getDocumentRequestByToken(token);
+      if (!documentReq || !documentReq.documentUrl) {
+        res.status(403).send("This document link is invalid, expired, or has not been approved by the SPM team.");
+        return;
+      }
+      const targetUrl = documentReq.documentUrl;
+      if (targetUrl.startsWith("/manus-storage/")) {
+        const relKey = targetUrl.replace("/manus-storage/", "");
+        const signedUrl = await storageGetSignedUrl(relKey);
+        res.redirect(302, signedUrl);
+        return;
+      }
+      res.redirect(302, targetUrl);
+    } catch (error) {
+      console.error("[Documents] Download resolution failed:", error);
+      res.status(500).send("Unable to resolve document download.");
+    }
+  });
+
   // tRPC API
   app.use(
     "/api/trpc",

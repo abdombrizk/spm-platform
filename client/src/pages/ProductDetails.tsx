@@ -50,6 +50,7 @@ export default function ProductDetails() {
   const [docForm, setDocForm] = useState({ name: "", email: "", organization: "", message: "" });
   const [docSuccess, setDocSuccess] = useState<string | null>(null);
   const [docError, setDocError] = useState<string | null>(null);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   if (query.isLoading) {
     return (
@@ -84,6 +85,7 @@ export default function ProductDetails() {
 
   const data = item.data as Record<string, any>;
   const tech = (data.technicalSpecifications ?? {}) as Record<string, string>;
+  const allImages = [data.mainImage, ...(data.additionalImages || [])].filter(Boolean) as string[];
 
   function openDocRequest(type: any, name: string, url?: string) {
     setSelectedDoc({ type, name, url });
@@ -137,9 +139,9 @@ export default function ProductDetails() {
             {/* Left: Product Image Box */}
             <div className="overflow-hidden rounded-3xl border border-[#dce7eb] bg-white p-6 shadow-sm">
               <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl bg-[#f1f5f9]">
-                {data.mainImage ? (
+                {allImages.length ? (
                   <img
-                    src={data.mainImage}
+                    src={allImages[activeImageIndex] || allImages[0]}
                     alt={data.name}
                     className="h-full w-full object-contain transition duration-500 hover:scale-105"
                   />
@@ -154,6 +156,24 @@ export default function ProductDetails() {
                   </div>
                 ) : null}
               </div>
+
+              {/* Thumbnails list if multiple images exist */}
+              {allImages.length > 1 ? (
+                <div className="mt-4 flex gap-2.5 overflow-x-auto pb-1">
+                  {allImages.map((img, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setActiveImageIndex(idx)}
+                      className={`relative h-16 w-20 shrink-0 overflow-hidden rounded-xl border p-1 transition ${
+                        activeImageIndex === idx ? "border-[#0f6fae] ring-2 ring-[#0f6fae]/20" : "border-[#e2e8f0] hover:border-[#94a3b8]"
+                      }`}
+                    >
+                      <img src={img} alt={`${data.name} view ${idx + 1}`} className="h-full w-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              ) : null}
 
               {/* Badges / Modality metadata below image */}
               <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-[#f1f5f9] pt-4">
@@ -190,7 +210,7 @@ export default function ProductDetails() {
               {/* Requirement 3: Request Quote CTA passed with product slug and equipment details */}
               <div className="mt-8 flex flex-wrap gap-4">
                 <Link
-                  href={`/request-a-quote?product=${encodeURIComponent(item.slug)}`}
+                  href={`/request-a-quote?product=${encodeURIComponent(item.slug)}&equipment=${encodeURIComponent(data.name)}&brand=${encodeURIComponent(data.brand || data.manufacturer || "")}&model=${encodeURIComponent(data.modelNumber || "")}`}
                   className="w-full sm:w-auto"
                 >
                   <Button className="h-12 w-full bg-[#f36b21] px-8 text-sm font-bold text-white shadow-md transition hover:bg-[#d95316] hover:shadow-lg active:scale-95 sm:w-auto">
