@@ -36,11 +36,12 @@ const fallback: Record<string, string> = {
   "hero.secondary.url": "/request-service",
   "hero.image": "/manus-storage/spm-hero-medical-engineer_fd2460bc.jpg",
   "careers.image": "/manus-storage/spm-service-engineer_96348b80.jpg",
+  "careers.visible": "true",
 };
 
 const solutions = [
   { icon: Wrench, eyebrow: "Service", title: "Practical support for equipment that cannot wait.", text: "From corrective and preventive maintenance to installation, calibration and technical support.", href: "/services", image: "/manus-storage/spm-service-engineer_96348b80.jpg", cta: "Explore services" },
-  { icon: Boxes, eyebrow: "Equipment", title: "The right imaging system for the job.", text: "Explore a controlled catalogue of medical imaging equipment, technical specifications and supporting documents.", href: "/catalogue", image: "/manus-storage/spm-equipment-carm_d9a563ca.jpg", cta: "Browse equipment" },
+  { icon: Boxes, eyebrow: "Products", title: "The right imaging system for the job.", text: "Explore a controlled catalogue of medical imaging equipment, technical specifications and supporting documents.", href: "/catalogue", image: "/manus-storage/spm-equipment-carm_d9a563ca.jpg", cta: "Browse equipment" },
   { icon: Layers, eyebrow: "Spare parts", title: "Parts support that starts with the details.", text: "Share the equipment context, part information and evidence your team has so SPM can review the need accurately.", href: "/spare-parts", image: "/manus-storage/spm-parts-lab_656efe60.jpg", cta: "Request a part" },
 ];
 
@@ -90,7 +91,6 @@ export default function Home() {
   const statsQuery = trpc.cms.publishedStats.useQuery();
   const brandsQuery = trpc.parts.brands.useQuery();
   const eventsPageQuery = trpc.cms.publishedBySlug.useQuery({ slug: "events" });
-  const careersPageQuery = trpc.cms.publishedBySlug.useQuery({ slug: "careers" });
 
   const rawStats = statsQuery.data ?? [];
   const stats = new Map(rawStats.map(item => [item.metricKey, item]));
@@ -127,7 +127,7 @@ export default function Home() {
       bg: "bg-[#eaf4fa]",
     },
     {
-      num: parseInt(experience?.value ?? "15", 10) || 15,
+      num: parseInt(experience?.value ?? "7", 10) || 7,
       prefix: "+",
       label: experience?.label || "Years of Experience",
       sub: "Radiology engineering expertise",
@@ -155,6 +155,8 @@ export default function Home() {
     const eventTime = new Date(ev.date).getTime();
     return !isNaN(eventTime) && eventTime <= Date.now();
   });
+
+  const showCareers = content["careers.visible"] !== "false" && content["careers.visible"] !== "";
 
   return (
     <SiteChrome transparentHeader={false}>
@@ -223,7 +225,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Section 2: The Trust Bar (Social Proof - Animated Counters from CMS) */}
+        {/* Section 2: The Trust Bar (Social Proof - Animated Counters from CMS, experience set to 7) */}
         <section className="border-b border-[#dce7eb] bg-white py-10" aria-label="Social Proof Trust Bar">
           <div className="mx-auto max-w-[1280px] px-5 lg:px-8">
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -252,7 +254,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Section 3: Solutions Overview */}
+        {/* Section 3: Solutions Overview - Entire Card Clickable UX */}
         <section className="mx-auto max-w-[1240px] px-5 py-20 lg:px-8 lg:py-24">
           <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div>
@@ -265,29 +267,31 @@ export default function Home() {
               Why SPM <ArrowUpRight className="ml-2 h-4 w-4" />
             </Link>
           </div>
+
           <div className="mt-12 grid gap-6 lg:grid-cols-3">
             {solutions.map(item => (
-              <article
+              <Link
                 key={item.title}
-                className="group overflow-hidden rounded-2xl border border-[#d7e0e7] bg-white shadow-[0_2px_8px_rgba(11,41,66,.08)] transition hover:-translate-y-1 hover:shadow-[0_12px_28px_rgba(11,41,66,.12)]"
+                href={item.href}
+                className="group block cursor-pointer overflow-hidden rounded-2xl border border-[#d7e0e7] bg-white shadow-[0_2px_8px_rgba(11,41,66,.08)] transition-all duration-300 hover:-translate-y-1.5 hover:border-[#0f6fae] hover:shadow-[0_16px_32px_rgba(11,41,66,.14)]"
               >
                 <div className="relative h-56 overflow-hidden">
                   <img src={item.image} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0a4052]/60 to-transparent" />
-                  <div className="absolute bottom-4 left-4 rounded-xl bg-white/95 p-3 text-[#0f6fae]">
+                  <div className="absolute bottom-4 left-4 rounded-xl bg-white/95 p-3 text-[#0f6fae] shadow-sm">
                     <item.icon className="h-5 w-5" />
                   </div>
                 </div>
                 <div className="p-6">
                   <p className="text-xs font-bold uppercase tracking-[.16em] text-[#0f6fae]">{item.eyebrow}</p>
-                  <h3 className="mt-3 text-2xl font-semibold leading-tight text-[#0a4052]">{item.title}</h3>
+                  <h3 className="mt-3 text-2xl font-semibold leading-tight text-[#0a4052] transition-colors group-hover:text-[#0f6fae]">{item.title}</h3>
                   <p className="mt-3 text-sm leading-7 text-[#617180]">{item.text}</p>
-                  <Link href={item.href} className="mt-6 inline-flex items-center text-sm font-semibold text-[#d95316]">
+                  <div className="mt-6 inline-flex items-center text-sm font-bold text-[#d95316] transition-transform group-hover:translate-x-1">
                     {item.cta}
                     <ArrowUpRight className="ml-2 h-4 w-4" />
-                  </Link>
+                  </div>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         </section>
@@ -389,63 +393,65 @@ export default function Home() {
           </section>
         ) : null}
 
-        {/* Section 6: Join the Experts - Careers Section */}
-        <section className="relative overflow-hidden bg-[#061f2b] py-20 text-white lg:py-24" aria-label="Careers Section">
-          <div className="absolute inset-0 -z-10 opacity-20">
-            <img
-              src={content["careers.image"] || fallback["careers.image"]}
-              alt="SPM engineering team in field operation"
-              className="h-full w-full object-cover object-center"
-            />
-          </div>
-          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#061f2b] via-[#061f2b]/90 to-[#061f2b]/70" />
+        {/* Section 6: Join the Experts - Careers Section (Owner-controlled visibility) */}
+        {showCareers ? (
+          <section className="relative overflow-hidden bg-[#061f2b] py-20 text-white lg:py-24" aria-label="Careers Section">
+            <div className="absolute inset-0 -z-10 opacity-20">
+              <img
+                src={content["careers.image"] || fallback["careers.image"]}
+                alt="SPM engineering team in field operation"
+                className="h-full w-full object-cover object-center"
+              />
+            </div>
+            <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#061f2b] via-[#061f2b]/90 to-[#061f2b]/70" />
 
-          <div className="mx-auto max-w-[1240px] px-5 lg:px-8">
-            <div className="grid gap-10 lg:grid-cols-[1.2fr_.8fr] lg:items-center">
-              <div>
-                <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-[#8be0d5]">
-                  <Users className="h-3.5 w-3.5" /> Join Our Engineering Team
+            <div className="mx-auto max-w-[1240px] px-5 lg:px-8">
+              <div className="grid gap-10 lg:grid-cols-[1.2fr_.8fr] lg:items-center">
+                <div>
+                  <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-[#8be0d5]">
+                    <Users className="h-3.5 w-3.5" /> Join Our Engineering Team
+                  </div>
+                  <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
+                    Build your career at the forefront of medical imaging technology.
+                  </h2>
+                  <p className="mt-5 max-w-xl text-base leading-relaxed text-white/80 sm:text-lg">
+                    SPM is growing. We seek ambitious biomedical engineers, imaging technicians, and quality specialists dedicated to patient safety and clinical excellence.
+                  </p>
+                  <div className="mt-8 flex flex-wrap gap-4">
+                    <Link href="/careers">
+                      <Button size="lg" className="h-12 bg-[#f36b21] px-7 text-sm font-bold text-white shadow-lg hover:bg-[#d95316]">
+                        Explore Open Roles <ArrowUpRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </Link>
+                    <Link href="/contact?subject=Careers">
+                      <Button size="lg" variant="outline" className="h-12 border-white/40 bg-transparent px-7 text-sm font-bold text-white hover:bg-white/10">
+                        Submit Your CV <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
-                <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
-                  Build your career at the forefront of medical imaging technology.
-                </h2>
-                <p className="mt-5 max-w-xl text-base leading-relaxed text-white/80 sm:text-lg">
-                  SPM is growing. We seek ambitious biomedical engineers, imaging technicians, and quality specialists dedicated to patient safety and clinical excellence.
-                </p>
-                <div className="mt-8 flex flex-wrap gap-4">
-                  <Link href="/careers">
-                    <Button size="lg" className="h-12 bg-[#f36b21] px-7 text-sm font-bold text-white shadow-lg hover:bg-[#d95316]">
-                      Explore Open Roles <ArrowUpRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-                  <Link href="/contact?subject=Careers">
-                    <Button size="lg" variant="outline" className="h-12 border-white/40 bg-transparent px-7 text-sm font-bold text-white hover:bg-white/10">
-                      Submit Your CV <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-                </div>
-              </div>
 
-              <div className="rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur-md sm:p-8">
-                <p className="text-xs font-bold uppercase tracking-widest text-[#8be0d5]">Why Work with SPM?</p>
-                <ul className="mt-4 space-y-3.5 text-sm text-white/85">
-                  <li className="flex items-start gap-2.5">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#8be0d5]" />
-                    <span>Hands-on training on advanced C-Arm and Digital X-Ray systems.</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#8be0d5]" />
-                    <span>Compliance with ISO 13485 and European MDR quality standards.</span>
-                  </li>
-                  <li className="flex items-start gap-2.5">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#8be0d5]" />
-                    <span>High-impact projects across top-tier public and private healthcare facilities.</span>
-                  </li>
-                </ul>
+                <div className="rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur-md sm:p-8">
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#8be0d5]">Why Work with SPM?</p>
+                  <ul className="mt-4 space-y-3.5 text-sm text-white/85">
+                    <li className="flex items-start gap-2.5">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#8be0d5]" />
+                      <span>Hands-on training on advanced C-Arm and Digital X-Ray systems.</span>
+                    </li>
+                    <li className="flex items-start gap-2.5">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#8be0d5]" />
+                      <span>Compliance with ISO 13485 and European MDR quality standards.</span>
+                    </li>
+                    <li className="flex items-start gap-2.5">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#8be0d5]" />
+                      <span>High-impact projects across top-tier public and private healthcare facilities.</span>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        ) : null}
 
         {/* Section 7: Operational Rhythm */}
         <section className="bg-[#eaf4fa]">

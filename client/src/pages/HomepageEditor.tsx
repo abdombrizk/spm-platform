@@ -29,6 +29,7 @@ const groups = [
   { title: "Hero section", keys: ["hero.eyebrow", "hero.title", "hero.description", "hero.primary.label", "hero.primary.url", "hero.secondary.label", "hero.secondary.url", "hero.image"] },
   { title: "Information panel", keys: ["panel.eyebrow", "panel.title", "panel.metric1.value", "panel.metric1.label", "panel.metric2.value", "panel.metric2.label", "panel.description"] },
   { title: "Feature cards", keys: ["highlight.1.title", "highlight.1.text", "highlight.2.title", "highlight.2.text", "highlight.3.title", "highlight.3.text"] },
+  { title: "Section visibility", keys: ["careers.visible"] },
 ];
 
 export default function HomepageEditor() {
