@@ -21,6 +21,7 @@ const ServiceRequestsManager = lazy(() => import("@/pages/ServiceRequestsManager
 const ContentLanding = lazy(() => import("@/pages/ContentLanding"));
 const SparePartsPage = lazy(() => import("@/pages/SparePartsPage"));
 const ContactPage = lazy(() => import("@/pages/ContactPage"));
+const AboutPage = lazy(() => import("@/pages/AboutPage"));
 
 function Router() {
   return (
@@ -39,7 +40,7 @@ function Router() {
         <Route path="/owner/quotes" component={QuotesManager} />
         <Route path="/request-service" component={ServiceRequest} />
         <Route path="/owner/service-requests" component={ServiceRequestsManager} />
-        <Route path="/about" component={ContentLanding} />
+        <Route path="/about" component={AboutPage} />
         <Route path="/maintenance-contracts" component={ContentLanding} />
         <Route path="/faqs" component={ContentLanding} />
         <Route path="/downloads" component={ContentLanding} />
