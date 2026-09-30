@@ -33,9 +33,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
   const items = itemsQuery.data ?? [];
   const partBrands = partsQuery.data ?? [];
 
-  const italrayBrand = brands.find(b => b.slug === "italray");
   const hermannBrand = brands.find(b => b.slug === "hermann");
-  const italrayItems = items.filter(item => item.brandId === italrayBrand?.id);
   const hermannItems = items.filter(item => item.brandId === hermannBrand?.id);
 
   const navIdle = transparentHeader ? "text-white/90 hover:text-white" : "text-[#334155] hover:text-[#0f6fae]";
@@ -72,7 +70,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                 <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${transparentHeader ? "text-white/80" : "text-[#94a3b8]"} ${activeCompany ? "rotate-180" : ""}`} />
               </Link>
               <div
-                className={`absolute left-0 top-full w-64 rounded-2xl border border-[#dce7eb] bg-white p-2.5 shadow-2xl transition duration-200 ${
+                className={`absolute left-0 top-full w-64 rounded-2xl border border-[#dce7eb] bg-white p-2.5 shadow-2xl transition-[opacity,transform,visibility] duration-300 ease-out ${
                   activeCompany ? "pointer-events-auto visible translate-y-0 opacity-100" : "pointer-events-none invisible translate-y-2 opacity-0"
                 }`}
               >
@@ -108,7 +106,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
 
               {/* 3-Tab Hover Cascading Dropdown */}
               <div
-                className={`absolute left-0 top-full w-[780px] rounded-3xl border border-[#dce7eb] bg-white p-5 shadow-2xl backdrop-blur-xl transition-all duration-200 ${
+                className={`absolute left-0 top-full w-[780px] rounded-3xl border border-[#dce7eb] bg-white p-5 shadow-2xl backdrop-blur-xl transition-[opacity,transform,visibility] duration-300 ease-out ${
                   activeMega ? "pointer-events-auto visible translate-y-1 opacity-100" : "pointer-events-none invisible translate-y-3 opacity-0"
                 }`}
               >
@@ -117,10 +115,12 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                   <div className="space-y-2 border-r border-[#eef3f5] pr-4">
                     <p className="px-3 text-[11px] font-bold uppercase tracking-wider text-[#94a3b8]">Product Categories</p>
 
-                    {/* 1. Italray */}
-                    <div
+                    {/* 1. Italray — direct public catalogue link */}
+                    <Link
+                      href="/catalogue"
                       onMouseEnter={() => setActiveProductTab("italray")}
-                      className={`group flex cursor-pointer items-center justify-between rounded-xl p-3 transition ${
+                      onClick={() => setActiveMega(false)}
+                      className={`group flex items-center justify-between rounded-xl p-3 transition ${
                         activeProductTab === "italray" ? "bg-[#0f6fae] text-white shadow-md shadow-[#0f6fae]/20" : "text-[#334155] hover:bg-[#f0f7fb] hover:text-[#0f6fae]"
                       }`}
                     >
@@ -132,7 +132,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                         </div>
                       </div>
                       <ChevronRight className={`h-4 w-4 transition-transform ${activeProductTab === "italray" ? "translate-x-1" : ""}`} />
-                    </div>
+                    </Link>
 
                     {/* 2. Hermann Medizintechnik */}
                     <div
@@ -172,35 +172,20 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                   {/* Right Column: Dynamic Content Pane for the active branch */}
                   <div className="flex flex-col justify-between py-1">
                     {activeProductTab === "italray" ? (
-                      <div>
+                      <div className="animate-in fade-in slide-in-from-right-2 duration-300">
                         <div className="mb-3 flex items-center justify-between border-b border-[#eef3f5] pb-2">
-                          <span className="text-xs font-bold uppercase tracking-wider text-[#0f6fae]">Italray Digital Solutions</span>
-                          <Link href="/catalogue" className="text-xs font-semibold text-[#d95316] hover:underline">
-                            View All Italray <ArrowUpRight className="ml-1 inline h-3 w-3" />
+                          <span className="text-xs font-bold uppercase tracking-wider text-[#0f6fae]">Italray Imaging Systems</span>
+                          <Link href="/catalogue" onClick={() => setActiveMega(false)} className="text-xs font-semibold text-[#d95316] hover:underline">
+                            Open public catalogue <ArrowUpRight className="ml-1 inline h-3 w-3" />
                           </Link>
                         </div>
-                        <div className="space-y-1.5">
-                          {italrayItems.map(item => (
-                            <Link
-                              key={item.id}
-                              href={item.href}
-                              className="group flex items-center gap-3 rounded-xl p-2 transition hover:bg-[#f8fafc]"
-                            >
-                              {item.imageUrl ? (
-                                <img src={item.imageUrl} alt="" className="h-10 w-10 shrink-0 rounded-lg border border-[#e2e8f0] object-cover" />
-                              ) : (
-                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#eaf4fa] text-[#0f6fae]">
-                                  <Boxes className="h-4 w-4" />
-                                </div>
-                              )}
-                              <div className="min-w-0 flex-1">
-                                <p className="truncate text-xs font-bold text-[#1e293b] group-hover:text-[#0f6fae]">{item.label}</p>
-                                <p className="text-[10px] text-[#64748b]">Clinical Fluoroscopy & Radiography</p>
-                              </div>
-                              <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8] opacity-0 transition group-hover:opacity-100" />
-                            </Link>
-                          ))}
-                        </div>
+                        <Link href="/catalogue" onClick={() => setActiveMega(false)} className="group block rounded-2xl border border-[#bcdde2] bg-[#f7fafc] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#0f6fae] hover:bg-white hover:shadow-lg">
+                          <div className="flex items-start gap-3">
+                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#eaf4fa] text-[#0f6fae]"><Boxes className="h-5 w-5" /></div>
+                            <div><p className="text-sm font-bold text-[#0a4052] group-hover:text-[#0f6fae]">Explore the public Italray catalogue</p><p className="mt-1 text-xs leading-5 text-[#64748b]">Browse published systems and open full product details from the general catalogue page.</p></div>
+                          </div>
+                          <span className="mt-4 inline-flex items-center text-xs font-bold text-[#d95316]">Browse Italray systems <ArrowUpRight className="ml-1 h-3 w-3" /></span>
+                        </Link>
                       </div>
                     ) : activeProductTab === "hermann" ? (
                       <div>
@@ -295,7 +280,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                 <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${transparentHeader ? "text-white/80" : "text-[#94a3b8]"} ${activeServices ? "rotate-180" : ""}`} />
               </Link>
               <div
-                className={`absolute left-0 top-full w-72 rounded-2xl border border-[#dce7eb] bg-white p-2.5 shadow-2xl transition duration-200 ${
+                className={`absolute left-0 top-full w-72 rounded-2xl border border-[#dce7eb] bg-white p-2.5 shadow-2xl transition-[opacity,transform,visibility] duration-300 ease-out ${
                   activeServices ? "pointer-events-auto visible translate-y-0 opacity-100" : "pointer-events-none invisible translate-y-2 opacity-0"
                 }`}
               >
@@ -331,7 +316,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                 <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${transparentHeader ? "text-white/80" : "text-[#94a3b8]"} ${activeNews ? "rotate-180" : ""}`} />
               </Link>
               <div
-                className={`absolute left-0 top-full w-64 rounded-2xl border border-[#dce7eb] bg-white p-2.5 shadow-2xl transition duration-200 ${
+                className={`absolute left-0 top-full w-64 rounded-2xl border border-[#dce7eb] bg-white p-2.5 shadow-2xl transition-[opacity,transform,visibility] duration-300 ease-out ${
                   activeNews ? "pointer-events-auto visible translate-y-0 opacity-100" : "pointer-events-none invisible translate-y-2 opacity-0"
                 }`}
               >

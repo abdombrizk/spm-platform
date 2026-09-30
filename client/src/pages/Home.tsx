@@ -161,67 +161,51 @@ export default function Home() {
   return (
     <SiteChrome transparentHeader={false}>
       <main>
-        {/* Section 1: Hero Section (SPM Brand Identity Style, Left-Aligned Content) */}
-        <section className="relative overflow-hidden border-b border-[#dce7eb]/80 bg-[#f7fafc]">
-          <div className="mx-auto grid max-w-[1280px] gap-12 px-5 py-14 sm:py-20 lg:grid-cols-[1.05fr_.95fr] lg:items-center lg:px-8 lg:py-24">
-            {/* Left Content Column */}
-            <div className="relative z-10 text-left">
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#bcdde2] bg-white px-3.5 py-1.5 text-xs font-bold uppercase tracking-[.18em] text-[#0f6fae] shadow-sm">
+        {/* Section 1: Full-bleed Hero with SPM colors and left-aligned copy */}
+        <section className="relative isolate min-h-[680px] overflow-hidden border-b border-[#0a4052] bg-[#061f2b] text-white sm:min-h-[740px]">
+          <img
+            src={content["hero.image"] || fallback["hero.image"]}
+            alt="SPM biomedical engineer working on medical imaging equipment"
+            className="absolute inset-0 h-full w-full object-cover object-center transition duration-700 hover:scale-[1.02]"
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,31,43,.96)_0%,rgba(6,31,43,.84)_38%,rgba(6,31,43,.38)_72%,rgba(6,31,43,.56)_100%)]" aria-hidden="true" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/70 via-transparent to-[#061f2b]/20" aria-hidden="true" />
+          <div className="relative mx-auto flex min-h-[680px] max-w-[1280px] items-center px-5 py-28 sm:min-h-[740px] lg:px-8">
+            <div className="max-w-2xl text-left">
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#8be0d5]/40 bg-[#061f2b]/45 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[.18em] text-[#8be0d5] shadow-lg backdrop-blur-sm">
                 <span className="h-2 w-2 rounded-full bg-[#60c1bb]" />
                 {content["hero.eyebrow"] || fallback["hero.eyebrow"]}
               </div>
-              <h1 className="max-w-2xl text-4xl font-semibold leading-[1.05] tracking-[-.04em] text-[#0a4052] sm:text-5xl lg:text-[64px]">
+              <h1 className="max-w-2xl text-4xl font-semibold leading-[1.04] tracking-[-.04em] text-white sm:text-5xl lg:text-[68px]">
                 {content["hero.title"] || fallback["hero.title"]}
               </h1>
-              <p className="mt-6 max-w-xl text-base leading-8 text-[#536474] sm:text-lg">
+              <p className="mt-6 max-w-xl text-base leading-8 text-white/80 sm:text-lg">
                 {content["hero.description"] || fallback["hero.description"]}
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-3.5">
                 <Link href={content["hero.primary.url"] || fallback["hero.primary.url"]}>
-                  <Button size="lg" className="h-12 rounded-lg bg-[#f36b21] px-7 text-sm font-bold text-white shadow-lg shadow-[#f36b21]/20 transition-all hover:-translate-y-0.5 hover:bg-[#d95316] hover:shadow-xl active:scale-95">
+                  <Button size="lg" className="h-12 rounded-lg bg-[#f36b21] px-7 text-sm font-bold text-white shadow-lg shadow-[#f36b21]/25 transition-all hover:-translate-y-0.5 hover:bg-[#d95316] hover:shadow-xl active:scale-95">
                     {content["hero.primary.label"] || fallback["hero.primary.label"]}
                     <ArrowUpRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
                 <Link href={content["hero.secondary.url"] || fallback["hero.secondary.url"]}>
-                  <Button size="lg" variant="outline" className="h-12 rounded-lg border-2 border-[#0f6fae] bg-transparent px-7 text-sm font-bold text-[#0f6fae] transition-all hover:-translate-y-0.5 hover:bg-[#eaf4fa] active:scale-95">
+                  <Button size="lg" variant="outline" className="h-12 rounded-lg border-2 border-white/70 bg-white/5 px-7 text-sm font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-white/15 active:scale-95">
                     {content["hero.secondary.label"] || fallback["hero.secondary.label"]}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
               </div>
-              <div className="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-sm font-medium text-[#617180]">
-                <span className="inline-flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-[#1e8ac4]" /> Structured request journeys
-                </span>
-                <span className="inline-flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-[#1e8ac4]" /> Controlled & verified content
-                </span>
+              <div className="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-sm font-medium text-white/75">
+                <span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-[#8be0d5]" /> Structured request journeys</span>
+                <span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-[#8be0d5]" /> Controlled & verified content</span>
               </div>
             </div>
-
-            {/* Right Visual Frame */}
-            <div className="relative min-h-[440px] overflow-hidden rounded-[32px] bg-[#0a4052] shadow-2xl shadow-[#0a4052]/20 lg:min-h-[560px]">
-              <img
-                src={content["hero.image"] || fallback["hero.image"]}
-                alt="SPM biomedical engineer working on medical imaging equipment"
-                className="absolute inset-0 h-full w-full object-cover object-center transition duration-700 hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0a4052]/85 via-[#0a4052]/20 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
-                <div className="max-w-md rounded-2xl border border-white/25 bg-[#0a4052]/80 p-5 text-white shadow-lg backdrop-blur-md">
-                  <p className="text-xs font-bold uppercase tracking-[.18em] text-[#8be0d5]">
-                    {content["panel.eyebrow"] || fallback["panel.eyebrow"]}
-                  </p>
-                  <p className="mt-2 text-xl font-semibold leading-snug">
-                    {content["panel.title"] || fallback["panel.title"]}
-                  </p>
-                  <p className="mt-2 text-xs leading-5 text-white/80">
-                    {content["panel.description"] || fallback["panel.description"]}
-                  </p>
-                </div>
-              </div>
-            </div>
+          </div>
+          <div className="absolute bottom-6 right-5 hidden max-w-sm rounded-2xl border border-white/20 bg-[#061f2b]/70 p-5 text-white shadow-xl backdrop-blur-md lg:block lg:right-8">
+            <p className="text-xs font-bold uppercase tracking-[.18em] text-[#8be0d5]">{content["panel.eyebrow"] || fallback["panel.eyebrow"]}</p>
+            <p className="mt-2 text-xl font-semibold leading-snug">{content["panel.title"] || fallback["panel.title"]}</p>
+            <p className="mt-2 text-xs leading-5 text-white/75">{content["panel.description"] || fallback["panel.description"]}</p>
           </div>
         </section>
 
