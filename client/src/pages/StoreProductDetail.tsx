@@ -34,6 +34,8 @@ function ProductView({ product }: { product: Product }) {
     product.variants[0];
   const isAvailable = selectedVariant?.availableForSale ?? false;
   const currentImage = product.images[activeImageIndex] || product.images[0];
+  const isQuoteOnly = product.tags.includes("Quote Only");
+  const quoteHref = `/request-a-quote?equipment=${encodeURIComponent(product.title)}&brand=${encodeURIComponent(product.vendor || "Italray")}&model=${encodeURIComponent(product.handle)}`;
 
   const handleAddToCart = async () => {
     if (!selectedVariant || !isAvailable) return;
@@ -165,21 +167,27 @@ function ProductView({ product }: { product: Product }) {
 
             {/* Price Box */}
             <div className="mt-6 border-y border-[#f1f5f9] py-5">
-              <p className="text-xs uppercase tracking-wider text-[#94a3b8]">Unit Price</p>
+              <p className="text-xs uppercase tracking-wider text-[#94a3b8]">
+                {isQuoteOnly ? "Commercial terms" : "Unit Price"}
+              </p>
               <div className="mt-1 flex items-baseline gap-3">
                 <span className="text-3xl font-extrabold text-[#0a4052]">
-                  {selectedVariant
-                    ? formatMoney(selectedVariant.price)
-                    : formatMoney(product.priceRange.min)}
+                  {isQuoteOnly
+                    ? "Request a quote"
+                    : selectedVariant
+                      ? formatMoney(selectedVariant.price)
+                      : formatMoney(product.priceRange.min)}
                 </span>
-                {selectedVariant?.compareAtPrice && (
+                {!isQuoteOnly && selectedVariant?.compareAtPrice && (
                   <span className="text-base text-[#94a3b8] line-through">
                     {formatMoney(selectedVariant.compareAtPrice)}
                   </span>
                 )}
               </div>
               <p className="mt-1 text-xs text-[#64748b]">
-                Secure direct checkout powered by Shopify Storefront API
+                {isQuoteOnly
+                  ? "Configuration, installation, training and delivery are quoted to your facility requirements."
+                  : "Secure direct checkout powered by Shopify Storefront API"}
               </p>
             </div>
 
@@ -212,61 +220,74 @@ function ProductView({ product }: { product: Product }) {
             )}
 
             {/* Quantity Selector */}
-            <div className="mt-6 flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#334155]">
-                Quantity
-              </span>
-              <div className="flex items-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc]">
-                <button
-                  type="button"
-                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  disabled={quantity <= 1 || cartLoading || adding}
-                  className="flex h-9 w-9 items-center justify-center text-[#64748b] hover:bg-white rounded-l-xl transition disabled:opacity-30"
-                >
-                  -
-                </button>
-                <span className="w-10 text-center text-sm font-bold text-[#1e293b]">
-                  {quantity}
+            {!isQuoteOnly && (
+              <div className="mt-6 flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-[#334155]">
+                  Quantity
                 </span>
-                <button
-                  type="button"
-                  onClick={() => setQuantity((q) => q + 1)}
-                  disabled={cartLoading || adding}
-                  className="flex h-9 w-9 items-center justify-center text-[#64748b] hover:bg-white rounded-r-xl transition"
-                >
-                  +
-                </button>
+                <div className="flex items-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc]">
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    disabled={quantity <= 1 || cartLoading || adding}
+                    className="flex h-9 w-9 items-center justify-center text-[#64748b] hover:bg-white rounded-l-xl transition disabled:opacity-30"
+                  >
+                    -
+                  </button>
+                  <span className="w-10 text-center text-sm font-bold text-[#1e293b]">
+                    {quantity}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((q) => q + 1)}
+                    disabled={cartLoading || adding}
+                    className="flex h-9 w-9 items-center justify-center text-[#64748b] hover:bg-white rounded-r-xl transition"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Action Buttons */}
             <div className="mt-8 space-y-3">
-              <Button
-                type="button"
-                disabled={!isAvailable || cartLoading || adding}
-                onClick={handleAddToCart}
-                className="w-full h-12 rounded-xl bg-[#0a4052] text-sm font-bold text-white shadow-md hover:bg-[#072c38] transition active:scale-[0.99]"
-              >
-                {adding ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : (
-                  <>
-                    <ShoppingBag className="mr-2 h-4 w-4" />
-                    <span>Add to Cart</span>
-                  </>
-                )}
-              </Button>
+              {isQuoteOnly ? (
+                <Button asChild className="w-full h-12 rounded-xl bg-[#d95316] text-sm font-bold text-white shadow-md hover:bg-[#b8430e] transition active:scale-[0.99]">
+                  <Link href={quoteHref}>
+                    <ArrowLeft className="mr-2 h-4 w-4 rotate-180" />
+                    <span>Request a Project Quote</span>
+                  </Link>
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    type="button"
+                    disabled={!isAvailable || cartLoading || adding}
+                    onClick={handleAddToCart}
+                    className="w-full h-12 rounded-xl bg-[#0a4052] text-sm font-bold text-white shadow-md hover:bg-[#072c38] transition active:scale-[0.99]"
+                  >
+                    {adding ? (
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                    ) : (
+                      <>
+                        <ShoppingBag className="mr-2 h-4 w-4" />
+                        <span>Add to Cart</span>
+                      </>
+                    )}
+                  </Button>
 
-              <Button
-                type="button"
-                variant="outline"
-                disabled={!isAvailable || cartLoading || adding}
-                onClick={handleBuyNow}
-                className="w-full h-12 rounded-xl border-[#0a4052] text-[#0a4052] text-sm font-bold hover:bg-[#eaf4fa] transition"
-              >
-                <span>Buy Now with Shopify</span>
-                <ExternalLink className="ml-2 h-4 w-4" />
-              </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={!isAvailable || cartLoading || adding}
+                    onClick={handleBuyNow}
+                    className="w-full h-12 rounded-xl border-[#0a4052] text-[#0a4052] text-sm font-bold hover:bg-[#eaf4fa] transition"
+                  >
+                    <span>Buy Now with Shopify</span>
+                    <ExternalLink className="ml-2 h-4 w-4" />
+                  </Button>
+                </>
+              )}
             </div>
 
             {/* Value Guarantees list */}

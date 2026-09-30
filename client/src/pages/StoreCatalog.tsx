@@ -78,6 +78,9 @@ export default function StoreCatalog() {
     }
   };
 
+  const quoteHref = (product: Product) =>
+    `/request-a-quote?equipment=${encodeURIComponent(product.title)}&brand=${encodeURIComponent(product.vendor || "Italray")}&model=${encodeURIComponent(product.handle)}`;
+
   return (
     <SiteChrome>
       <main className="min-h-screen bg-[#f7fafc]">
@@ -94,7 +97,7 @@ export default function StoreCatalog() {
                   Medical Equipment & Precision Store
                 </h1>
                 <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#617180] sm:text-base">
-                  Purchase certified imaging systems, laparoscopic sets, and genuine biomedical hardware directly with direct Shopify checkout and manufacturer warranty.
+                  Explore certified imaging systems, laparoscopic sets, and genuine biomedical hardware. Checkout-ready items can be purchased online; configured clinical systems are presented with a tailored project quotation flow.
                 </p>
               </div>
 
@@ -198,6 +201,7 @@ export default function StoreCatalog() {
                   {filteredProducts.map((product) => {
                     const firstVariant = product.variants[0];
                     const isAvailable = firstVariant?.availableForSale ?? false;
+                    const isQuoteOnly = product.tags.includes("Quote Only");
                     const primaryImage = product.images[0]?.url;
                     const isAdding = addingId === firstVariant?.id;
 
@@ -232,7 +236,11 @@ export default function StoreCatalog() {
 
                           {/* Availability status */}
                           <div className="absolute right-3 top-3">
-                            {isAvailable ? (
+                            {isQuoteOnly ? (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-[#fff7ed] px-2.5 py-0.5 text-[11px] font-semibold text-[#c2410c]">
+                                <ArrowUpRight className="h-3 w-3" /> Quote Required
+                              </span>
+                            ) : isAvailable ? (
                               <span className="inline-flex items-center gap-1 rounded-full bg-[#ecfdf5] px-2.5 py-0.5 text-[11px] font-semibold text-[#047857]">
                                 <CheckCircle2 className="h-3 w-3" /> In Stock
                               </span>
@@ -283,29 +291,40 @@ export default function StoreCatalog() {
                           {/* Pricing and Action */}
                           <div className="mt-6 flex items-center justify-between border-t border-[#f1f5f9] pt-4">
                             <div>
-                              <p className="text-[11px] uppercase tracking-wider text-[#94a3b8]">Price</p>
+                              <p className="text-[11px] uppercase tracking-wider text-[#94a3b8]">
+                                {isQuoteOnly ? "Commercial terms" : "Price"}
+                              </p>
                               <p className="text-lg font-extrabold text-[#0a4052]">
-                                {formatMoney(product.priceRange.min)}
+                                {isQuoteOnly ? "Request a quote" : formatMoney(product.priceRange.min)}
                               </p>
                             </div>
 
                             <div className="flex items-center gap-2">
-                              <Button
-                                type="button"
-                                size="sm"
-                                disabled={!isAvailable || cartLoading || isAdding}
-                                onClick={(e) => handleAddToCart(product, e)}
-                                className="h-10 rounded-xl bg-[#0a4052] px-4 font-bold text-white shadow-xs hover:bg-[#072c38] active:scale-95 transition"
-                              >
-                                {isAdding ? (
-                                  <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                  <>
-                                    <ShoppingBag className="mr-1.5 h-4 w-4" />
-                                    <span>Add to Cart</span>
-                                  </>
-                                )}
-                              </Button>
+                              {isQuoteOnly ? (
+                                <Button asChild size="sm" className="h-10 rounded-xl bg-[#d95316] px-4 font-bold text-white shadow-xs hover:bg-[#b8430e] active:scale-95 transition">
+                                  <Link href={quoteHref(product)}>
+                                    <ArrowUpRight className="mr-1.5 h-4 w-4" />
+                                    <span>Request Quote</span>
+                                  </Link>
+                                </Button>
+                              ) : (
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  disabled={!isAvailable || cartLoading || isAdding}
+                                  onClick={(e) => handleAddToCart(product, e)}
+                                  className="h-10 rounded-xl bg-[#0a4052] px-4 font-bold text-white shadow-xs hover:bg-[#072c38] active:scale-95 transition"
+                                >
+                                  {isAdding ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                  ) : (
+                                    <>
+                                      <ShoppingBag className="mr-1.5 h-4 w-4" />
+                                      <span>Add to Cart</span>
+                                    </>
+                                  )}
+                                </Button>
+                              )}
                             </div>
                           </div>
                         </CardContent>
