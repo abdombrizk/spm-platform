@@ -1,20 +1,10 @@
-import { useState } from "react";
-import { ChevronDown, ChevronRight, Menu, X, ArrowUpRight, LockKeyhole, Activity, Boxes, Layers, Stethoscope, Wrench, Sparkles, Search } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ChevronDown, ChevronRight, Menu, X, ArrowUpRight, LockKeyhole, Activity, Boxes, Layers, Stethoscope, Sparkles, Search, PhoneCall } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
 
 const logo = "/manus-storage/spm-logo-cropped_7b519adc.webp";
-
-const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  Activity,
-  Boxes,
-  Layers,
-  Stethoscope,
-  Wrench,
-  ArrowUpRight,
-  Sparkles,
-};
 
 export default function SiteChrome({ children, transparentHeader = false }: { children: React.ReactNode; transparentHeader?: boolean }) {
   const [open, setOpen] = useState(false);
@@ -23,6 +13,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
   const [activeCompany, setActiveCompany] = useState(false);
   const [activeServices, setActiveServices] = useState(false);
   const [activeNews, setActiveNews] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [location] = useLocation();
 
   const brandsQuery = trpc.menu.productBrands.useQuery();
@@ -36,21 +27,41 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
   const hermannBrand = brands.find(b => b.slug === "hermann");
   const hermannItems = items.filter(item => item.brandId === hermannBrand?.id);
 
-  const navIdle = transparentHeader ? "text-white/90 hover:text-white" : "text-[#334155] hover:text-[#0f6fae]";
-  const navActive = transparentHeader ? "text-white" : "text-[#0f6fae]";
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 16);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const isDarkNav = transparentHeader && !isScrolled;
+  const navIdle = isDarkNav ? "text-white/90 hover:text-white" : "text-[#334155] hover:text-[#0f6fae]";
+  const navActive = isDarkNav ? "text-white font-bold" : "text-[#0f6fae] font-bold";
 
   return (
     <div className="min-h-screen bg-[#f7fafc] text-[#17212b]">
-      <header className={`${transparentHeader ? "absolute inset-x-0 top-0 border-white/15 bg-[#061f2b]/20 text-white" : "sticky top-0 border-b border-[#dce7eb]/80 bg-white/95 text-[#17212b]"} z-50 backdrop-blur-md`}>
-        <div className="mx-auto flex h-[82px] max-w-[1280px] items-center justify-between gap-6 px-5 lg:px-8">
+      {/* Accessible Skip Link for Keyboard Navigation */}
+      <a href="#main-content" className="sr-only sr-only-focusable">
+        Skip to main content
+      </a>
+
+      <header
+        className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+          isDarkNav
+            ? "border-b border-white/10 bg-[#061f2b]/40 backdrop-blur-md"
+            : "border-b border-[#dce7eb] bg-white/95 shadow-xs backdrop-blur-md"
+        }`}
+      >
+        <div className="mx-auto flex h-[80px] max-w-[1280px] items-center justify-between gap-6 px-5 lg:px-8">
           <Link href="/" className="flex shrink-0 items-center gap-3" onClick={() => setOpen(false)}>
-            <img src={logo} alt="SPM Medical Imaging Technology" className="h-12 w-auto object-contain" />
-            <span className="sr-only">SPM</span>
+            <img src={logo} alt="SPM Medical Imaging Technology" className="h-11 w-auto object-contain transition-transform hover:scale-105" />
+            <span className="sr-only">SPM - Systems for Projects & Maintenance</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden items-center gap-2 lg:flex" aria-label="Main Navigation">
-            {/* 1. Company */}
+          <nav className="hidden items-center gap-1 xl:gap-2 lg:flex" aria-label="Main Navigation">
+            {/* 1. Company Dropdown */}
             <div
               className="relative"
               onMouseEnter={() => setActiveCompany(true)}
@@ -58,7 +69,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
             >
               <Link
                 href="/about"
-                className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-5 text-sm font-semibold transition ${
+                className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-4 text-sm font-semibold transition ${
                   location.startsWith("/about") || location.startsWith("/careers") || location.startsWith("/contact")
                     ? navActive
                     : navIdle
@@ -67,26 +78,26 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                 aria-expanded={activeCompany}
               >
                 Company
-                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${transparentHeader ? "text-white/80" : "text-[#94a3b8]"} ${activeCompany ? "rotate-180" : ""}`} />
+                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${isDarkNav ? "text-white/80" : "text-[#94a3b8]"} ${activeCompany ? "rotate-180" : ""}`} />
               </Link>
               <div
-                className={`absolute left-0 top-full w-64 rounded-2xl border border-[#dce7eb] bg-white p-2.5 shadow-2xl transition-[opacity,transform,visibility] duration-300 ease-out ${
+                className={`absolute left-0 top-full w-64 rounded-2xl border border-[#dce7eb] bg-white p-2.5 shadow-2xl transition-[opacity,transform,visibility] duration-250 ease-out ${
                   activeCompany ? "pointer-events-auto visible translate-y-0 opacity-100" : "pointer-events-none invisible translate-y-2 opacity-0"
                 }`}
               >
-                <Link href="/about" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] hover:bg-[#f0f7fb] hover:text-[#0f6fae]">
+                <Link href="/about" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] transition hover:bg-[#eaf4fa] hover:text-[#0a4052]">
                   About SPM <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8]" />
                 </Link>
-                <Link href="/contact" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] hover:bg-[#f0f7fb] hover:text-[#0f6fae]">
+                <Link href="/contact" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] transition hover:bg-[#eaf4fa] hover:text-[#0a4052]">
                   Contact & Locations <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8]" />
                 </Link>
-                <Link href="/careers" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] hover:bg-[#f0f7fb] hover:text-[#0f6fae]">
+                <Link href="/careers" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] transition hover:bg-[#eaf4fa] hover:text-[#0a4052]">
                   Careers at SPM <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8]" />
                 </Link>
               </div>
             </div>
 
-            {/* 2. Products - 3-Branch Flyout Menu (1. Italray, 2. Hermann, 3. Spare Parts Module) */}
+            {/* 2. Products - 3-Branch Flyout Menu */}
             <div
               className="relative"
               onMouseEnter={() => setActiveMega(true)}
@@ -94,34 +105,34 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
             >
               <Link
                 href="/catalogue"
-                className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-5 text-sm font-semibold transition ${
+                className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-4 text-sm font-semibold transition ${
                   location.startsWith("/catalogue") || location.startsWith("/spare-parts") ? navActive : navIdle
                 }`}
                 onFocus={() => setActiveMega(true)}
                 aria-expanded={activeMega}
               >
                 Products
-                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${transparentHeader ? "text-white/80" : "text-[#94a3b8]"} ${activeMega ? "rotate-180" : ""}`} />
+                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${isDarkNav ? "text-white/80" : "text-[#94a3b8]"} ${activeMega ? "rotate-180" : ""}`} />
               </Link>
 
               {/* 3-Tab Hover Cascading Dropdown */}
               <div
-                className={`absolute left-0 top-full w-[780px] rounded-3xl border border-[#dce7eb] bg-white p-5 shadow-2xl backdrop-blur-xl transition-[opacity,transform,visibility] duration-300 ease-out ${
+                className={`absolute left-0 top-full w-[760px] rounded-3xl border border-[#dce7eb] bg-white p-5 shadow-2xl backdrop-blur-xl transition-[opacity,transform,visibility] duration-250 ease-out ${
                   activeMega ? "pointer-events-auto visible translate-y-1 opacity-100" : "pointer-events-none invisible translate-y-3 opacity-0"
                 }`}
               >
-                <div className="grid grid-cols-[260px_1fr] gap-6">
-                  {/* Left Column: Exactly the 3 requested branches */}
+                <div className="grid grid-cols-[250px_1fr] gap-6">
+                  {/* Left Column: 3 branches */}
                   <div className="space-y-2 border-r border-[#eef3f5] pr-4">
                     <p className="px-3 text-[11px] font-bold uppercase tracking-wider text-[#94a3b8]">Product Categories</p>
 
-                    {/* 1. Italray — direct public catalogue link */}
+                    {/* 1. Italray */}
                     <Link
                       href="/catalogue"
                       onMouseEnter={() => setActiveProductTab("italray")}
                       onClick={() => setActiveMega(false)}
                       className={`group flex items-center justify-between rounded-xl p-3 transition ${
-                        activeProductTab === "italray" ? "bg-[#0f6fae] text-white shadow-md shadow-[#0f6fae]/20" : "text-[#334155] hover:bg-[#f0f7fb] hover:text-[#0f6fae]"
+                        activeProductTab === "italray" ? "bg-[#0a4052] text-white shadow-md shadow-[#0a4052]/20" : "text-[#334155] hover:bg-[#eaf4fa] hover:text-[#0a4052]"
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
@@ -134,55 +145,60 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                       <ChevronRight className={`h-4 w-4 transition-transform ${activeProductTab === "italray" ? "translate-x-1" : ""}`} />
                     </Link>
 
-                    {/* 2. Hermann Medizintechnik */}
+                    {/* 2. Hermann */}
                     <div
                       onMouseEnter={() => setActiveProductTab("hermann")}
                       className={`group flex cursor-pointer items-center justify-between rounded-xl p-3 transition ${
-                        activeProductTab === "hermann" ? "bg-[#0f6fae] text-white shadow-md shadow-[#0f6fae]/20" : "text-[#334155] hover:bg-[#f0f7fb] hover:text-[#0f6fae]"
+                        activeProductTab === "hermann" ? "bg-[#0a4052] text-white shadow-md shadow-[#0a4052]/20" : "text-[#334155] hover:bg-[#eaf4fa] hover:text-[#0a4052]"
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
                         <Stethoscope className="h-4 w-4" />
                         <div>
-                          <p className="text-sm font-bold">2. Hermann Medizintechnik</p>
-                          <p className={`text-[10px] ${activeProductTab === "hermann" ? "text-white/80" : "text-[#64748b]"}`}>Authorized Agent in Egypt</p>
+                          <p className="text-sm font-bold">2. Hermann</p>
+                          <p className={`text-[10px] ${activeProductTab === "hermann" ? "text-white/80" : "text-[#64748b]"}`}>Authorized Partner</p>
                         </div>
                       </div>
                       <ChevronRight className={`h-4 w-4 transition-transform ${activeProductTab === "hermann" ? "translate-x-1" : ""}`} />
                     </div>
 
-                    {/* 3. Spare Parts Module (Moved here from Services per user request) */}
+                    {/* 3. Spare Parts Module */}
                     <div
                       onMouseEnter={() => setActiveProductTab("parts")}
                       className={`group flex cursor-pointer items-center justify-between rounded-xl p-3 transition ${
-                        activeProductTab === "parts" ? "bg-[#0f6fae] text-white shadow-md shadow-[#0f6fae]/20" : "text-[#334155] hover:bg-[#f0f7fb] hover:text-[#0f6fae]"
+                        activeProductTab === "parts" ? "bg-[#0a4052] text-white shadow-md shadow-[#0a4052]/20" : "text-[#334155] hover:bg-[#eaf4fa] hover:text-[#0a4052]"
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
                         <Layers className="h-4 w-4" />
                         <div>
-                          <p className="text-sm font-bold">3. Spare Parts Module</p>
-                          <p className={`text-[10px] ${activeProductTab === "parts" ? "text-white/80" : "text-[#64748b]"}`}>Multi-Brand OEM Parts</p>
+                          <p className="text-sm font-bold">3. Spare Parts</p>
+                          <p className={`text-[10px] ${activeProductTab === "parts" ? "text-white/80" : "text-[#64748b]"}`}>Multi-Vendor OEM</p>
                         </div>
                       </div>
                       <ChevronRight className={`h-4 w-4 transition-transform ${activeProductTab === "parts" ? "translate-x-1" : ""}`} />
                     </div>
                   </div>
 
-                  {/* Right Column: Dynamic Content Pane for the active branch */}
+                  {/* Right Column: Dynamic Content Pane */}
                   <div className="flex flex-col justify-between py-1">
                     {activeProductTab === "italray" ? (
-                      <div className="animate-in fade-in slide-in-from-right-2 duration-300">
+                      <div className="animate-in fade-in slide-in-from-right-2 duration-250">
                         <div className="mb-3 flex items-center justify-between border-b border-[#eef3f5] pb-2">
-                          <span className="text-xs font-bold uppercase tracking-wider text-[#0f6fae]">Italray Imaging Systems</span>
+                          <span className="text-xs font-bold uppercase tracking-wider text-[#0a4052]">Italray Imaging Systems</span>
                           <Link href="/catalogue" onClick={() => setActiveMega(false)} className="text-xs font-semibold text-[#d95316] hover:underline">
                             Open public catalogue <ArrowUpRight className="ml-1 inline h-3 w-3" />
                           </Link>
                         </div>
-                        <Link href="/catalogue" onClick={() => setActiveMega(false)} className="group block rounded-2xl border border-[#bcdde2] bg-[#f7fafc] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#0f6fae] hover:bg-white hover:shadow-lg">
+                        <Link href="/catalogue" onClick={() => setActiveMega(false)} className="group block rounded-2xl border border-[#bcdde2] bg-[#f7fafc] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#0a4052] hover:bg-white hover:shadow-lg">
                           <div className="flex items-start gap-3">
-                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#eaf4fa] text-[#0f6fae]"><Boxes className="h-5 w-5" /></div>
-                            <div><p className="text-sm font-bold text-[#0a4052] group-hover:text-[#0f6fae]">Explore the public Italray catalogue</p><p className="mt-1 text-xs leading-5 text-[#64748b]">Browse published systems and open full product details from the general catalogue page.</p></div>
+                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#eaf4fa] text-[#0a4052]">
+                              <Boxes className="h-6 w-6" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-[#0a4052] group-hover:text-[#0f6fae]">Explore the complete Italray catalogue</p>
+                              <p className="mt-1 text-xs leading-5 text-[#64748b]">Browse certified C-Arm, Digital Radiography and fluoroscopy systems supported with exclusive Egyptian agency warranty.</p>
+                            </div>
                           </div>
                           <span className="mt-4 inline-flex items-center text-xs font-bold text-[#d95316]">Browse Italray systems <ArrowUpRight className="ml-1 h-3 w-3" /></span>
                         </Link>
@@ -190,7 +206,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                     ) : activeProductTab === "hermann" ? (
                       <div>
                         <div className="mb-3 flex items-center justify-between border-b border-[#eef3f5] pb-2">
-                          <span className="text-xs font-bold uppercase tracking-wider text-[#0f6fae]">Hermann Precision Instruments</span>
+                          <span className="text-xs font-bold uppercase tracking-wider text-[#0a4052]">Hermann Medizintechnik</span>
                           <Link href="/catalogue" className="text-xs font-semibold text-[#d95316] hover:underline">
                             View All Hermann <ArrowUpRight className="ml-1 inline h-3 w-3" />
                           </Link>
@@ -203,7 +219,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                                 href={item.href}
                                 className="group flex items-center gap-3 rounded-xl p-2 transition hover:bg-[#f8fafc]"
                               >
-                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#eaf4fa] text-[#0f6fae]">
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#eaf4fa] text-[#0a4052]">
                                   <Stethoscope className="h-4 w-4" />
                                 </div>
                                 <div className="min-w-0 flex-1">
@@ -214,9 +230,9 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                             ))
                           ) : (
                             <div className="rounded-xl border border-[#e2e8f0] bg-[#fafcfd] p-4 text-center">
-                              <p className="text-xs font-semibold text-[#0a4052]">Surgical & Electrosurgical Solutions</p>
-                              <p className="mt-1 text-[11px] text-[#64748b]">Contact our commercial team for authorized Hermann product inquiries.</p>
-                              <Link href="/request-a-quote?brand=hermann" className="mt-3 inline-flex text-xs font-bold text-[#0f6fae] hover:underline">
+                              <p className="text-xs font-semibold text-[#0a4052]">Surgical & Precision Technology</p>
+                              <p className="mt-1 text-[11px] text-[#64748b]">Authorized agent distribution in Egypt for Hermann specialty instrumentation.</p>
+                              <Link href="/request-a-quote?brand=hermann" className="mt-3 inline-flex text-xs font-bold text-[#0a4052] hover:underline">
                                 Request Hermann Quote <ArrowUpRight className="ml-1 h-3 w-3" />
                               </Link>
                             </div>
@@ -226,24 +242,24 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                     ) : (
                       <div>
                         <div className="mb-3 flex items-center justify-between border-b border-[#eef3f5] pb-2">
-                          <span className="text-xs font-bold uppercase tracking-wider text-[#0f6fae]">Spare Parts Sourcing Hub</span>
+                          <span className="text-xs font-bold uppercase tracking-wider text-[#0a4052]">Spare Parts Hub</span>
                           <Link href="/spare-parts" className="text-xs font-semibold text-[#d95316] hover:underline">
                             Browse All Parts <ArrowUpRight className="ml-1 inline h-3 w-3" />
                           </Link>
                         </div>
                         <div className="grid grid-cols-2 gap-2">
-                          {partBrands.map(pb => (
+                          {partBrands.slice(0, 6).map(pb => (
                             <Link
                               key={pb.id}
                               href="/spare-parts"
-                              className="group flex items-center gap-2.5 rounded-xl border border-[#e2e8f0] bg-[#fafcfd] p-3 transition hover:border-[#0f6fae] hover:bg-white hover:shadow-sm"
+                              className="group flex items-center gap-2.5 rounded-xl border border-[#e2e8f0] bg-[#fafcfd] p-2.5 transition hover:border-[#0a4052] hover:bg-white hover:shadow-xs"
                             >
-                              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#eaf4fa] text-[#0f6fae]">
+                              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#eaf4fa] text-[#0a4052]">
                                 <Layers className="h-4 w-4" />
                               </div>
                               <div className="min-w-0 flex-1">
                                 <p className="truncate text-xs font-bold text-[#1e293b] group-hover:text-[#0f6fae]">{pb.name}</p>
-                                <p className="text-[10px] text-[#94a3b8]">Verified OEM</p>
+                                <p className="text-[10px] text-[#94a3b8]">Verified Component</p>
                               </div>
                             </Link>
                           ))}
@@ -252,9 +268,9 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                     )}
 
                     <div className="mt-4 flex items-center justify-between rounded-xl bg-[#eaf4fa] p-3 text-xs text-[#0a4052]">
-                      <span className="font-semibold">Need urgent engineering assistance?</span>
+                      <span className="font-semibold">Urgent engineering requirement?</span>
                       <Link href="/request-a-quote" className="font-bold text-[#d95316] hover:underline">
-                        Request Quote Directly &rarr;
+                        Start Quote Request &rarr;
                       </Link>
                     </div>
                   </div>
@@ -262,7 +278,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
               </div>
             </div>
 
-            {/* 3. Services (Spare parts moved to Products) */}
+            {/* 3. Services */}
             <div
               className="relative"
               onMouseEnter={() => setActiveServices(true)}
@@ -270,33 +286,33 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
             >
               <Link
                 href="/services"
-                className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-5 text-sm font-semibold transition ${
+                className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-4 text-sm font-semibold transition ${
                   location.startsWith("/services") ? navActive : navIdle
                 }`}
                 onFocus={() => setActiveServices(true)}
                 aria-expanded={activeServices}
               >
                 Services
-                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${transparentHeader ? "text-white/80" : "text-[#94a3b8]"} ${activeServices ? "rotate-180" : ""}`} />
+                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${isDarkNav ? "text-white/80" : "text-[#94a3b8]"} ${activeServices ? "rotate-180" : ""}`} />
               </Link>
               <div
-                className={`absolute left-0 top-full w-72 rounded-2xl border border-[#dce7eb] bg-white p-2.5 shadow-2xl transition-[opacity,transform,visibility] duration-300 ease-out ${
+                className={`absolute left-0 top-full w-72 rounded-2xl border border-[#dce7eb] bg-white p-2.5 shadow-2xl transition-[opacity,transform,visibility] duration-250 ease-out ${
                   activeServices ? "pointer-events-auto visible translate-y-0 opacity-100" : "pointer-events-none invisible translate-y-2 opacity-0"
                 }`}
               >
-                <Link href="/services" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] hover:bg-[#f0f7fb] hover:text-[#0f6fae]">
-                  All Services <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8]" />
+                <Link href="/services" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] transition hover:bg-[#eaf4fa] hover:text-[#0a4052]">
+                  All Services (10 Pillars) <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8]" />
                 </Link>
-                <Link href="/request-service" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] hover:bg-[#f0f7fb] hover:text-[#0f6fae]">
+                <Link href="/request-service" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] transition hover:bg-[#eaf4fa] hover:text-[#0a4052]">
                   Request Service Visit <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8]" />
                 </Link>
-                <Link href="/maintenance-contracts" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] hover:bg-[#f0f7fb] hover:text-[#0f6fae]">
+                <Link href="/maintenance-contracts" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] transition hover:bg-[#eaf4fa] hover:text-[#0a4052]">
                   Maintenance Contracts <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8]" />
                 </Link>
               </div>
             </div>
 
-            {/* 4. Events & News (Download Center removed per user comment) */}
+            {/* 4. Events & News */}
             <div
               className="relative"
               onMouseEnter={() => setActiveNews(true)}
@@ -304,7 +320,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
             >
               <Link
                 href="/news"
-                className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-5 text-sm font-semibold transition ${
+                className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-4 text-sm font-semibold transition ${
                   location.startsWith("/news") || location.startsWith("/events") || location.startsWith("/faqs")
                     ? navActive
                     : navIdle
@@ -313,54 +329,51 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                 aria-expanded={activeNews}
               >
                 Events & News
-                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${transparentHeader ? "text-white/80" : "text-[#94a3b8]"} ${activeNews ? "rotate-180" : ""}`} />
+                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${isDarkNav ? "text-white/80" : "text-[#94a3b8]"} ${activeNews ? "rotate-180" : ""}`} />
               </Link>
               <div
-                className={`absolute left-0 top-full w-64 rounded-2xl border border-[#dce7eb] bg-white p-2.5 shadow-2xl transition-[opacity,transform,visibility] duration-300 ease-out ${
+                className={`absolute left-0 top-full w-64 rounded-2xl border border-[#dce7eb] bg-white p-2.5 shadow-2xl transition-[opacity,transform,visibility] duration-250 ease-out ${
                   activeNews ? "pointer-events-auto visible translate-y-0 opacity-100" : "pointer-events-none invisible translate-y-2 opacity-0"
                 }`}
               >
-                <Link href="/news" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] hover:bg-[#f0f7fb] hover:text-[#0f6fae]">
+                <Link href="/news" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] transition hover:bg-[#eaf4fa] hover:text-[#0a4052]">
                   Latest News <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8]" />
                 </Link>
-                <Link href="/events" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] hover:bg-[#f0f7fb] hover:text-[#0f6fae]">
+                <Link href="/events" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] transition hover:bg-[#eaf4fa] hover:text-[#0a4052]">
                   Upcoming Events <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8]" />
                 </Link>
-                <Link href="/faqs" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] hover:bg-[#f0f7fb] hover:text-[#0f6fae]">
-                  FAQs & Support <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8]" />
+                <Link href="/faqs" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] transition hover:bg-[#eaf4fa] hover:text-[#0a4052]">
+                  FAQs & Knowledge <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8]" />
                 </Link>
               </div>
             </div>
           </nav>
 
-          {/* Action CTAs: Button renamed to "Contact" per user comment */}
+          {/* Action CTAs */}
           <div className="hidden items-center gap-3 lg:flex">
             <Link
               href="/login"
-              className={`inline-flex items-center gap-2 rounded-xl border px-3.5 py-2.5 text-xs font-bold transition ${
-                transparentHeader
-                  ? "border-white/40 bg-white/10 text-white hover:border-white hover:bg-white/20"
-                  : "border-[#dce7eb] bg-white text-[#334155] hover:border-[#0f6fae] hover:text-[#0f6fae]"
+              className={`inline-flex items-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-bold transition ${
+                isDarkNav
+                  ? "border-white/30 bg-white/10 text-white hover:border-white hover:bg-white/20"
+                  : "border-[#dce7eb] bg-white text-[#334155] hover:border-[#0a4052] hover:text-[#0a4052]"
               }`}
             >
               <LockKeyhole className="h-3.5 w-3.5 text-[#0f6fae]" />
-              Sign in
+              Staff Sign in
             </Link>
             <Link href="/contact">
-              <Button className="h-11 rounded-xl bg-[#f36b21] px-6 text-sm font-bold text-white shadow-md transition-all hover:bg-[#d95316] hover:shadow-lg active:scale-95">
+              <Button className="h-11 rounded-xl bg-[#d95316] px-6 text-sm font-bold text-white shadow-md shadow-[#d95316]/20 transition-all hover:bg-[#b8430e] hover:shadow-lg active:scale-95">
                 Contact <ArrowUpRight className="ml-1.5 h-4 w-4" />
               </Button>
             </Link>
-            {transparentHeader ? (
-              <Link href="/contact" aria-label="Search" className="hidden rounded-xl p-2 text-white/90 transition hover:bg-white/15 hover:text-white xl:inline-flex">
-                <Search className="h-5 w-5" />
-              </Link>
-            ) : null}
           </div>
 
           {/* Mobile Menu Toggle */}
           <button
-            className={`rounded-xl border p-2.5 lg:hidden ${transparentHeader ? "border-white/40 text-white" : "border-[#dce7eb] text-[#334155]"}`}
+            className={`rounded-xl border p-2.5 lg:hidden ${
+              isDarkNav ? "border-white/40 text-white" : "border-[#dce7eb] text-[#334155]"
+            }`}
             onClick={() => setOpen(value => !value)}
             aria-label={open ? "Close menu" : "Open menu"}
           >
@@ -377,7 +390,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
               className="mb-4 flex items-center justify-between rounded-xl border border-[#dce7eb] bg-[#f8fafc] p-3 text-sm font-bold text-[#0a4052]"
             >
               <span className="inline-flex items-center gap-2">
-                <LockKeyhole className="h-4 w-4 text-[#0f6fae]" /> Internal Sign in
+                <LockKeyhole className="h-4 w-4 text-[#0f6fae]" /> Internal Staff Sign in
               </span>
               <ArrowUpRight className="h-4 w-4 text-[#94a3b8]" />
             </Link>
@@ -395,16 +408,16 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
               <div className="pt-4">
                 <p className="text-xs font-bold uppercase tracking-wider text-[#94a3b8]">2. Products</p>
                 <div className="mt-2 space-y-1">
-                  <Link href="/catalogue" onClick={() => setOpen(false)} className="block py-1.5 text-sm font-bold text-[#0f6fae]">1. Italray Imaging Systems</Link>
-                  <Link href="/catalogue" onClick={() => setOpen(false)} className="block py-1.5 text-sm font-bold text-[#0f6fae]">2. Hermann Medizintechnik</Link>
-                  <Link href="/spare-parts" onClick={() => setOpen(false)} className="block py-1.5 text-sm font-bold text-[#0f6fae]">3. Spare Parts Module</Link>
+                  <Link href="/catalogue" onClick={() => setOpen(false)} className="block py-1.5 text-sm font-bold text-[#0a4052]">1. Italray Imaging Systems</Link>
+                  <Link href="/catalogue" onClick={() => setOpen(false)} className="block py-1.5 text-sm font-bold text-[#0a4052]">2. Hermann Medizintechnik</Link>
+                  <Link href="/spare-parts" onClick={() => setOpen(false)} className="block py-1.5 text-sm font-bold text-[#0a4052]">3. Spare Parts Module</Link>
                 </div>
               </div>
 
               <div className="pt-4">
                 <p className="text-xs font-bold uppercase tracking-wider text-[#94a3b8]">3. Services</p>
                 <div className="mt-2 space-y-1">
-                  <Link href="/services" onClick={() => setOpen(false)} className="block py-1.5 text-sm font-medium text-[#334155]">All Services</Link>
+                  <Link href="/services" onClick={() => setOpen(false)} className="block py-1.5 text-sm font-medium text-[#334155]">All Services (10 Pillars)</Link>
                   <Link href="/request-service" onClick={() => setOpen(false)} className="block py-1.5 text-sm font-medium text-[#334155]">Request Service Visit</Link>
                   <Link href="/maintenance-contracts" onClick={() => setOpen(false)} className="block py-1.5 text-sm font-medium text-[#334155]">Maintenance Contracts</Link>
                 </div>
@@ -422,14 +435,17 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
 
             <div className="mt-6">
               <Link href="/contact" onClick={() => setOpen(false)}>
-                <Button className="w-full bg-[#f36b21] text-white hover:bg-[#d95316]">Contact</Button>
+                <Button className="w-full bg-[#d95316] text-white hover:bg-[#b8430e]">Contact</Button>
               </Link>
             </div>
           </div>
         ) : null}
       </header>
 
-      {children}
+      {/* Main Content Landmark */}
+      <div id="main-content" className="pt-[80px]">
+        {children}
+      </div>
 
       <footer className="border-t border-[#08303e] bg-[#061f2b] text-white">
         <div className="mx-auto max-w-[1280px] px-5 py-16 lg:px-8">
@@ -442,8 +458,8 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                 Systems for Projects & Maintenance (SPM). Medical imaging technology, genuine spare parts, and dedicated field engineering support across Egypt and the MENA region.
               </p>
               <div className="mt-4 border-t border-white/10 pt-3 text-[11px] text-[#64748b]">
-                <p>Certified Quality Processes: ISO 13485 & CE Directives</p>
-                <p>Exclusive and Authorized Partner in Egypt for Select Global Manufacturers</p>
+                <p>Quality Framework: ISO 13485 & CE Directives</p>
+                <p>Exclusive Agent in Egypt for Italray & Authorized Hermann Distribution</p>
               </div>
             </div>
 
@@ -454,14 +470,14 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                 <li><Link href="/catalogue" className="hover:text-white">Mobile Radiography</Link></li>
                 <li><Link href="/catalogue" className="hover:text-white">Fixed X-Ray & DR</Link></li>
                 <li><Link href="/catalogue" className="hover:text-white">Italray Solutions</Link></li>
-                <li><Link href="/spare-parts" className="hover:text-white">Spare Parts Module</Link></li>
+                <li><Link href="/spare-parts" className="hover:text-white">Spare Parts Hub</Link></li>
               </ul>
             </div>
 
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-[#94a3b8]">Support & Insight</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-[#94a3b8]">Support & Capabilities</p>
               <ul className="mt-4 space-y-2.5 text-sm text-[#cbd5e1]">
-                <li><Link href="/services" className="hover:text-white">Service Capabilities</Link></li>
+                <li><Link href="/services" className="hover:text-white">10 Core Service Capabilities</Link></li>
                 <li><Link href="/maintenance-contracts" className="hover:text-white">Maintenance Contracts</Link></li>
                 <li><Link href="/faqs" className="hover:text-white">Frequently Asked Questions</Link></li>
                 <li><Link href="/news" className="hover:text-white">News & Publications</Link></li>
@@ -469,7 +485,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
             </div>
 
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-[#94a3b8]">Contact & Support</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-[#94a3b8]">Contact & Dispatch</p>
               <div className="mt-4 space-y-3 text-xs text-[#cbd5e1]">
                 <div>
                   <p className="font-semibold text-white">CENTRAL PHONE / WHATSAPP</p>
@@ -490,7 +506,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
               </div>
               <div className="mt-5 flex gap-2">
                 <Link href="/request-service"><Button size="sm" variant="outline" className="border-white/20 bg-transparent text-white hover:bg-white/10">Request Service</Button></Link>
-                <Link href="/contact"><Button size="sm" className="bg-[#f36b21] text-white hover:bg-[#d95316]">Contact</Button></Link>
+                <Link href="/contact"><Button size="sm" className="bg-[#d95316] text-white hover:bg-[#b8430e]">Contact</Button></Link>
               </div>
             </div>
           </div>
@@ -500,7 +516,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
             <div className="flex gap-4">
               <Link href="/privacy" className="hover:text-white">Privacy Policy</Link>
               <Link href="/terms" className="hover:text-white">Terms of Use</Link>
-              <Link href="/login" className="hover:text-white">Internal Sign in</Link>
+              <Link href="/login" className="hover:text-white">Internal Staff Sign in</Link>
             </div>
           </div>
         </div>

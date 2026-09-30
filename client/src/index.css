@@ -43,16 +43,16 @@
 }
 
 :root {
-  --primary: #0f6fae;
+  --primary: #0a4052;
   --primary-foreground: #ffffff;
-  --sidebar-primary: #0f6fae;
+  --sidebar-primary: #0a4052;
   --sidebar-primary-foreground: #ffffff;
-  --chart-1: #0f6fae;
-  --chart-2: #60c1bb;
-  --chart-3: #0a4052;
-  --chart-4: #f36b21;
-  --chart-5: #617180;
-  --radius: 0.55rem;
+  --chart-1: #0a4052;
+  --chart-2: #0f6fae;
+  --chart-3: #2b8c88;
+  --chart-4: #d95316;
+  --chart-5: #475569;
+  --radius: 0.65rem;
   --background: #ffffff;
   --foreground: #17212b;
   --card: #ffffff;
@@ -65,31 +65,91 @@
   --muted-foreground: #617180;
   --accent: #eaf4fa;
   --accent-foreground: #0a4052;
-  --destructive: #c83a3a;
+  --destructive: #9b1c1c;
   --destructive-foreground: #ffffff;
-  --border: #d7e0e7;
-  --input: #d7e0e7;
-  --ring: #1e8ac4;
+  --border: #dce7eb;
+  --input: #dce7eb;
+  --ring: #0f6fae;
   --sidebar: #ffffff;
   --sidebar-foreground: #17212b;
   --sidebar-accent: #eaf4fa;
   --sidebar-accent-foreground: #0a4052;
-  --sidebar-border: #d7e0e7;
-  --sidebar-ring: #1e8ac4;
+  --sidebar-border: #dce7eb;
+  --sidebar-ring: #0f6fae;
 }
 
-.dark { --background: #0a4052; --foreground: #f7fafc; --card: #0d5065; --card-foreground: #f7fafc; --popover: #0d5065; --popover-foreground: #f7fafc; --secondary: #0f6fae; --secondary-foreground: #ffffff; --muted: #0d5065; --muted-foreground: #c9d9df; --accent: #0f6fae; --accent-foreground: #ffffff; --border: rgba(255,255,255,.15); --input: rgba(255,255,255,.2); --ring: #60c1bb; }
+.dark {
+  --background: #061f2b;
+  --foreground: #f7fafc;
+  --card: #0a4052;
+  --card-foreground: #f7fafc;
+  --popover: #0a4052;
+  --popover-foreground: #f7fafc;
+  --secondary: #0f6fae;
+  --secondary-foreground: #ffffff;
+  --muted: #0d5065;
+  --muted-foreground: #c9d9df;
+  --accent: #0f6fae;
+  --accent-foreground: #ffffff;
+  --border: rgba(255, 255, 255, 0.15);
+  --input: rgba(255, 255, 255, 0.2);
+  --ring: #2b8c88;
+}
 
 @layer base {
-  * { @apply border-border outline-ring/50; }
-  html { scroll-behavior: smooth; }
-  body { @apply bg-background text-foreground; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-  button:not(:disabled), [role="button"]:not([aria-disabled="true"]), [type="button"]:not(:disabled), [type="submit"]:not(:disabled), [type="reset"]:not(:disabled), a[href], select:not(:disabled), input[type="checkbox"]:not(:disabled), input[type="radio"]:not(:disabled) { @apply cursor-pointer; }
-  :focus-visible { outline: 3px solid rgba(30,138,196,.45); outline-offset: 3px; }
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [type="button"]:not(:disabled),
+  [type="submit"]:not(:disabled),
+  [type="reset"]:not(:disabled),
+  a[href],
+  select:not(:disabled),
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled) {
+    @apply cursor-pointer;
+  }
+  :focus-visible {
+    outline: 2px solid #0f6fae;
+    outline-offset: 2px;
+  }
+  .sr-only-focusable:focus-visible {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 100;
+    padding: 0.75rem 1.25rem;
+    background: #0a4052;
+    color: #ffffff;
+    border-radius: 0.5rem;
+    font-weight: 700;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  }
 }
 
 @layer components {
-  .container { width: 100%; margin-inline: auto; padding-inline: 1.25rem; }
-  .flex { min-height: 0; min-width: 0; }
-  @media (min-width: 1024px) { .container { max-width: 1280px; padding-inline: 2rem; } }
+  .container {
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+  .flex {
+    min-height: 0;
+    min-width: 0;
+  }
+  @media (min-width: 1024px) {
+    .container {
+      max-width: 1280px;
+      padding-inline: 2rem;
+    }
+  }
 }
