@@ -13,6 +13,7 @@ import Login from "./pages/Login";
 const OwnerDashboard = lazy(() => import("@/pages/OwnerDashboard"));
 const ProductManager = lazy(() => import("@/pages/ProductManager"));
 const Catalogue = lazy(() => import("@/pages/Catalogue"));
+const ItalrayPortfolio = lazy(() => import("@/pages/ItalrayPortfolio"));
 const ProductDetails = lazy(() => import("@/pages/ProductDetails"));
 const ServiceManager = lazy(() => import("@/pages/ServiceManager"));
 const Services = lazy(() => import("@/pages/Services"));
@@ -39,6 +40,7 @@ function Router() {
         <Route path="/owner/products" component={ProductManager} />
         <Route path="/owner/services" component={ServiceManager} />
         <Route path="/catalogue" component={Catalogue} />
+        <Route path="/catalogue/italray" component={ItalrayPortfolio} />
         <Route path="/catalogue/:slug" component={ProductDetails} />
         <Route path="/store" component={StoreCatalog} />
         <Route path="/store/products/:handle" component={StoreProductDetail} />

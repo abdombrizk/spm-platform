@@ -132,7 +132,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
 
                     {/* 1. Italray */}
                     <Link
-                      href="/catalogue"
+                      href="/catalogue/italray"
                       onMouseEnter={() => setActiveProductTab("italray")}
                       onClick={() => setActiveMega(false)}
                       className={`group flex items-center justify-between rounded-xl p-3 transition ${
@@ -190,7 +190,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                       <div className="animate-in fade-in slide-in-from-right-2 duration-250">
                         <div className="mb-3 flex items-center justify-between border-b border-[#eef3f5] pb-2">
                           <span className="text-xs font-bold uppercase tracking-wider text-[#0a4052]">Italray Imaging Systems</span>
-                          <Link href="/catalogue" onClick={() => setActiveMega(false)} className="text-xs font-semibold text-[#d95316] hover:underline">
+                          <Link href="/catalogue/italray" onClick={() => setActiveMega(false)} className="text-xs font-semibold text-[#d95316] hover:underline">
                             Open public catalogue <ArrowUpRight className="ml-1 inline h-3 w-3" />
                           </Link>
                         </div>
@@ -219,7 +219,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                             ))}
                           </div>
                         ) : (
-                          <Link href="/catalogue" onClick={() => setActiveMega(false)} className="group block rounded-2xl border border-[#bcdde2] bg-[#f7fafc] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#0a4052] hover:bg-white hover:shadow-lg">
+                          <Link href="/catalogue/italray" onClick={() => setActiveMega(false)} className="group block rounded-2xl border border-[#bcdde2] bg-[#f7fafc] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#0a4052] hover:bg-white hover:shadow-lg">
                             <div className="flex items-start gap-3">
                               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#eaf4fa] text-[#0a4052]">
                                 <Boxes className="h-6 w-6" />
@@ -488,7 +488,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
               <div className="pt-4">
                 <p className="text-xs font-bold uppercase tracking-wider text-[#94a3b8]">2. Products</p>
                 <div className="mt-2 space-y-1">
-                  <Link href="/catalogue" onClick={() => setOpen(false)} className="block py-1.5 text-sm font-bold text-[#0a4052]">1. Italray Imaging Systems</Link>
+                  <Link href="/catalogue/italray" onClick={() => setOpen(false)} className="block py-1.5 text-sm font-bold text-[#0a4052]">1. Italray Imaging Systems</Link>
                   <Link href="/catalogue" onClick={() => setOpen(false)} className="block py-1.5 text-sm font-bold text-[#0a4052]">2. Hermann Medizintechnik</Link>
                   <Link href="/spare-parts" onClick={() => setOpen(false)} className="block py-1.5 text-sm font-bold text-[#0a4052]">3. Spare Parts Module</Link>
                 </div>
