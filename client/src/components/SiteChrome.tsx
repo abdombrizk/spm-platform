@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { ChevronDown, ChevronRight, Menu, X, ArrowUpRight, LockKeyhole, Activity, Boxes, Layers, Stethoscope, Sparkles, Search, PhoneCall } from "lucide-react";
+import { ChevronDown, ChevronRight, Menu, X, ArrowUpRight, LockKeyhole, Activity, Boxes, Layers, Stethoscope, Sparkles, Search, PhoneCall, ShoppingBag } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
+import { useCart } from "@/contexts/CartContext";
 
 const logo = "/manus-storage/spm-logo-cropped_7b519adc.webp";
 
@@ -15,6 +16,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
   const [activeNews, setActiveNews] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [location] = useLocation();
+  const { itemCount, openCart } = useCart();
 
   const brandsQuery = trpc.menu.productBrands.useQuery();
   const itemsQuery = trpc.menu.productItems.useQuery();
@@ -347,10 +349,43 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                 </Link>
               </div>
             </div>
+
+            {/* 5. Online Storefront */}
+            <Link
+              href="/store"
+              className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-4 text-sm font-semibold transition ${
+                location.startsWith("/store") || location.startsWith("/cart")
+                  ? navActive
+                  : navIdle
+              }`}
+            >
+              <ShoppingBag className="h-4 w-4 text-[#d95316]" />
+              Store
+              <span className="rounded-full bg-[#d95316]/10 px-1.5 py-0.5 text-[10px] font-bold text-[#d95316]">Shopify</span>
+            </Link>
           </nav>
 
           {/* Action CTAs */}
           <div className="hidden items-center gap-3 lg:flex">
+            {/* Cart Trigger */}
+            <button
+              type="button"
+              onClick={openCart}
+              className={`relative inline-flex items-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-bold transition ${
+                isDarkNav
+                  ? "border-white/30 bg-white/10 text-white hover:bg-white/20"
+                  : "border-[#dce7eb] bg-white text-[#0a4052] hover:border-[#0a4052] hover:bg-[#eaf4fa]"
+              }`}
+              title="Open cart drawer"
+            >
+              <ShoppingBag className="h-4 w-4 text-[#0a4052]" />
+              <span>Cart</span>
+              {itemCount > 0 && (
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#d95316] text-[10px] font-extrabold text-white">
+                  {itemCount}
+                </span>
+              )}
+            </button>
             <Link
               href="/login"
               className={`inline-flex items-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-bold transition ${
@@ -394,6 +429,29 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
               </span>
               <ArrowUpRight className="h-4 w-4 text-[#94a3b8]" />
             </Link>
+
+            {/* Mobile Store & Cart quick bar */}
+            <div className="mb-4 grid grid-cols-2 gap-2">
+              <Link
+                href="/store"
+                onClick={() => setOpen(false)}
+                className="flex items-center justify-center gap-2 rounded-xl bg-[#0a4052] p-2.5 text-xs font-bold text-white shadow-xs"
+              >
+                <ShoppingBag className="h-4 w-4" />
+                Store Catalog
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  openCart();
+                }}
+                className="flex items-center justify-center gap-2 rounded-xl border border-[#0a4052] bg-white p-2.5 text-xs font-bold text-[#0a4052]"
+              >
+                <ShoppingBag className="h-4 w-4 text-[#0a4052]" />
+                Cart ({itemCount})
+              </button>
+            </div>
 
             <div className="space-y-4 divide-y divide-[#f1f5f9]">
               <div className="pt-2">

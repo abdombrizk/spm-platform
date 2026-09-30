@@ -5,8 +5,11 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { CartProvider } from "./contexts/CartContext";
+import { CartDrawer } from "./components/CartDrawer";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+
 const OwnerDashboard = lazy(() => import("@/pages/OwnerDashboard"));
 const ProductManager = lazy(() => import("@/pages/ProductManager"));
 const Catalogue = lazy(() => import("@/pages/Catalogue"));
@@ -22,6 +25,9 @@ const ContentLanding = lazy(() => import("@/pages/ContentLanding"));
 const SparePartsPage = lazy(() => import("@/pages/SparePartsPage"));
 const ContactPage = lazy(() => import("@/pages/ContactPage"));
 const AboutPage = lazy(() => import("@/pages/AboutPage"));
+const StoreCatalog = lazy(() => import("@/pages/StoreCatalog"));
+const StoreProductDetail = lazy(() => import("@/pages/StoreProductDetail"));
+const CartPage = lazy(() => import("@/pages/CartPage"));
 
 function Router() {
   return (
@@ -34,6 +40,9 @@ function Router() {
         <Route path="/owner/services" component={ServiceManager} />
         <Route path="/catalogue" component={Catalogue} />
         <Route path="/catalogue/:slug" component={ProductDetails} />
+        <Route path="/store" component={StoreCatalog} />
+        <Route path="/store/products/:handle" component={StoreProductDetail} />
+        <Route path="/cart" component={CartPage} />
         <Route path="/services" component={Services} />
         <Route path="/services/:slug" component={ServiceDetails} />
         <Route path="/request-a-quote" component={QuoteRequest} />
@@ -63,10 +72,13 @@ function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
+        <CartProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+            <CartDrawer />
+          </TooltipProvider>
+        </CartProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

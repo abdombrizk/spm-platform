@@ -10,6 +10,7 @@ import { createSessionToken, hashPassword, hashSessionToken, sessionExpiresAt, v
 import { userRoles, UserRole } from "../drizzle/schema";
 import { storagePut } from "./storage";
 import { notifyOwner } from "./_core/notification";
+import { commerceRouter } from "./routers/commerce";
 
 const roleSchema = z.enum(userRoles);
 const loginPasswordSchema = z.string().min(8);
@@ -159,6 +160,7 @@ function safeUser(user: NonNullable<Awaited<ReturnType<typeof db.getUserById>>>)
 
 export const appRouter = router({
   system: systemRouter,
+  commerce: commerceRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user ? safeUser(opts.ctx.user) : null),
     login: publicProcedure.input(z.object({ email: z.string().email(), password: loginPasswordSchema })).mutation(async ({ ctx, input }) => {
