@@ -180,6 +180,9 @@ export default function Home() {
   ];
 
   const partBrands = brandsQuery.data ?? [];
+  const marqueeBrands = partBrands.length
+    ? Array.from({ length: Math.max(2, Math.ceil(8 / partBrands.length)) }, () => partBrands).flat()
+    : [];
 
   const eventsData = eventsPageQuery.data?.data as { items?: Array<{ title: string; date: string; location: string; image?: string; isPast?: boolean }> } | undefined;
   const pastEvents = (eventsData?.items ?? []).filter(ev => {
@@ -261,19 +264,6 @@ export default function Home() {
                 </span>
               </div>
             </div>
-          </div>
-
-          {/* Lower Right Dynamic Panel */}
-          <div className="absolute bottom-8 right-5 hidden max-w-sm rounded-2xl border border-white/20 bg-[#061f2b]/80 p-5 text-white shadow-2xl backdrop-blur-md lg:block lg:right-8">
-            <p className="text-xs font-bold uppercase tracking-[.18em] text-[#8be0d5]">
-              {content["panel.eyebrow"] || fallback["panel.eyebrow"]}
-            </p>
-            <p className="mt-2 text-xl font-bold leading-snug">
-              {content["panel.title"] || fallback["panel.title"]}
-            </p>
-            <p className="mt-2 text-xs leading-5 text-white/80">
-              {content["panel.description"] || fallback["panel.description"]}
-            </p>
           </div>
         </section>
 
@@ -388,24 +378,31 @@ export default function Home() {
               </Link>
             </div>
 
-            {/* Manufacturer Brand Badges */}
-            <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-4">
-              {partBrands.map(brand => (
-                <Link
-                  key={brand.id}
-                  href={`/spare-parts`}
-                  className="group flex flex-col items-center justify-center rounded-2xl border border-[#e2e8f0] bg-[#fafcfd] p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-[#0a4052] hover:bg-white hover:shadow-lg"
-                >
-                  <div className="flex h-14 w-full items-center justify-center">
-                    <span className="text-lg font-bold tracking-tight text-[#64748b] grayscale filter transition-all duration-300 group-hover:text-[#0a4052] group-hover:grayscale-0 sm:text-xl">
-                      {brand.name}
-                    </span>
-                  </div>
-                  <span className="mt-2 text-xs font-semibold text-[#94a3b8] transition-colors group-hover:text-[#0f6fae]">
-                    Verified Component
-                  </span>
-                </Link>
-              ))}
+            {/* Manufacturer logo marquee — logos stay controlled from the CMS */}
+            <div className="brand-marquee mt-12 overflow-hidden rounded-3xl border border-[#dce7eb] bg-[#fafcfd] py-5" aria-label="Verified spare part manufacturers">
+              <div className="brand-marquee-track flex w-max items-center gap-4 px-4">
+                {[...marqueeBrands, ...marqueeBrands].map((brand, index) => (
+                  <Link
+                    key={`${brand.id}-${index}`}
+                    href={`/spare-parts?brand=${encodeURIComponent(brand.slug)}`}
+                    aria-hidden={index >= marqueeBrands.length ? true : undefined}
+                    tabIndex={index >= marqueeBrands.length ? -1 : undefined}
+                    className="group flex h-24 w-44 shrink-0 items-center justify-center rounded-2xl border border-[#e2e8f0] bg-white px-5 text-center shadow-xs transition hover:border-[#0a4052] hover:shadow-md"
+                  >
+                    {brand.logoUrl ? (
+                      <img
+                        src={brand.logoUrl}
+                        alt={`${brand.name} logo`}
+                        className="max-h-12 max-w-full object-contain grayscale transition duration-300 group-hover:grayscale-0"
+                      />
+                    ) : (
+                      <span className="text-lg font-bold tracking-tight text-[#64748b] transition-colors group-hover:text-[#0a4052] sm:text-xl">
+                        {brand.name}
+                      </span>
+                    )}
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </section>
