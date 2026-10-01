@@ -1,12 +1,18 @@
 import { Building2, Clock, Mail, MapPin, Phone, ShieldCheck, ArrowUpRight, MessageSquare } from "lucide-react";
 import { Link } from "wouter";
 import SiteChrome from "@/components/SiteChrome";
+import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function ContactPage() {
   return (
     <SiteChrome>
+      <SEOHead
+        title="Contact Technical & Commercial Teams"
+        description="Get in touch with SPM Systems for Projects & Maintenance for medical imaging equipment quotes, maintenance visits, spare-parts, and official agency support."
+        url="/contact"
+      />
       <main className="bg-[#f8fafc] text-[#1e293b]">
         {/* Header */}
         <section className="border-b border-[#dce7eb] bg-gradient-to-b from-[#eaf4fa] to-white py-16 lg:py-20">

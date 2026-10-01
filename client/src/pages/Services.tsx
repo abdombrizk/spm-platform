@@ -21,6 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import SiteChrome from "@/components/SiteChrome";
+import SEOHead from "@/components/SEOHead";
 import { trpc } from "@/lib/trpc";
 
 const labels: Record<string, string> = {
@@ -65,6 +66,11 @@ export default function Services() {
 
   return (
     <SiteChrome>
+      <SEOHead
+        title="Medical Imaging Services & Engineering Support"
+        description="SPM provides certified medical imaging equipment service across Egypt: preventive maintenance, emergency repairs, calibration, commissioning, and SLA contracts."
+        url="/services"
+      />
       <main className="bg-[#f7fafc] text-[#17212b]">
         <section className="relative overflow-hidden bg-[#061f2b] text-white">
           <div className="absolute inset-0"><img src={heroImage} alt="SPM medical imaging service engineer" className="h-full w-full object-cover opacity-35" /><div className="absolute inset-0 bg-gradient-to-r from-[#061f2b]/95 via-[#061f2b]/85 to-[#0a4052]/55" /></div>

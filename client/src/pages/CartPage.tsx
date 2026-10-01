@@ -1,6 +1,7 @@
 import { useCart } from "@/contexts/CartContext";
 import { formatMoney } from "@/lib/format";
 import SiteChrome from "@/components/SiteChrome";
+import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import {
@@ -30,6 +31,11 @@ export default function CartPage() {
 
   return (
     <SiteChrome>
+      <SEOHead
+        title="Shopping Cart"
+        description="Review your selected medical hardware and proceed to secure checkout through SPM Store."
+        url="/cart"
+      />
       <main className="min-h-screen bg-[#f7fafc] py-12 lg:py-16">
         <div className="mx-auto max-w-[1280px] px-5 lg:px-8">
           {/* Header */}

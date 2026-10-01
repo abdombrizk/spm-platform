@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import SiteChrome from "@/components/SiteChrome";
+import SEOHead from "@/components/SEOHead";
 import { trpc } from "@/lib/trpc";
 import type { Product } from "@shared/commerce/types";
 
@@ -88,7 +89,17 @@ function ProductCard({ product }: { product: Product }) {
   return (
     <Card className="group flex h-full flex-col overflow-hidden rounded-3xl border-[#dce7eb] bg-white shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:border-[#0a4052] hover:shadow-2xl">
       <Link href={`/store/products/${product.handle}`} className="relative block aspect-[16/10] overflow-hidden bg-[#eef7fa]">
-        {image ? <img src={image} alt={product.title} className="h-full w-full object-contain p-4 transition duration-700 group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-[#94a3b8]"><Boxes className="h-14 w-14" /></div>}
+        {image ? (
+          <img
+            src={image}
+            alt={product.title}
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-contain p-4 transition duration-700 group-hover:scale-105"
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center text-[#94a3b8]"><Boxes className="h-14 w-14" /></div>
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/60 via-transparent to-transparent" />
         <div className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[#0a4052] shadow-sm">Italray</div>
         <div className={`absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold shadow-sm backdrop-blur-sm ${isQuoteOnly ? "bg-[#fff7ed]/95 text-[#c2410c]" : "bg-[#ecfdf5]/95 text-[#047857]"}`}>
@@ -118,7 +129,12 @@ export default function ItalrayPortfolio() {
 
   return (
     <SiteChrome>
-      <main className="min-h-screen bg-[#f7fafc] text-[#17212b]">
+      <SEOHead
+        title="Italray Medical Imaging Portfolio"
+        description="Official Italray product portfolio in Egypt: mobile C-Arms, digital radiography, dynamic radio-fluoroscopy, and digital mammography systems supported by SPM."
+        url="/catalogue/italray"
+      />
+      <main className="bg-[#f7fafc] text-[#1e293b]">
         <div className="border-b border-[#dce7eb] bg-white">
           <div className="mx-auto flex max-w-[1280px] items-center justify-between gap-4 px-5 py-3 lg:px-8">
             <Link href="/catalogue" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#64748b] transition hover:text-[#0a4052]"><ArrowLeft className="h-3.5 w-3.5" /> All equipment</Link>

@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SiteChrome from "@/components/SiteChrome";
+import SEOHead from "@/components/SEOHead";
 import { trpc } from "@/lib/trpc";
 import type { Product as ShopifyProduct } from "@shared/commerce/types";
 
@@ -165,6 +166,11 @@ export default function Catalogue() {
 
   return (
     <SiteChrome>
+      <SEOHead
+        title="Clinical Equipment & Imaging Catalogue"
+        description="Explore SPM's complete medical equipment portfolio, from mobile C-Arms and digital radiography to fluoroscopy, mammography and precision surgical technology."
+        url="/catalogue"
+      />
       <main className="min-h-screen bg-[#f7fafc]">
         {/* Visual catalogue hero */}
         <section className="relative isolate overflow-hidden bg-[#061f2b] text-white">
@@ -336,7 +342,13 @@ export default function Catalogue() {
                 <Card key={item.id} className="group flex h-full flex-col overflow-hidden rounded-3xl border border-[#dce7eb] bg-white shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:border-[#0a4052] hover:shadow-2xl">
                   <Link href={item.href} className="relative block aspect-[16/10] overflow-hidden bg-[#eef7fa]">
                     {item.image ? (
-                      <img src={item.image} alt={item.title} className="h-full w-full object-contain p-4 transition duration-700 group-hover:scale-105" />
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full object-contain p-4 transition duration-700 group-hover:scale-105"
+                      />
                     ) : (
                       <div className="flex h-full items-center justify-center text-[#94a3b8]"><PackageSearch className="h-14 w-14" /></div>
                     )}

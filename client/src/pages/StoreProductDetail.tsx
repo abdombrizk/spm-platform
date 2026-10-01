@@ -7,6 +7,7 @@ import type { Product, ProductVariant } from "@shared/commerce/types";
 import SiteChrome from "@/components/SiteChrome";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import SEOHead from "@/components/SEOHead";
 import {
   ShoppingBag,
   ArrowLeft,
@@ -60,6 +61,12 @@ function ProductView({ product }: { product: Product }) {
 
   return (
     <div className="mx-auto max-w-[1280px] px-5 py-8 lg:px-8">
+      <SEOHead
+        title={product.title}
+        description={product.description || `Explore ${product.title} - certified medical imaging technology distributed and supported by SPM in Egypt.`}
+        image={currentImage?.url}
+        url={`/store/products/${product.handle}`}
+      />
       {/* Breadcrumb */}
       <nav className="mb-6 flex items-center gap-2 text-xs font-semibold text-[#64748b]">
         <Link href="/" className="hover:text-[#0a4052]">
@@ -82,6 +89,8 @@ function ProductView({ product }: { product: Product }) {
                 <img
                   src={currentImage.url}
                   alt={currentImage.altText || product.title}
+                  loading="eager"
+                  decoding="async"
                   className="h-full w-full object-contain p-4"
                 />
               ) : (
@@ -108,6 +117,8 @@ function ProductView({ product }: { product: Product }) {
                     <img
                       src={img.url}
                       alt={img.altText || `${product.title} ${idx + 1}`}
+                      loading="lazy"
+                      decoding="async"
                       className="h-full w-full object-contain"
                     />
                   </button>

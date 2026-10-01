@@ -21,6 +21,7 @@ import {
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import SiteChrome from "@/components/SiteChrome";
+import SEOHead from "@/components/SEOHead";
 import { trpc } from "@/lib/trpc";
 
 const fallback: Record<string, string> = {
@@ -195,6 +196,11 @@ export default function Home() {
 
   return (
     <SiteChrome transparentHeader={false}>
+      <SEOHead
+        title="Medical Imaging Technology, Service and Spare Parts"
+        description="SPM supports medical imaging equipment with sourcing, service, maintenance and spare-parts request journeys for healthcare and technical teams across Egypt."
+        url="/"
+      />
       <main>
         {/* Section 1: Hero Section */}
         <section className="relative isolate min-h-[640px] overflow-hidden border-b border-[#0a4052] bg-[#061f2b] text-white sm:min-h-[720px] lg:min-h-[760px]">
@@ -433,7 +439,13 @@ export default function Home() {
                   <article key={idx} className="overflow-hidden rounded-2xl border border-[#dce7eb] bg-white shadow-xs transition hover:shadow-md">
                     {event.image ? (
                       <div className="h-48 overflow-hidden bg-[#e2e8f0]">
-                        <img src={event.image} alt={event.title} className="h-full w-full object-cover" />
+                        <img
+                          src={event.image}
+                          alt={event.title}
+                          loading="lazy"
+                          decoding="async"
+                          className="h-full w-full object-cover"
+                        />
                       </div>
                     ) : (
                       <div className="flex h-36 items-center justify-center bg-[#eaf4fa] text-[#0a4052]">

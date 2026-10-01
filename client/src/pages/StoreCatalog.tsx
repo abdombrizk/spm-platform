@@ -8,6 +8,7 @@ import SiteChrome from "@/components/SiteChrome";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import SEOHead from "@/components/SEOHead";
 import {
   ShoppingBag,
   Sparkles,
@@ -83,6 +84,11 @@ export default function StoreCatalog() {
 
   return (
     <SiteChrome>
+      <SEOHead
+        title="Medical Equipment & Precision Store"
+        description="Explore certified imaging systems, laparoscopic sets, and genuine biomedical hardware available for direct purchase and project quotation through SPM."
+        url="/store"
+      />
       <main className="min-h-screen bg-[#f7fafc]">
         {/* Hero Section */}
         <section className="border-b border-[#dce7eb] bg-white py-14 lg:py-16">
@@ -219,6 +225,8 @@ export default function StoreCatalog() {
                             <img
                               src={primaryImage}
                               alt={product.images[0]?.altText || product.title}
+                              loading="lazy"
+                              decoding="async"
                               className="h-full w-full object-contain p-4 transition-transform duration-500 group-hover:scale-105"
                             />
                           ) : (
