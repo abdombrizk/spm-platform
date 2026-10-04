@@ -8,6 +8,7 @@ import SiteChrome from "@/components/SiteChrome";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import SEOHead from "@/components/SEOHead";
+import ItalrayProductExperience from "@/pages/ItalrayProductExperience";
 import {
   ShoppingBag,
   ArrowLeft,
@@ -325,19 +326,34 @@ function ProductView({ product }: { product: Product }) {
 export default function StoreProductDetail() {
   const [, params] = useRoute("/store/products/:handle");
   const handle = params?.handle || "";
+  const utils = trpc.useUtils();
 
   const { data: product, isLoading, error } = trpc.commerce.products.byHandle.useQuery(
     { handle },
-    { enabled: Boolean(handle) }
+    {
+      enabled: Boolean(handle),
+      staleTime: 60 * 1000,
+      initialData: () => {
+        const list = utils.commerce.products.list.getData();
+        return list?.find((item) => item.handle === handle);
+      },
+    }
   );
 
   return (
     <SiteChrome>
       <main className="min-h-screen bg-[#f7fafc]">
         {isLoading ? (
-          <div className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-            <Loader2 className="h-10 w-10 animate-spin text-[#0a4052]" />
-            <p className="mt-4 text-sm font-semibold text-[#64748b]">Loading product from Shopify...</p>
+          <div role="status" aria-live="polite" aria-busy="true" className="mx-auto max-w-[1280px] px-5 py-12 lg:px-8">
+            <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
+              <div className="h-[420px] rounded-[2rem] bg-[#eef7fa] animate-pulse lg:col-span-7" />
+              <div className="space-y-5 lg:col-span-5">
+                <div className="h-6 w-32 rounded-full bg-[#e2e8f0] animate-pulse" />
+                <div className="h-10 w-3/4 rounded-xl bg-[#cbd5e1] animate-pulse" />
+                <div className="h-20 w-full rounded-2xl bg-[#f1f5f9] animate-pulse" />
+                <div className="h-12 w-48 rounded-xl bg-[#c2410c]/30 animate-pulse" />
+              </div>
+            </div>
           </div>
         ) : error || !product ? (
           <div className="mx-auto max-w-md py-20 px-5 text-center">
@@ -354,7 +370,7 @@ export default function StoreProductDetail() {
             </div>
           </div>
         ) : (
-          <ProductView product={product} />
+          product.vendor?.toLowerCase() === "italray" ? <ItalrayProductExperience product={product} /> : <ProductView product={product} />
         )}
       </main>
     </SiteChrome>

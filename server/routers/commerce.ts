@@ -23,6 +23,8 @@ import {
 import { publicProcedure, router } from "../_core/trpc";
 
 
+const productCache = new Map<string, { time: number; data: any }>();
+const CACHE_TTL_MS = 60 * 1000;
 const sanitizeProduct = <T extends { descriptionHtml?: string; description?: string }>(product: T): T => ({
   ...product,
   descriptionHtml: product.descriptionHtml ? sanitizeHtml(product.descriptionHtml, { allowedTags: ["p", "br", "strong", "em", "ul", "ol", "li", "a"], allowedAttributes: { a: ["href", "target", "rel"] }, allowedSchemes: ["https", "mailto"] }) : "",
@@ -56,8 +58,21 @@ export const commerceRouter = router({
     byHandle: publicProcedure
       .input(z.object({ handle: z.string().min(1) }))
       .query(async ({ input }) => {
-        const product = await getProductByHandle(input.handle);
-        return product ? sanitizeProduct(product) : null;
+        const cached = productCache.get(input.handle);
+        if (cached && Date.now() - cached.time < CACHE_TTL_MS) {
+          return cached.data;
+        }
+        try {
+          const product = await getProductByHandle(input.handle);
+          const sanitized = product ? sanitizeProduct(product) : null;
+          if (sanitized) {
+            productCache.set(input.handle, { time: Date.now(), data: sanitized });
+          }
+          return sanitized;
+        } catch (err) {
+          if (cached) return cached.data;
+          throw err;
+        }
       }),
   }),
   collections: router({
