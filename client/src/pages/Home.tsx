@@ -262,7 +262,7 @@ export default function Home() {
                     className="h-13 rounded-xl border-2 border-white/70 bg-white/10 px-8 text-sm font-bold text-white backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:bg-white/20 active:scale-97"
                   >
                     {content["hero.secondary.label"] || fallback["hero.secondary.label"]}
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                    <ArrowUpRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
               </div>

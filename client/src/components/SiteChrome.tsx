@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { ChevronDown, ChevronRight, Menu, X, ArrowUpRight, LockKeyhole, Activity, Boxes, Stethoscope, Sparkles, Search, PhoneCall, ShoppingBag, Wrench } from "lucide-react";
+import { ChevronDown, ChevronRight, Menu, X, ArrowUpRight, Boxes, Stethoscope, Search, MessageCircle, Wrench } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
-import { useCart } from "@/contexts/CartContext";
 
 const logo = "/manus-storage/spm-logo-cropped_7b519adc.webp";
 const italrayLogo = "/manus-storage/italray-logo_57cfff13.png";
@@ -18,7 +17,6 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
   const [activeNews, setActiveNews] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [location] = useLocation();
-  const { itemCount, openCart } = useCart();
 
   const brandsQuery = trpc.menu.productBrands.useQuery();
   const itemsQuery = trpc.menu.productItems.useQuery();
@@ -59,7 +57,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
       >
         <div className="mx-auto flex h-[80px] max-w-[1280px] items-center justify-between gap-6 px-5 lg:px-8">
           <Link href="/" className="flex shrink-0 items-center gap-3" onClick={() => setOpen(false)}>
-            <img src={logo} alt="SPM Medical Imaging Technology" className="h-12 w-auto max-w-[178px] object-contain transition-transform hover:scale-105 sm:h-14" />
+            <img src={logo} alt="SPM Medical Imaging Technology" className="h-14 w-auto max-w-[208px] object-contain transition-transform hover:scale-105 sm:h-16" />
             <span className="sr-only">SPM - Systems for Projects & Maintenance</span>
           </Link>
 
@@ -90,13 +88,13 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                 }`}
               >
                 <Link href="/about" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] transition hover:bg-[#eaf4fa] hover:text-[#0a4052]">
-                  About SPM <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8]" />
+                  About SPM
                 </Link>
                 <Link href="/contact" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] transition hover:bg-[#eaf4fa] hover:text-[#0a4052]">
-                  Contact & Locations <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8]" />
+                  Contact & Locations
                 </Link>
                 <Link href="/careers" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] transition hover:bg-[#eaf4fa] hover:text-[#0a4052]">
-                  Careers at SPM <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8]" />
+                  Careers at SPM
                 </Link>
               </div>
             </div>
@@ -319,13 +317,13 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                 }`}
               >
                 <Link href="/services" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] transition hover:bg-[#eaf4fa] hover:text-[#0a4052]">
-                  All Services (10 Pillars) <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8]" />
+                  All Services (10 Pillars)
                 </Link>
                 <Link href="/request-service" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] transition hover:bg-[#eaf4fa] hover:text-[#0a4052]">
-                  Request Service Visit <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8]" />
+                  Request Service Visit
                 </Link>
                 <Link href="/maintenance-contracts" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] transition hover:bg-[#eaf4fa] hover:text-[#0a4052]">
-                  Maintenance Contracts <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8]" />
+                  Maintenance Contracts
                 </Link>
               </div>
             </div>
@@ -355,63 +353,32 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                 }`}
               >
                 <Link href="/news" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] transition hover:bg-[#eaf4fa] hover:text-[#0a4052]">
-                  Latest News <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8]" />
+                  Latest News
                 </Link>
                 <Link href="/events" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] transition hover:bg-[#eaf4fa] hover:text-[#0a4052]">
-                  Upcoming Events <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8]" />
+                  Upcoming Events
                 </Link>
                 <Link href="/faqs" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] transition hover:bg-[#eaf4fa] hover:text-[#0a4052]">
-                  FAQs & Knowledge <ArrowUpRight className="h-3.5 w-3.5 text-[#94a3b8]" />
+                  FAQs & Knowledge
                 </Link>
               </div>
             </div>
 
-            {/* 5. Online Storefront */}
-            <Link
-              href="/store"
-              className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-4 text-sm font-semibold transition ${
-                location.startsWith("/store") || location.startsWith("/cart")
-                  ? navActive
-                  : navIdle
-              }`}
-            >
-              <ShoppingBag className="h-4 w-4 text-[#d95316]" />
-              Store
-              <span className="rounded-full bg-[#d95316]/10 px-1.5 py-0.5 text-[10px] font-bold text-[#d95316]">Shopify</span>
-            </Link>
           </nav>
 
           {/* Action CTAs */}
           <div className="hidden items-center gap-3 lg:flex">
-            {/* Cart Trigger */}
-            <button
-              type="button"
-              onClick={openCart}
-              className={`relative inline-flex items-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-bold transition ${
+            <Link
+              href="/store"
+              aria-label="Search products and spare parts"
+              title="Search products and spare parts"
+              className={`inline-flex h-10 w-10 items-center justify-center rounded-xl border transition ${
                 isDarkNav
                   ? "border-white/30 bg-white/10 text-white hover:bg-white/20"
                   : "border-[#dce7eb] bg-white text-[#0a4052] hover:border-[#0a4052] hover:bg-[#eaf4fa]"
               }`}
-              title="Open cart drawer"
             >
-              <ShoppingBag className="h-4 w-4 text-[#0a4052]" />
-              <span>Cart</span>
-              {itemCount > 0 && (
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#d95316] text-[10px] font-extrabold text-white">
-                  {itemCount}
-                </span>
-              )}
-            </button>
-            <Link
-              href="/login"
-              className={`inline-flex items-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-bold transition ${
-                isDarkNav
-                  ? "border-white/30 bg-white/10 text-white hover:border-white hover:bg-white/20"
-                  : "border-[#dce7eb] bg-white text-[#334155] hover:border-[#0a4052] hover:text-[#0a4052]"
-              }`}
-            >
-              <LockKeyhole className="h-3.5 w-3.5 text-[#0f6fae]" />
-              Staff Sign in
+              <Search className="h-4 w-4" />
             </Link>
             <Link href="/contact">
               <Button className="h-11 rounded-xl bg-[#d95316] px-6 text-sm font-bold text-white shadow-md shadow-[#d95316]/20 transition-all hover:bg-[#b8430e] hover:shadow-lg active:scale-95">
@@ -436,38 +403,12 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
         {open ? (
           <div className="max-h-[80vh] overflow-y-auto border-t border-[#dce7eb] bg-white px-5 py-6 lg:hidden">
             <Link
-              href="/login"
+              href="/store"
               onClick={() => setOpen(false)}
-              className="mb-4 flex items-center justify-between rounded-xl border border-[#dce7eb] bg-[#f8fafc] p-3 text-sm font-bold text-[#0a4052]"
+              className="mb-4 flex items-center justify-center gap-2 rounded-xl border border-[#dce7eb] bg-[#f8fafc] p-3 text-sm font-bold text-[#0a4052]"
             >
-              <span className="inline-flex items-center gap-2">
-                <LockKeyhole className="h-4 w-4 text-[#0f6fae]" /> Internal Staff Sign in
-              </span>
-              <ArrowUpRight className="h-4 w-4 text-[#94a3b8]" />
+              <Search className="h-4 w-4 text-[#0f6fae]" /> Search products and spare parts
             </Link>
-
-            {/* Mobile Store & Cart quick bar */}
-            <div className="mb-4 grid grid-cols-2 gap-2">
-              <Link
-                href="/store"
-                onClick={() => setOpen(false)}
-                className="flex items-center justify-center gap-2 rounded-xl bg-[#0a4052] p-2.5 text-xs font-bold text-white shadow-xs"
-              >
-                <ShoppingBag className="h-4 w-4" />
-                Store Catalog
-              </Link>
-              <button
-                type="button"
-                onClick={() => {
-                  setOpen(false);
-                  openCart();
-                }}
-                className="flex items-center justify-center gap-2 rounded-xl border border-[#0a4052] bg-white p-2.5 text-xs font-bold text-[#0a4052]"
-              >
-                <ShoppingBag className="h-4 w-4 text-[#0a4052]" />
-                Cart ({itemCount})
-              </button>
-            </div>
 
             <div className="space-y-4 divide-y divide-[#f1f5f9]">
               <div className="pt-2">
@@ -595,6 +536,19 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
           </div>
         </div>
       </footer>
+
+      <a
+        href="https://wa.me/201221888395?text=Hello%20SPM%2C%20I%20need%20help%20with%20medical%20imaging%20equipment."
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Contact SPM on WhatsApp"
+        className="group fixed bottom-5 right-5 z-50 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_10px_30px_rgba(37,211,102,.35)] transition duration-200 hover:-translate-y-1 hover:bg-[#1ebe5d] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#25D366]/30"
+      >
+        <MessageCircle className="h-7 w-7" strokeWidth={2.25} />
+        <span className="pointer-events-none absolute right-full mr-3 hidden whitespace-nowrap rounded-lg bg-[#061f2b] px-3 py-2 text-xs font-semibold text-white opacity-0 shadow-lg transition group-hover:block group-hover:opacity-100">
+          Chat with SPM on WhatsApp
+        </span>
+      </a>
     </div>
   );
 }
