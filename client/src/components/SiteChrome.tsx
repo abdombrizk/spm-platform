@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
-import { ChevronDown, ChevronRight, Menu, X, ArrowUpRight, LockKeyhole, Activity, Boxes, Layers, Stethoscope, Sparkles, Search, PhoneCall, ShoppingBag } from "lucide-react";
+import { ChevronDown, ChevronRight, Menu, X, ArrowUpRight, LockKeyhole, Activity, Boxes, Stethoscope, Sparkles, Search, PhoneCall, ShoppingBag, Wrench } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
 import { useCart } from "@/contexts/CartContext";
 
 const logo = "/manus-storage/spm-logo-cropped_7b519adc.webp";
+const italrayLogo = "/manus-storage/italray-logo_57cfff13.png";
+const hermannLogo = "/manus-storage/hermann-logo_7f4be603.png";
 
 export default function SiteChrome({ children, transparentHeader = false }: { children: React.ReactNode; transparentHeader?: boolean }) {
   const [open, setOpen] = useState(false);
@@ -20,12 +22,10 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
 
   const brandsQuery = trpc.menu.productBrands.useQuery();
   const itemsQuery = trpc.menu.productItems.useQuery();
-  const partsQuery = trpc.parts.brands.useQuery();
   const storeProductsQuery = trpc.commerce.products.list.useQuery({ first: 12 });
 
   const brands = brandsQuery.data ?? [];
   const items = itemsQuery.data ?? [];
-  const partBrands = partsQuery.data ?? [];
   const italrayStoreProducts = (storeProductsQuery.data ?? []).filter(product => product.vendor === "Italray").slice(0, 6);
 
   const hermannBrand = brands.find(b => b.slug === "hermann");
@@ -140,7 +140,9 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
-                        <Activity className="h-4 w-4" />
+                        <span className={`flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg bg-white p-1 ${activeProductTab === "italray" ? "ring-1 ring-white/60" : "border border-[#dce7eb]"}`}>
+                          <img src={italrayLogo} alt="" className="h-full w-full object-contain" />
+                        </span>
                         <div>
                           <p className="text-sm font-bold">1. Italray</p>
                           <p className={`text-[10px] ${activeProductTab === "italray" ? "text-white/80" : "text-[#64748b]"}`}>Exclusive Agent in Egypt</p>
@@ -157,7 +159,9 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
-                        <Stethoscope className="h-4 w-4" />
+                        <span className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg bg-[#c92518] p-1">
+                          <img src={hermannLogo} alt="" className="h-full w-full object-contain" />
+                        </span>
                         <div>
                           <p className="text-sm font-bold">2. Hermann</p>
                           <p className={`text-[10px] ${activeProductTab === "hermann" ? "text-white/80" : "text-[#64748b]"}`}>Authorized Partner</p>
@@ -174,10 +178,10 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
-                        <Layers className="h-4 w-4" />
+                        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#eaf4fa] text-[#0a4052]"><Wrench className="h-4 w-4" /></span>
                         <div>
-                          <p className="text-sm font-bold">3. Spare Parts</p>
-                          <p className={`text-[10px] ${activeProductTab === "parts" ? "text-white/80" : "text-[#64748b]"}`}>Multi-Vendor OEM</p>
+                          <p className="text-sm font-bold">3. Service & Maintenance</p>
+                          <p className={`text-[10px] ${activeProductTab === "parts" ? "text-white/80" : "text-[#64748b]"}`}>Lifecycle Engineering</p>
                         </div>
                       </div>
                       <ChevronRight className={`h-4 w-4 transition-transform ${activeProductTab === "parts" ? "translate-x-1" : ""}`} />
@@ -201,15 +205,9 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                                 key={product.id}
                                 href={`/store/products/${product.handle}`}
                                 onClick={() => setActiveMega(false)}
-                                className="group flex min-w-0 items-center gap-2 rounded-xl border border-[#e2e8f0] bg-[#fafcfd] p-2.5 transition hover:-translate-y-0.5 hover:border-[#0a4052] hover:bg-white hover:shadow-sm"
+                                className="group flex min-w-0 items-center gap-3 rounded-xl border border-[#e2e8f0] bg-[#fafcfd] px-3 py-2.5 transition hover:-translate-y-0.5 hover:border-[#0a4052] hover:bg-white hover:shadow-sm"
                               >
-                                <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-[#eaf4fa] text-[#0a4052]">
-                                  {product.images[0]?.url ? (
-                                    <img src={product.images[0].url} alt="" className="h-full w-full object-contain p-1" />
-                                  ) : (
-                                    <Boxes className="h-5 w-5" />
-                                  )}
-                                </div>
+                                <span className="h-2 w-2 shrink-0 rounded-full bg-[#d95316] transition group-hover:scale-125" />
                                 <div className="min-w-0 flex-1">
                                   <p className="line-clamp-2 text-[11px] font-bold leading-4 text-[#1e293b] group-hover:text-[#0f6fae]">{product.title}</p>
                                   <p className="mt-0.5 truncate text-[10px] text-[#94a3b8]">{product.productType || "Medical imaging system"}</p>
@@ -272,25 +270,21 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                     ) : (
                       <div>
                         <div className="mb-3 flex items-center justify-between border-b border-[#eef3f5] pb-2">
-                          <span className="text-xs font-bold uppercase tracking-wider text-[#0a4052]">Spare Parts Hub</span>
-                          <Link href="/spare-parts" className="text-xs font-semibold text-[#d95316] hover:underline">
-                            Browse All Parts <ArrowUpRight className="ml-1 inline h-3 w-3" />
+                          <span className="text-xs font-bold uppercase tracking-wider text-[#0a4052]">Service & Maintenance</span>
+                          <Link href="/services" className="text-xs font-semibold text-[#d95316] hover:underline">
+                            Explore Service <ArrowUpRight className="ml-1 inline h-3 w-3" />
                           </Link>
                         </div>
                         <div className="grid grid-cols-2 gap-2">
-                          {partBrands.slice(0, 6).map(pb => (
-                            <Link
-                              key={pb.id}
-                              href="/spare-parts"
-                              className="group flex items-center gap-2.5 rounded-xl border border-[#e2e8f0] bg-[#fafcfd] p-2.5 transition hover:border-[#0a4052] hover:bg-white hover:shadow-xs"
-                            >
-                              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#eaf4fa] text-[#0a4052]">
-                                <Layers className="h-4 w-4" />
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <p className="truncate text-xs font-bold text-[#1e293b] group-hover:text-[#0f6fae]">{pb.name}</p>
-                                <p className="text-[10px] text-[#94a3b8]">Verified Component</p>
-                              </div>
+                          {[
+                            ["Preventive maintenance", "/request-service?type=preventive_maintenance"],
+                            ["Emergency repair", "/request-service?type=emergency_maintenance"],
+                            ["Commissioning & calibration", "/request-service?type=commissioning"],
+                            ["Genuine spare parts", "/spare-parts"],
+                          ].map(([label, href]) => (
+                            <Link key={label} href={href} className="group rounded-xl border border-[#e2e8f0] bg-[#fafcfd] p-3 transition hover:border-[#0a4052] hover:bg-white hover:shadow-xs">
+                              <Wrench className="h-4 w-4 text-[#0f6fae] transition group-hover:text-[#d95316]" />
+                              <p className="mt-2 text-xs font-bold leading-4 text-[#1e293b] group-hover:text-[#0f6fae]">{label}</p>
                             </Link>
                           ))}
                         </div>

@@ -34,7 +34,7 @@ const fallback: Record<string, string> = {
   "hero.primary.url": "/request-a-quote",
   "hero.secondary.label": "Request Service",
   "hero.secondary.url": "/request-service",
-  "hero.image": "/manus-storage/spm-hero-medical-engineer_fd2460bc.jpg",
+  "hero.image": "/manus-storage/spm-modern-imaging-hero_a4444ff2.jpg",
   "panel.eyebrow": "FIELD READINESS",
   "panel.title": "24–48h Cairo Response",
   "panel.description": "Dedicated biomedical engineers covering 24 of 27 Egyptian governorates with remote diagnostics within 4 hours.",
@@ -59,7 +59,7 @@ const solutions = [
     title: "Certified Medical Imaging Equipment",
     text: "Explore C-Arm systems, digital radiography, fluoroscopy, and surgical technology with full technical specs and ISO documents.",
     href: "/catalogue",
-    image: "/manus-storage/spm-equipment-carm_d9a563ca.jpg",
+    image: "https://cdn.shopify.com/s/files/1/1002/9672/0673/files/MsiwLyhyWlEjDsPK.jpg?v=1790773853",
     cta: "Browse Imaging Systems",
     badge: "Italray Exclusive Agent",
   },
@@ -74,6 +74,11 @@ const solutions = [
     badge: "Engineering Warranty",
   },
 ];
+
+const brandLogoOverrides: Record<string, string> = {
+  italray: "/manus-storage/italray-logo_57cfff13.png",
+  hermann: "/manus-storage/hermann-logo_7f4be603.png",
+};
 
 function AnimatedCounter({ targetValue, duration = 1200 }: { targetValue: number; duration?: number }) {
   const [count, setCount] = useState(0);
@@ -193,6 +198,9 @@ export default function Home() {
   });
 
   const showCareers = content["careers.visible"] !== "false" && content["careers.visible"] !== "";
+  const heroImage = content["hero.image"]?.includes("spm-hero-medical-engineer")
+    ? fallback["hero.image"]
+    : content["hero.image"] || fallback["hero.image"];
 
   return (
     <SiteChrome transparentHeader={false}>
@@ -205,8 +213,10 @@ export default function Home() {
         {/* Section 1: Hero Section */}
         <section className="relative isolate min-h-[640px] overflow-hidden border-b border-[#0a4052] bg-[#061f2b] text-white sm:min-h-[720px] lg:min-h-[760px]">
           <img
-            src={content["hero.image"] || fallback["hero.image"]}
+            src={heroImage}
             alt="SPM biomedical engineer working on hospital medical imaging equipment"
+            fetchPriority="high"
+            decoding="async"
             className="absolute inset-0 h-full w-full object-cover object-center transition duration-1000 hover:scale-[1.01]"
           />
           {/* Multi-stage calibrated gradient overlay */}
@@ -395,10 +405,12 @@ export default function Home() {
                     tabIndex={index >= marqueeBrands.length ? -1 : undefined}
                     className="group flex h-24 w-44 shrink-0 items-center justify-center rounded-2xl border border-[#e2e8f0] bg-white px-5 text-center shadow-xs transition hover:border-[#0a4052] hover:shadow-md"
                   >
-                    {brand.logoUrl ? (
+                    {brand.logoUrl || brandLogoOverrides[brand.slug] ? (
                       <img
-                        src={brand.logoUrl}
+                        src={brand.logoUrl || brandLogoOverrides[brand.slug]}
                         alt={`${brand.name} logo`}
+                        loading="lazy"
+                        decoding="async"
                         className="max-h-12 max-w-full object-contain grayscale transition duration-300 group-hover:grayscale-0"
                       />
                     ) : (
