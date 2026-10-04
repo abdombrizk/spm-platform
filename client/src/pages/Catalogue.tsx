@@ -111,16 +111,36 @@ export default function Catalogue() {
   const [location] = useLocation();
   const searchParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : new URLSearchParams();
   const initialBrandParam = searchParams.get("brand") || "all";
+  const initialCategoryParam = searchParams.get("category") || "all";
+  const initialSortParam = searchParams.get("sort") || "relevance";
+  const initialSearchParam = searchParams.get("q") || "";
 
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState(initialCategoryParam.toLowerCase());
   const [selectedBrand, setSelectedBrand] = useState(initialBrandParam.toLowerCase());
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(initialSearchParam);
+  const [selectedSort, setSelectedSort] = useState(initialSortParam);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const brand = params.get("brand");
-    if (brand) setSelectedBrand(brand.toLowerCase());
+    const category = params.get("category");
+    const q = params.get("q");
+    const sort = params.get("sort");
+    setSelectedBrand(brand?.toLowerCase() || "all");
+    setSelectedCategory(category?.toLowerCase() || "all");
+    setSearchTerm(q || "");
+    setSelectedSort(sort || "relevance");
   }, [location]);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (selectedBrand !== "all") params.set("brand", selectedBrand);
+    if (selectedCategory !== "all") params.set("category", selectedCategory);
+    if (searchTerm.trim()) params.set("q", searchTerm.trim());
+    if (selectedSort !== "relevance") params.set("sort", selectedSort);
+    const next = params.toString() ? `/catalogue?${params.toString()}` : "/catalogue";
+    if (typeof window !== "undefined" && window.location.pathname + window.location.search !== next) window.history.replaceState({}, "", next);
+  }, [selectedBrand, selectedCategory, searchTerm, selectedSort]);
 
   const cmsItems = useMemo(() => (query.data ?? []).map(item => toCmsItem(item as CmsProduct)), [query.data]);
   const shopifyItems = useMemo(() => (storeQuery.data ?? []).map(toShopifyItem), [storeQuery.data]);
@@ -144,20 +164,22 @@ export default function Catalogue() {
 
   const products = useMemo(() => {
     const search = normalize(searchTerm);
-    return allItems.filter(item => {
-      if (selectedCategory !== "all" && normalize(item.category) !== selectedCategory) return false;
+    const filtered = allItems.filter(item => {
+      if (selectedCategory !== "all" && !normalize(item.category).includes(selectedCategory)) return false;
       if (selectedBrand !== "all" && !normalize(item.brand).includes(selectedBrand)) return false;
       if (!search) return true;
       return [item.title, item.brand, item.category, item.model, item.description, ...item.specs].some(value => normalize(value).includes(search));
     });
-  }, [allItems, searchTerm, selectedBrand, selectedCategory]);
+    return [...filtered].sort((a, b) => selectedSort === "title" ? a.title.localeCompare(b.title) : selectedSort === "brand" ? a.brand.localeCompare(b.brand) : a.title.localeCompare(b.title));
+  }, [allItems, searchTerm, selectedBrand, selectedCategory, selectedSort]);
 
   const resetFilters = () => {
     setSelectedCategory("all");
     setSelectedBrand("all");
     setSearchTerm("");
-    if (typeof window !== "undefined" && window.history.pushState) {
-      window.history.pushState({}, "", "/catalogue");
+    setSelectedSort("relevance");
+    if (typeof window !== "undefined" && window.history.replaceState) {
+      window.history.replaceState({}, "", "/catalogue");
     }
   };
 
@@ -192,7 +214,7 @@ export default function Catalogue() {
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <a href="#catalogue-grid">
-                  <Button size="lg" className="h-12 rounded-xl bg-[#d95316] px-6 text-sm font-bold text-white shadow-xl shadow-[#d95316]/20 hover:bg-[#b8430e]">
+                  <Button size="lg" className="h-12 rounded-xl bg-[#c2410c] px-6 text-sm font-bold text-white shadow-xl shadow-[#c2410c]/20 hover:bg-[#9a3412]">
                     Browse all systems <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </a>
@@ -215,8 +237,8 @@ export default function Catalogue() {
                 </div>
                 <div className="rounded-2xl border border-white/10 bg-white/10 p-3 backdrop-blur-sm">
                   <ShieldCheck className="h-5 w-5 text-[#8be0d5]" />
-                  <p className="mt-2 text-xl font-extrabold">CE</p>
-                  <p className="text-[11px] text-white/60">Document-led sourcing</p>
+                  <p className="mt-2 text-xl font-extrabold">Docs</p>
+                  <p className="text-xs text-white/70">Document-led sourcing</p>
                 </div>
                 <div className="rounded-2xl border border-white/10 bg-white/10 p-3 backdrop-blur-sm">
                   <Truck className="h-5 w-5 text-[#8be0d5]" />
@@ -289,8 +311,18 @@ export default function Catalogue() {
                     ))}
                   </SelectContent>
                 </Select>
+                <Select value={selectedSort} onValueChange={setSelectedSort}>
+                  <SelectTrigger className="h-12 rounded-xl border-[#dce7eb] bg-[#fafcfd] text-sm" aria-label="Sort catalogue">
+                    <SelectValue placeholder="Sort systems" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="relevance">Sort: Relevance</SelectItem>
+                    <SelectItem value="title">Sort: Name</SelectItem>
+                    <SelectItem value="brand">Sort: Manufacturer</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              {hasActiveFilters ? (
+              {hasActiveFilters || selectedSort !== "relevance" ? (
                 <Button variant="outline" onClick={resetFilters} className="h-12 rounded-xl border-[#dce7eb] px-4 text-xs font-bold text-[#64748b] hover:bg-[#eaf4fa] hover:text-[#0a4052]">
                   <X className="mr-1.5 h-4 w-4" /> Clear
                 </Button>
@@ -306,7 +338,7 @@ export default function Catalogue() {
                 <button type="button" onClick={() => setSelectedCategory("all")} className={`shrink-0 rounded-full px-3.5 py-2 text-xs font-bold transition ${selectedCategory === "all" ? "bg-[#0a4052] text-white" : "bg-[#f1f5f9] text-[#64748b] hover:bg-[#eaf4fa] hover:text-[#0a4052]"}`}>
                   All systems
                 </button>
-                {availableCategories.slice(0, 7).map(([value, label]) => (
+                {availableCategories.map(([value, label]) => (
                   <button type="button" key={value} onClick={() => setSelectedCategory(value)} className={`shrink-0 rounded-full px-3.5 py-2 text-xs font-bold transition ${selectedCategory === value ? "bg-[#0a4052] text-white" : "bg-[#f1f5f9] text-[#64748b] hover:bg-[#eaf4fa] hover:text-[#0a4052]"}`}>
                     {label}
                   </button>
@@ -355,7 +387,7 @@ export default function Catalogue() {
                     <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/65 via-transparent to-transparent" />
                     <div className="absolute left-4 top-4 flex flex-wrap gap-2">
                       <Badge className="rounded-full bg-[#0a4052] text-[10px] font-bold text-white shadow-sm">{item.category}</Badge>
-                      {item.kind === "shopify" ? <Badge className="rounded-full bg-white/90 text-[10px] font-bold text-[#d95316] shadow-sm">Storefront</Badge> : null}
+                      {item.kind === "shopify" ? <Badge className="rounded-full bg-white/90 text-[10px] font-bold text-[#c2410c] shadow-sm">Storefront</Badge> : null}
                     </div>
                     <span className={`absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold shadow-sm backdrop-blur-sm ${item.statusTone === "green" ? "bg-[#ecfdf5]/95 text-[#047857]" : item.statusTone === "amber" ? "bg-[#fff7ed]/95 text-[#c2410c]" : "bg-white/90 text-[#64748b]"}`}>
                       {item.statusTone === "green" ? <CheckCircle2 className="h-3.5 w-3.5" /> : <BadgeCheck className="h-3.5 w-3.5" />}
@@ -382,7 +414,7 @@ export default function Catalogue() {
                     ) : null}
                     <div className="mt-auto pt-6">
                       <Link href={item.href}>
-                        <Button className={`w-full rounded-xl text-sm font-bold text-white shadow-xs ${item.statusTone === "amber" ? "bg-[#d95316] hover:bg-[#b8430e]" : "bg-[#0a4052] hover:bg-[#063545]"}`}>
+                        <Button className={`w-full rounded-xl text-sm font-bold text-white shadow-xs ${item.statusTone === "amber" ? "bg-[#c2410c] hover:bg-[#9a3412]" : "bg-[#0a4052] hover:bg-[#063545]"}`}>
                           {item.cta} <ArrowUpRight className="ml-2 h-4 w-4" />
                         </Button>
                       </Link>

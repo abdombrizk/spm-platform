@@ -179,9 +179,9 @@ export default function Home() {
       label: spareParts?.label || "Verified Spare Parts",
       sub: "OEM components ready for immediate dispatch",
       icon: Layers,
-      accent: "text-[#d95316]",
+      accent: "text-[#c2410c]",
       bg: "bg-[#fff1e9]",
-      border: "hover:border-[#d95316]",
+      border: "hover:border-[#c2410c]",
     },
   ];
 
@@ -215,6 +215,7 @@ export default function Home() {
           <img
             src={heroImage}
             alt="Premium mobile C-Arm medical imaging system in a cinematic studio setting"
+            loading="eager"
             fetchPriority="high"
             decoding="async"
             className="absolute inset-0 h-full w-full object-cover object-center transition duration-1000 hover:scale-[1.01]"
@@ -249,7 +250,7 @@ export default function Home() {
                 <Link href={content["hero.primary.url"] || fallback["hero.primary.url"]}>
                   <Button
                     size="lg"
-                    className="h-13 rounded-xl bg-[#d95316] px-8 text-sm font-bold text-white shadow-xl shadow-[#d95316]/25 transition-all hover:-translate-y-0.5 hover:bg-[#b8430e] hover:shadow-2xl active:scale-97"
+                    className="h-13 rounded-xl bg-[#c2410c] px-8 text-sm font-bold text-white shadow-xl shadow-[#c2410c]/25 transition-all hover:-translate-y-0.5 hover:bg-[#9a3412] hover:shadow-2xl active:scale-97"
                   >
                     {content["hero.primary.label"] || fallback["hero.primary.label"]}
                     <ArrowUpRight className="ml-2 h-4 w-4" />
@@ -362,7 +363,7 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="border-t border-[#f1f5f9] px-7 py-4">
-                  <div className="inline-flex items-center text-sm font-bold text-[#d95316] transition-transform group-hover:translate-x-1.5">
+                  <div className="inline-flex items-center text-sm font-bold text-[#c2410c] transition-transform group-hover:translate-x-1.5">
                     {item.cta}
                     <ArrowUpRight className="ml-2 h-4 w-4" />
                   </div>
@@ -510,7 +511,7 @@ export default function Home() {
                   </p>
                   <div className="mt-8 flex flex-wrap gap-4">
                     <Link href="/careers">
-                      <Button size="lg" className="h-12 rounded-xl bg-[#d95316] px-7 text-sm font-bold text-white shadow-lg hover:bg-[#b8430e]">
+                      <Button size="lg" className="h-12 rounded-xl bg-[#c2410c] px-7 text-sm font-bold text-white shadow-lg hover:bg-[#9a3412]">
                         Explore Open Roles <ArrowUpRight className="ml-2 h-4 w-4" />
                       </Button>
                     </Link>
@@ -594,7 +595,7 @@ export default function Home() {
         <section className="mx-auto max-w-[1280px] px-5 py-20 text-center lg:px-8 lg:py-24">
           <div className="mx-auto max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-[#bcdde2] bg-[#eaf4fa] px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#0a4052]">
-              <PhoneCall className="h-3.5 w-3.5 text-[#d95316]" /> Ready When You Are
+              <PhoneCall className="h-3.5 w-3.5 text-[#c2410c]" /> Ready When You Are
             </div>
             <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-[#0a4052] sm:text-4xl lg:text-5xl">
               Tell SPM what needs to move forward.
@@ -604,7 +605,7 @@ export default function Home() {
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
               <Link href="/request-a-quote">
-                <Button size="lg" className="h-13 rounded-xl bg-[#d95316] px-8 text-sm font-bold text-white shadow-lg shadow-[#d95316]/20 hover:bg-[#b8430e]">
+                <Button size="lg" className="h-13 rounded-xl bg-[#c2410c] px-8 text-sm font-bold text-white shadow-lg shadow-[#c2410c]/20 hover:bg-[#9a3412]">
                   Request a Quote <ArrowUpRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>

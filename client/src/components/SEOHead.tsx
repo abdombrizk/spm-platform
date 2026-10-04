@@ -11,7 +11,7 @@ interface SEOProps {
 const DEFAULT_TITLE = "SPM | Medical Imaging Technology, Service and Spare Parts";
 const DEFAULT_DESCRIPTION =
   "SPM supports medical imaging equipment with sourcing, service, maintenance and spare-parts request journeys for healthcare and technical teams.";
-const DEFAULT_IMAGE = "/manus-storage/spm-hero-medical-engineer_fd2460bc.jpg";
+const DEFAULT_IMAGE = "/manus-storage/spm-italray-product-hero_c7063612.jpg";
 const BASE_URL = "https://spmhospitals.com";
 
 export default function SEOHead({

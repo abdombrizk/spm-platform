@@ -91,10 +91,10 @@ function ProductCard({ product }: { product: Product }) {
       <Link href={`/store/products/${product.handle}`} className="relative block aspect-[16/10] overflow-hidden bg-[#eef7fa]">
         {image ? (
           <img
-            src={image}
-            alt={product.title}
             loading="lazy"
             decoding="async"
+            src={image}
+            alt={product.title}
             className="h-full w-full object-contain p-4 transition duration-700 group-hover:scale-105"
           />
         ) : (
@@ -115,7 +115,7 @@ function ProductCard({ product }: { product: Product }) {
           <Link href={`/store/products/${product.handle}`} className="min-w-0 flex-1">
             <Button className="w-full rounded-xl bg-[#0a4052] text-xs font-bold text-white hover:bg-[#063545]">View product <ArrowUpRight className="ml-1.5 h-3.5 w-3.5" /></Button>
           </Link>
-          {isQuoteOnly ? <Link href={quoteHref(product)}><Button variant="outline" className="h-10 rounded-xl border-[#d95316] px-3 text-[#d95316] hover:bg-[#fff7ed]" aria-label={`Request a quote for ${product.title}`}><Mail className="h-4 w-4" /></Button></Link> : null}
+          {isQuoteOnly ? <Link href={quoteHref(product)}><Button variant="outline" className="h-10 rounded-xl border-[#c2410c] px-3 text-[#c2410c] hover:bg-[#fff7ed]" aria-label={`Request a quote for ${product.title}`}><Mail className="h-4 w-4" /></Button></Link> : null}
         </div>
       </CardContent>
     </Card>
@@ -144,7 +144,7 @@ export default function ItalrayPortfolio() {
 
         {/* Brand hero */}
         <section className="relative isolate overflow-hidden bg-[#061f2b] text-white">
-          <img src={heroImage} alt="Italray medical imaging system" className="absolute inset-0 h-full w-full object-cover opacity-25" />
+          <img loading="eager" decoding="async" src={heroImage} alt="Italray medical imaging system" className="absolute inset-0 h-full w-full object-cover opacity-25" />
           <div className="absolute inset-0 bg-[linear-gradient(100deg,#061f2b_0%,rgba(6,31,43,.96)_37%,rgba(10,64,82,.78)_70%,rgba(15,111,174,.34)_100%)]" aria-hidden="true" />
           <div className="absolute -right-20 top-10 h-72 w-72 rounded-full border border-[#8be0d5]/20 sm:h-[34rem] sm:w-[34rem]" aria-hidden="true" />
           <div className="relative mx-auto grid max-w-[1280px] gap-10 px-5 py-16 sm:py-20 lg:grid-cols-[1fr_.75fr] lg:items-center lg:px-8 lg:py-28">
@@ -153,7 +153,7 @@ export default function ItalrayPortfolio() {
               <h1 className="mt-6 text-5xl font-extrabold leading-[.98] tracking-[-.05em] text-white sm:text-6xl lg:text-[82px]">Imaging that moves with your clinical ambition.</h1>
               <p className="mt-7 max-w-2xl text-base leading-8 text-white/80 sm:text-lg">A complete portfolio of mobile C-Arms, digital radiography, radio-fluoroscopy and mammography systems—presented, configured and supported by SPM in Egypt.</p>
               <div className="mt-9 flex flex-wrap gap-3">
-                <a href="#italray-families"><Button size="lg" className="h-12 rounded-xl bg-[#d95316] px-6 text-sm font-bold text-white shadow-xl shadow-[#d95316]/25 hover:bg-[#b8430e]">Explore product families <ArrowRight className="ml-2 h-4 w-4" /></Button></a>
+                <a href="#italray-families"><Button size="lg" className="h-12 rounded-xl bg-[#c2410c] px-6 text-sm font-bold text-white shadow-xl shadow-[#c2410c]/25 hover:bg-[#9a3412]">Explore product families <ArrowRight className="ml-2 h-4 w-4" /></Button></a>
                 <Link href="/request-a-quote?brand=Italray"><Button size="lg" variant="outline" className="h-12 rounded-xl border-white/40 bg-white/10 px-6 text-sm font-bold text-white hover:bg-white/20">Talk to an Italray specialist <ArrowUpRight className="ml-2 h-4 w-4" /></Button></Link>
               </div>
             </div>
@@ -229,7 +229,7 @@ export default function ItalrayPortfolio() {
           <div className="mx-auto max-w-[1280px] px-5 lg:px-8">
             <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
               <div className="max-w-2xl"><p className="text-xs font-bold uppercase tracking-[.2em] text-[#0f6fae]">Beyond the device</p><h2 className="mt-4 text-4xl font-extrabold tracking-[-.04em] text-[#0a4052]">A portfolio arranged around real clinical workflows.</h2></div>
-              <Link href="/request-service" className="inline-flex items-center text-sm font-bold text-[#d95316]">Discuss your department <ArrowUpRight className="ml-2 h-4 w-4" /></Link>
+              <Link href="/request-service" className="inline-flex items-center text-sm font-bold text-[#c2410c]">Discuss your department <ArrowUpRight className="ml-2 h-4 w-4" /></Link>
             </div>
             <div className="mt-12 grid gap-5 md:grid-cols-3">
               {[
@@ -245,14 +245,14 @@ export default function ItalrayPortfolio() {
         <section id="italray-support" className="mx-auto max-w-[1280px] px-5 py-20 lg:px-8 lg:py-24">
           <div className="rounded-[2rem] bg-[#0a4052] p-7 text-white sm:p-10 lg:p-14">
             <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
-              <div><p className="text-xs font-bold uppercase tracking-[.2em] text-[#8be0d5]">SPM lifecycle support</p><h2 className="mt-4 text-4xl font-extrabold tracking-[-.04em] sm:text-5xl">The portfolio does not stop at delivery.</h2><p className="mt-5 max-w-xl text-sm leading-7 text-white/75">SPM connects the Italray system selection with site planning, installation, commissioning, operator training, service contracts, genuine parts and technical documentation.</p><Link href="/request-a-quote?brand=Italray" className="mt-8 inline-flex"><Button className="h-12 rounded-xl bg-[#d95316] px-6 text-sm font-bold text-white hover:bg-[#b8430e]">Start an Italray project <ArrowUpRight className="ml-2 h-4 w-4" /></Button></Link></div>
+              <div><p className="text-xs font-bold uppercase tracking-[.2em] text-[#8be0d5]">SPM lifecycle support</p><h2 className="mt-4 text-4xl font-extrabold tracking-[-.04em] sm:text-5xl">The portfolio does not stop at delivery.</h2><p className="mt-5 max-w-xl text-sm leading-7 text-white/75">SPM connects the Italray system selection with site planning, installation, commissioning, operator training, service contracts, genuine parts and technical documentation.</p><Link href="/request-a-quote?brand=Italray" className="mt-8 inline-flex"><Button className="h-12 rounded-xl bg-[#c2410c] px-6 text-sm font-bold text-white hover:bg-[#9a3412]">Start an Italray project <ArrowUpRight className="ml-2 h-4 w-4" /></Button></Link></div>
               <div className="grid gap-3 sm:grid-cols-2">
                 {[
                   { icon: Download, label: "Brochures & documents", href: "/downloads", text: "Request official documents and configuration packs." },
                   { icon: Wrench, label: "Service & commissioning", href: "/request-service", text: "Plan installation, calibration and after-sales support." },
                   { icon: Layers, label: "Genuine spare parts", href: "/spare-parts", text: "Identify and source verified OEM components." },
                   { icon: CircleHelp, label: "Talk to an expert", href: "/contact", text: "Connect with the SPM commercial and engineering team." },
-                ].map(resource => <Link key={resource.label} href={resource.href} className="group rounded-2xl border border-white/10 bg-white/10 p-5 transition hover:bg-white/15"><resource.icon className="h-5 w-5 text-[#b9f1e7]" /><p className="mt-5 text-sm font-bold text-white group-hover:text-[#b9f1e7]">{resource.label}</p><p className="mt-2 text-xs leading-5 text-white/60">{resource.text}</p><ArrowRight className="mt-4 h-4 w-4 text-[#d95316] transition group-hover:translate-x-1" /></Link>)}
+                ].map(resource => <Link key={resource.label} href={resource.href} className="group rounded-2xl border border-white/10 bg-white/10 p-5 transition hover:bg-white/15"><resource.icon className="h-5 w-5 text-[#b9f1e7]" /><p className="mt-5 text-sm font-bold text-white group-hover:text-[#b9f1e7]">{resource.label}</p><p className="mt-2 text-xs leading-5 text-white/60">{resource.text}</p><ArrowRight className="mt-4 h-4 w-4 text-[#c2410c] transition group-hover:translate-x-1" /></Link>)}
               </div>
             </div>
           </div>

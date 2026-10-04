@@ -247,7 +247,7 @@ export default function ProductDetails() {
               <div className="mt-6 flex items-start gap-3 rounded-2xl border border-[#bcdde2] bg-[#f0f7fb] p-4 text-xs leading-relaxed text-[#0a4052]">
                 <ShieldCheck className="h-5 w-5 shrink-0 text-[#0f6fae]" />
                 <p>
-                  <strong>ISO 13485 & Regulatory Notice:</strong> Commercial delivery includes full compliance documentation, warranty certificates, and authorized technical commissioning by certified biomedical engineers.
+                  <strong>Documentation & Regulatory Notice:</strong> Commercial delivery includes full compliance documentation, warranty certificates, and authorized technical commissioning by certified biomedical engineers.
                 </p>
               </div>
             </div>
@@ -334,7 +334,7 @@ export default function ProductDetails() {
                 <CardHeader>
                   <CardTitle className="text-lg font-bold text-[#0a4052]">Controlled Technical Files</CardTitle>
                   <p className="text-xs text-[#64748b]">
-                    Under ISO 13485 regulations, proprietary brochures, datasheets, and regulatory files are released upon authenticated request.
+                    Proprietary brochures, datasheets, and regulatory files are released through the approved SPM document-request workflow.
                   </p>
                 </CardHeader>
                 <CardContent className="space-y-3">

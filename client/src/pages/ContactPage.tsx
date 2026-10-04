@@ -1,11 +1,25 @@
+import { useState } from "react";
 import { Building2, Clock, Mail, MapPin, Phone, ShieldCheck, ArrowUpRight, MessageSquare } from "lucide-react";
 import { Link } from "wouter";
 import SiteChrome from "@/components/SiteChrome";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function ContactPage() {
+  const [submitted, setSubmitted] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", company: "", phone: "", message: "" });
+  const update = (key: keyof typeof form, value: string) => setForm(current => ({ ...current, [key]: value }));
+  const submit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const subject = `SPM enquiry from ${form.name}`;
+    const body = [`Name: ${form.name}`, `Email: ${form.email}`, `Company: ${form.company || "Not provided"}`, `Phone: ${form.phone || "Not provided"}`, "", form.message].join("\n");
+    window.location.href = `mailto:info@spmhospitals.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    setSubmitted(true);
+  };
   return (
     <SiteChrome>
       <SEOHead
@@ -122,6 +136,18 @@ export default function ContactPage() {
             </Card>
           </div>
 
+          <section aria-labelledby="contact-form-title" className="mt-12 rounded-3xl border border-[#dce7eb] bg-white p-6 shadow-sm lg:p-8">
+            <div className="max-w-2xl"><p className="text-xs font-bold uppercase tracking-[0.18em] text-[#0f6fae]">General enquiry</p><h2 id="contact-form-title" className="mt-2 text-2xl font-extrabold text-[#0a4052]">Tell us how we can help</h2><p className="mt-2 text-sm leading-6 text-[#617180]">Your email application will open with a ready-to-send message addressed to the SPM team.</p></div>
+            <form className="mt-6 grid gap-5 md:grid-cols-2" onSubmit={submit}>
+              <div className="space-y-2"><Label htmlFor="contact-name">Name <span aria-hidden="true">*</span></Label><Input id="contact-name" autoComplete="name" required value={form.name} onChange={event => update("name", event.target.value)} /></div>
+              <div className="space-y-2"><Label htmlFor="contact-email">Email <span aria-hidden="true">*</span></Label><Input id="contact-email" type="email" autoComplete="email" required value={form.email} onChange={event => update("email", event.target.value)} /></div>
+              <div className="space-y-2"><Label htmlFor="contact-company">Company or facility</Label><Input id="contact-company" autoComplete="organization" value={form.company} onChange={event => update("company", event.target.value)} /></div>
+              <div className="space-y-2"><Label htmlFor="contact-phone">Phone</Label><Input id="contact-phone" type="tel" autoComplete="tel" value={form.phone} onChange={event => update("phone", event.target.value)} /></div>
+              <div className="space-y-2 md:col-span-2"><Label htmlFor="contact-message">Message <span aria-hidden="true">*</span></Label><Textarea id="contact-message" required rows={5} value={form.message} onChange={event => update("message", event.target.value)} placeholder="Tell us about your equipment, service need or partnership enquiry." /></div>
+              <div className="flex flex-wrap items-center gap-4 md:col-span-2"><Button type="submit" className="bg-[#c2410c] text-white hover:bg-[#9a3412]">Prepare email <ArrowUpRight className="ml-2 h-4 w-4" aria-hidden="true" /></Button>{submitted ? <p role="status" aria-live="polite" className="text-sm font-semibold text-emerald-700">Your email draft is ready to send.</p> : null}</div>
+            </form>
+          </section>
+
           {/* Map & Quality Commitment */}
           <div className="mt-12 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
             <div className="overflow-hidden rounded-3xl border border-[#dce7eb] bg-white p-6 shadow-sm">
@@ -140,7 +166,7 @@ export default function ContactPage() {
 
             <div className="rounded-3xl border border-[#bcdde2] bg-[#f0f7fb] p-6 lg:p-8">
               <ShieldCheck className="h-8 w-8 text-[#0f6fae]" />
-              <h3 className="mt-4 text-lg font-bold text-[#0a4052]">ISO 13485 & CE Standards</h3>
+              <h3 className="mt-4 text-lg font-bold text-[#0a4052]">Quality & documentation workflow</h3>
               <p className="mt-2 text-xs leading-relaxed text-[#475569]">
                 All technical inquiries, spare-part dispatches, and commissioning operations are performed according to documented biomedical safety SOPs. Equipment records and serial numbers are archived for clinical traceability.
               </p>

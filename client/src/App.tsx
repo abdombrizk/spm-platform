@@ -32,7 +32,7 @@ const CartPage = lazy(() => import("@/pages/CartPage"));
 
 function Router() {
   return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-[#f7fafc] text-sm text-[#617180]">Loading SPM page…</div>}>
+    <Suspense fallback={<div role="status" aria-live="polite" aria-busy="true" className="flex min-h-screen items-center justify-center bg-[#f7fafc] px-5 text-center text-sm text-[#617180]"><span className="mr-3 inline-block h-4 w-4 animate-spin rounded-full border-2 border-[#bcdde2] border-t-[#0f6fae]" aria-hidden="true" />Loading SPM page…</div>}>
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/login" component={Login} />

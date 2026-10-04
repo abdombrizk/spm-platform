@@ -131,7 +131,7 @@ function ProductView({ product }: { product: Product }) {
           <div className="mt-8 rounded-3xl border border-[#dce7eb] bg-white p-6 sm:p-8 shadow-xs">
             <h2 className="text-lg font-bold text-[#0a4052]">Product Description</h2>
             {product.descriptionHtml ? (
-              <div className="prose prose-sm mt-4 text-[#334155] leading-relaxed max-w-none [&>ul]:list-disc [&>ul]:pl-5 [&>p]:mb-3 [&>ul>li]:mb-1" dangerouslySetInnerHTML={{ __html: product.descriptionHtml }} />
+              <p className="mt-4 max-w-none text-sm leading-7 text-[#334155]">{product.description || "Technical details are available from the SPM team."}</p>
             ) : (
               <p className="mt-4 text-sm leading-7 text-[#334155]">{product.description}</p>
             )}
