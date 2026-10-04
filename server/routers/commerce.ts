@@ -8,6 +8,7 @@
  */
 
 import { z } from "zod";
+import sanitizeHtml from "sanitize-html";
 import {
   addCartLines,
   createCart,
@@ -20,6 +21,12 @@ import {
   updateCartLines,
 } from "../_core/shopify";
 import { publicProcedure, router } from "../_core/trpc";
+
+
+const sanitizeProduct = <T extends { descriptionHtml?: string; description?: string }>(product: T): T => ({
+  ...product,
+  descriptionHtml: product.descriptionHtml ? sanitizeHtml(product.descriptionHtml, { allowedTags: ["p", "br", "strong", "em", "ul", "ol", "li", "a"], allowedAttributes: { a: ["href", "target", "rel"] }, allowedSchemes: ["https", "mailto"] }) : "",
+});
 
 const cartLineInputSchema = z.object({
   variantId: z.string().min(1),
@@ -44,12 +51,13 @@ export const commerceRouter = router({
           .optional()
       )
       .query(async ({ input }) => {
-        return listProducts(input ?? {});
+        return (await listProducts(input ?? {})).map(sanitizeProduct);
       }),
     byHandle: publicProcedure
       .input(z.object({ handle: z.string().min(1) }))
       .query(async ({ input }) => {
-        return getProductByHandle(input.handle);
+        const product = await getProductByHandle(input.handle);
+        return product ? sanitizeProduct(product) : null;
       }),
   }),
   collections: router({

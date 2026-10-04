@@ -80,7 +80,7 @@ type ProductRow = {
   publishedData: string;
   draftVisible: boolean;
   publishedVisible: boolean;
-  workflowStatus: "draft" | "published" | "archived";
+  workflowStatus: "draft" | "pending_review" | "approved" | "published" | "archived";
   displayOrder: number;
   createdAt: Date;
   updatedAt: Date;
@@ -146,6 +146,8 @@ const labels: Record<string, string> = {
   spare_part: "Spare part",
   accessory: "Accessory",
   draft: "Draft",
+  pending_review: "Pending review",
+  approved: "Approved",
   published: "Published",
   archived: "Archived",
 };
@@ -275,6 +277,14 @@ export default function ProductManager() {
       setMessage("Equipment details saved.");
       utils.products.list.invalidate();
     },
+    onError: error => setMessage(error.message),
+  });
+  const submitReview = trpc.products.submitReview.useMutation({
+    onSuccess: () => { setMessage("Equipment submitted for quality review."); utils.products.list.invalidate(); },
+    onError: error => setMessage(error.message),
+  });
+  const approveProduct = trpc.products.approve.useMutation({
+    onSuccess: () => { setMessage("Equipment approved for publication."); utils.products.list.invalidate(); },
     onError: error => setMessage(error.message),
   });
   const publish = trpc.products.publish.useMutation({
@@ -691,13 +701,15 @@ export default function ProductManager() {
                                   <Pencil className="mr-1 h-3 w-3" /> Edit
                                 </Button>
                                 {item.workflowStatus === "draft" ? (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="h-8 px-2.5 text-xs text-[#0f6fae] hover:bg-[#eaf4fa]"
-                                    disabled={!canPublish}
-                                    onClick={() => publish.mutate({ id: item.id })}
-                                  >
+                                  <Button size="sm" variant="outline" className="h-8 px-2.5 text-xs text-[#0f6fae] hover:bg-[#eaf4fa]" disabled={!canEdit || submitReview.isPending} onClick={() => submitReview.mutate({ id: item.id })}>
+                                    <Send className="mr-1 h-3 w-3" /> Submit review
+                                  </Button>
+                                ) : item.workflowStatus === "pending_review" ? (
+                                  <Button size="sm" variant="outline" className="h-8 px-2.5 text-xs text-emerald-700" disabled={!canQuality || approveProduct.isPending} onClick={() => approveProduct.mutate({ id: item.id })}>
+                                    <ShieldCheck className="mr-1 h-3 w-3" /> Approve
+                                  </Button>
+                                ) : item.workflowStatus === "approved" ? (
+                                  <Button size="sm" variant="outline" className="h-8 px-2.5 text-xs text-[#0f6fae] hover:bg-[#eaf4fa]" disabled={!canPublish || publish.isPending} onClick={() => publish.mutate({ id: item.id })}>
                                     <Send className="mr-1 h-3 w-3" /> Publish
                                   </Button>
                                 ) : item.workflowStatus === "published" ? (

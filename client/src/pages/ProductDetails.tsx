@@ -103,7 +103,6 @@ export default function ProductDetails() {
         productId: item ? item.id : undefined,
         documentType: selectedDoc.type,
         documentName: selectedDoc.name,
-        documentUrl: selectedDoc.url,
         requesterName: docForm.name,
         requesterEmail: docForm.email,
         requesterOrganization: docForm.organization,

@@ -24,7 +24,7 @@ This repository contains the current working platform foundation and the impleme
 - Service permissions for view, create, edit, media, quality approval, publish, archive, and delete.
 - Request for Quote intake accepting products, services, multiple items, and custom requests.
 - Optional organization and requester type for doctors, technicians, engineers, procurement teams, facilities, companies, and individuals.
-- Quote attachments with PDF, Office, image, and video formats; up to 5 files, 10 MB per file, and 30 MB total.
+- Quote attachments with PDF, Office, image, and video formats; up to 5 files, 10 MB per file, and 50 MB total.
 - Quote request number generation, priority, assignment, status workflow, internal comments, and protected operational management.
 - Product and service detail pages linked directly to the structured quote request form.
 - Public Service Request intake supporting one or more devices in one request.
@@ -32,6 +32,8 @@ This repository contains the current working platform foundation and the impleme
 - Service request attachments for photos, error screens, reports, Office/PDF files, and MP4/MOV videos; up to 10 files, 20 MB per file, and 100 MB total.
 - Per-request access token protection for public attachment uploads, with a no-patient-identifiable-information acknowledgement.
 - Service request number generation, service linkage, priority, assignment, status workflow, internal comments, quote linkage, and protected operational management.
+- Private service/quote uploads behind authenticated storage proxy routes; public request access tokens are hashed at rest and compared in constant time.
+- Product/service publication requires a separate review approval; edits reset review state and public CMS responses use explicit allowlists.
 - Owner-controlled Service Request permissions for viewing, assignment, priority, status, comments, scheduling, closing, attachment management, and deletion.
 - Public catalogue filtering and responsive layouts.
 
@@ -48,8 +50,7 @@ This repository contains the current working platform foundation and the impleme
 - MySQL/TiDB-compatible database
 - Vitest
 - Managed object storage for media
-- Manus OAuth infrastructure for platform-level runtime support
-- Internal SPM authentication for operational users
+- Internal SPM authentication for operational users with secure sessions
 
 ## Repository structure
 

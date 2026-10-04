@@ -173,7 +173,14 @@ export async function getUserBySessionToken(token: string) {
   if (!db) return undefined;
   const session = await db.select().from(internalSessions).where(and(eq(internalSessions.tokenHash, hashSessionToken(token)), gt(internalSessions.expiresAt, new Date()))).limit(1);
   if (!session[0]) return undefined;
-  return getUserById(session[0].userId);
+  const user = await getUserById(session[0].userId);
+  return user?.isActive ? user : undefined;
+}
+
+export async function invalidateUserSessions(userId: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.delete(internalSessions).where(eq(internalSessions.userId, userId));
 }
 
 export async function deleteInternalSession(token: string) {
@@ -348,7 +355,19 @@ export async function createProduct(input: {
 export async function updateProduct(id: number, input: { slug?: string; productType?: "medical_device" | "spare_part" | "accessory"; draftData?: string; draftVisible?: boolean; displayOrder?: number; updatedBy: number }) {
   const db = await getDb();
   if (!db) throw new Error("Database is not available");
-  await db.update(products).set(input).where(eq(products.id, id));
+  await db.update(products).set({ ...input, workflowStatus: "draft", submittedBy: null, reviewedBy: null, reviewedAt: null }).where(eq(products.id, id));
+}
+
+export async function submitProductReview(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(products).set({ workflowStatus: "pending_review", submittedBy: userId, updatedBy: userId }).where(eq(products.id, id));
+}
+
+export async function approveProduct(id: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(products).set({ workflowStatus: "approved", reviewedBy: userId, reviewedAt: new Date(), updatedBy: userId, publishedBy: null, publishedAt: null }).where(eq(products.id, id));
 }
 
 export async function publishProduct(id: number, userId: number) {
@@ -358,6 +377,12 @@ export async function publishProduct(id: number, userId: number) {
   if (!product) return false;
   await db.update(products).set({ publishedData: product.draftData, publishedVisible: product.draftVisible, workflowStatus: "published", publishedBy: userId, publishedAt: new Date(), archivedAt: null }).where(eq(products.id, id));
   return true;
+}
+
+export async function setProductPublishedVisibility(id: number, publishedVisible: boolean, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(products).set({ publishedVisible, updatedBy: userId }).where(eq(products.id, id));
 }
 
 export async function archiveProduct(id: number, userId: number) {
@@ -415,13 +440,13 @@ export async function createService(input: { slug: string; serviceType: string; 
 export async function updateService(id: number, input: { slug?: string; serviceType?: string; draftData?: string; draftVisible?: boolean; displayOrder?: number; updatedBy: number }) {
   const db = await getDb();
   if (!db) throw new Error("Database is not available");
-  await db.update(services).set({ ...input, serviceType: input.serviceType as any }).where(eq(services.id, id));
+  await db.update(services).set({ ...input, serviceType: input.serviceType as any, workflowStatus: "draft", submittedBy: null, reviewedBy: null, reviewedAt: null }).where(eq(services.id, id));
 }
 
 export async function submitServiceReview(id: number, userId: number) {
   const db = await getDb();
   if (!db) throw new Error("Database is not available");
-  await db.update(services).set({ workflowStatus: "pending_review", updatedBy: userId }).where(eq(services.id, id));
+  await db.update(services).set({ workflowStatus: "pending_review", submittedBy: userId, updatedBy: userId }).where(eq(services.id, id));
 }
 
 export async function approveService(id: number, userId: number) {
@@ -462,7 +487,7 @@ export async function createQuoteRequest(input: Omit<typeof quoteRequests.$infer
   if (!db) throw new Error("Database is not available");
   const pendingNumber = `PENDING-${randomUUID()}`;
   const publicAccessToken = `${randomUUID()}${randomUUID()}`;
-  const result = await db.insert(quoteRequests).values({ ...input, publicNumber: pendingNumber, publicAccessToken });
+  const result = await db.insert(quoteRequests).values({ ...input, publicNumber: pendingNumber, publicAccessToken: hashSessionToken(publicAccessToken) });
   const id = Number(result[0].insertId);
   const publicNumber = `SPM-Q-${new Date().getUTCFullYear()}-${String(id).padStart(6, "0")}`;
   await db.update(quoteRequests).set({ publicNumber }).where(eq(quoteRequests.id, id));
@@ -522,7 +547,7 @@ export async function createServiceRequest(input: Omit<typeof serviceRequests.$i
   if (!db) throw new Error("Database is not available");
   const pendingNumber = `PENDING-${randomUUID()}`;
   const publicAccessToken = `${randomUUID()}${randomUUID()}`;
-  const result = await db.insert(serviceRequests).values({ ...input, publicNumber: pendingNumber, publicAccessToken });
+  const result = await db.insert(serviceRequests).values({ ...input, publicNumber: pendingNumber, publicAccessToken: hashSessionToken(publicAccessToken) });
   const id = Number(result[0].insertId);
   const publicNumber = `SPM-SR-${new Date().getUTCFullYear()}-${String(id).padStart(6, "0")}`;
   await db.update(serviceRequests).set({ publicNumber }).where(eq(serviceRequests.id, id));
@@ -606,7 +631,7 @@ export async function upsertCmsPage(input: { slug: string; pageType: "about" | "
   if (!db) throw new Error("Database is not available");
   const existing = await getCmsPageBySlug(input.slug);
   if (existing) {
-    await db.update(cmsPages).set({ pageType: input.pageType, draftData: input.draftData, draftVisible: input.draftVisible, requiresQaReview: input.requiresQaReview, updatedBy: input.userId, workflowStatus: existing.workflowStatus === "published" ? "published" : "draft" }).where(eq(cmsPages.id, existing.id));
+    await db.update(cmsPages).set({ pageType: input.pageType, draftData: input.draftData, draftVisible: input.draftVisible, requiresQaReview: input.requiresQaReview, updatedBy: input.userId, workflowStatus: "draft", reviewedBy: null, reviewedAt: null, publishedBy: null, publishedAt: null }).where(eq(cmsPages.id, existing.id));
     return existing.id;
   }
   const result = await db.insert(cmsPages).values({ slug: input.slug, pageType: input.pageType, draftData: input.draftData, publishedData: input.draftData, draftVisible: input.draftVisible, publishedVisible: false, requiresQaReview: input.requiresQaReview, createdBy: input.userId, updatedBy: input.userId, workflowStatus: "draft" });
@@ -616,7 +641,7 @@ export async function upsertCmsPage(input: { slug: string; pageType: "about" | "
 export async function submitCmsPageReview(id: number, userId: number) {
   const db = await getDb();
   if (!db) throw new Error("Database is not available");
-  await db.update(cmsPages).set({ workflowStatus: "pending_review", updatedBy: userId }).where(eq(cmsPages.id, id));
+  await db.update(cmsPages).set({ workflowStatus: "pending_review", submittedBy: userId, updatedBy: userId }).where(eq(cmsPages.id, id));
 }
 
 export async function reviewCmsPage(id: number, userId: number, approved: boolean) {
@@ -803,7 +828,13 @@ export async function listDocumentRequests() {
   return db.select().from(documentRequests).orderBy(desc(documentRequests.createdAt));
 }
 
-export async function updateDocumentRequestStatus(id: number, status: "pending" | "approved" | "rejected" | "sent", reviewedBy: number) {
+export async function getDocumentRequestById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(documentRequests).where(eq(documentRequests.id, id)).limit(1);
+  return rows[0];
+}
+export async function updateDocumentRequestStatus(id: number, status: "pending" | "approved" | "rejected" | "sent", reviewedBy: number, documentUrl?: string) {
   const db = await getDb();
   if (!db) throw new Error("Database is not available");
   let downloadToken: string | null = null;
@@ -821,6 +852,7 @@ export async function updateDocumentRequestStatus(id: number, status: "pending" 
     sentAt: status === "approved" || status === "sent" ? new Date() : null,
     downloadTokenHash,
     downloadExpiresAt,
+    documentUrl: documentUrl ?? undefined,
   }).where(eq(documentRequests.id, id));
   return { downloadToken, downloadExpiresAt };
 }
@@ -833,6 +865,6 @@ export async function getDocumentRequestByToken(token: string) {
   const req = rows[0];
   if (!req) return undefined;
   if (!req.downloadExpiresAt || req.downloadExpiresAt < new Date()) return undefined;
-  await db.update(documentRequests).set({ downloadedAt: new Date() }).where(eq(documentRequests.id, req.id));
+  await db.update(documentRequests).set({ downloadedAt: new Date(), downloadTokenHash: null, downloadExpiresAt: null }).where(eq(documentRequests.id, req.id));
   return req;
 }

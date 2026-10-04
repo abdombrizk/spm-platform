@@ -1,7 +1,8 @@
 import { createHash, randomBytes, scrypt as scryptCallback, timingSafeEqual } from "node:crypto";
-import { promisify } from "node:util";
-
-const scrypt = promisify(scryptCallback);
+function deriveKey(password: string, salt: string, length: number, legacy = false): Promise<Buffer> {
+  const options = legacy ? { N: 16384, r: 8, p: 1, maxmem: 64 * 1024 * 1024 } : { N: 32768, r: 8, p: 1, maxmem: 128 * 1024 * 1024 };
+  return new Promise((resolve, reject) => scryptCallback(password, salt, length, options, (error, derived) => error ? reject(error) : resolve(derived as Buffer)));
+}
 const KEY_LENGTH = 64;
 const SESSION_TTL_MS = 1000 * 60 * 60 * 8;
 
@@ -9,7 +10,7 @@ export const INTERNAL_SESSION_COOKIE = "spm_internal_session";
 
 export async function hashPassword(password: string): Promise<string> {
   const salt = randomBytes(16).toString("hex");
-  const derived = (await scrypt(password, salt, KEY_LENGTH)) as Buffer;
+  const derived = (await deriveKey(password, salt, KEY_LENGTH)) as Buffer;
   return `scrypt$${salt}$${derived.toString("hex")}`;
 }
 
@@ -17,8 +18,11 @@ export async function verifyPassword(password: string, stored: string): Promise<
   const [algorithm, salt, encoded] = stored.split("$");
   if (algorithm !== "scrypt" || !salt || !encoded) return false;
   const expected = Buffer.from(encoded, "hex");
-  const actual = (await scrypt(password, salt, expected.length)) as Buffer;
-  return expected.length === actual.length && timingSafeEqual(expected, actual);
+  if (expected.length !== KEY_LENGTH || !/^[0-9a-f]+$/i.test(encoded)) return false;
+  const actual = (await deriveKey(password, salt, expected.length)) as Buffer;
+  if (expected.length === actual.length && timingSafeEqual(expected, actual)) return true;
+  const legacy = await deriveKey(password, salt, expected.length, true);
+  return expected.length === legacy.length && timingSafeEqual(expected, legacy);
 }
 
 export function createSessionToken(): string {

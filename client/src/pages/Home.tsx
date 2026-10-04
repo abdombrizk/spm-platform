@@ -56,7 +56,7 @@ const solutions = [
   {
     icon: Boxes,
     eyebrow: "Systems Catalogue",
-    title: "Certified Medical Imaging Equipment",
+    title: "Medical Imaging Equipment",
     text: "Explore C-Arm systems, digital radiography, fluoroscopy, and surgical technology with full technical specs and ISO documents.",
     href: "/catalogue",
     image: "https://cdn.shopify.com/s/files/1/1002/9672/0673/files/MsiwLyhyWlEjDsPK.jpg?v=1790773853",
@@ -273,7 +273,7 @@ export default function Home() {
                   <CheckCircle2 className="h-4 w-4 text-[#60c1bb]" /> Structured request tracking
                 </span>
                 <span className="inline-flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-[#60c1bb]" /> ISO 9001 & CE alignment
+                  <CheckCircle2 className="h-4 w-4 text-[#60c1bb]" /> Documented quality alignment
                 </span>
                 <span className="inline-flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-[#60c1bb]" /> 24/27 governorates coverage
@@ -531,7 +531,7 @@ export default function Home() {
                     </li>
                     <li className="flex items-start gap-3">
                       <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#8be0d5]" />
-                      <span>Certified QMS practices aligned with ISO 9001 and ISO 13485 guidelines.</span>
+                      <span>Documented QMS practices and traceable technical records.</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#8be0d5]" />

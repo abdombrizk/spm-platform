@@ -160,7 +160,7 @@ export default function ItalrayPortfolio() {
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
               <div className="rounded-3xl border border-white/15 bg-white/10 p-5 backdrop-blur-sm"><BadgeCheck className="h-6 w-6 text-[#8be0d5]" /><p className="mt-8 text-3xl font-extrabold">1974</p><p className="mt-1 text-xs leading-5 text-white/65">Italray heritage in X-ray technology</p></div>
               <div className="rounded-3xl border border-white/15 bg-white/10 p-5 backdrop-blur-sm sm:translate-y-8"><Globe2 className="h-6 w-6 text-[#8be0d5]" /><p className="mt-8 text-3xl font-extrabold">70+</p><p className="mt-1 text-xs leading-5 text-white/65">Countries reached by the manufacturer</p></div>
-              <div className="rounded-3xl border border-white/15 bg-white/10 p-5 backdrop-blur-sm"><ShieldCheck className="h-6 w-6 text-[#8be0d5]" /><p className="mt-8 text-3xl font-extrabold">CE</p><p className="mt-1 text-xs leading-5 text-white/65">Compliance-led project documentation</p></div>
+              <div className="rounded-3xl border border-white/15 bg-white/10 p-5 backdrop-blur-sm"><ShieldCheck className="h-6 w-6 text-[#8be0d5]" /><p className="mt-8 text-3xl font-extrabold">Docs</p><p className="mt-1 text-xs leading-5 text-white/65">Project documentation available on request</p></div>
               <div className="rounded-3xl border border-white/15 bg-white/10 p-5 backdrop-blur-sm sm:translate-y-8"><Wrench className="h-6 w-6 text-[#8be0d5]" /><p className="mt-8 text-3xl font-extrabold">SPM</p><p className="mt-1 text-xs leading-5 text-white/65">Local service, parts and lifecycle support</p></div>
             </div>
           </div>

@@ -130,12 +130,11 @@ function ProductView({ product }: { product: Product }) {
           {/* Description Section */}
           <div className="mt-8 rounded-3xl border border-[#dce7eb] bg-white p-6 sm:p-8 shadow-xs">
             <h2 className="text-lg font-bold text-[#0a4052]">Product Description</h2>
-            <div
-              className="prose prose-sm mt-4 text-[#334155] leading-relaxed max-w-none [&>ul]:list-disc [&>ul]:pl-5 [&>p]:mb-3 [&>ul>li]:mb-1"
-              dangerouslySetInnerHTML={{
-                __html: product.descriptionHtml || `<p>${product.description}</p>`,
-              }}
-            />
+            {product.descriptionHtml ? (
+              <div className="prose prose-sm mt-4 text-[#334155] leading-relaxed max-w-none [&>ul]:list-disc [&>ul]:pl-5 [&>p]:mb-3 [&>ul>li]:mb-1" dangerouslySetInnerHTML={{ __html: product.descriptionHtml }} />
+            ) : (
+              <p className="mt-4 text-sm leading-7 text-[#334155]">{product.description}</p>
+            )}
           </div>
         </div>
 
@@ -313,7 +312,7 @@ function ProductView({ product }: { product: Product }) {
               </div>
               <div className="flex items-center gap-2.5">
                 <RotateCcw className="h-4 w-4 text-[#0a4052]" />
-                <span>Complies with Egyptian Unified Medical Procurement & CE standards</span>
+                <span>Procurement and technical documentation available on request</span>
               </div>
             </div>
           </div>
