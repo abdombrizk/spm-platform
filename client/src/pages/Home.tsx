@@ -34,7 +34,7 @@ const fallback: Record<string, string> = {
   "hero.primary.url": "/request-a-quote",
   "hero.secondary.label": "Request Service",
   "hero.secondary.url": "/request-service",
-  "hero.image": "/manus-storage/spm-modern-imaging-hero_a4444ff2.jpg",
+  "hero.image": "/manus-storage/spm-italray-product-hero_c7063612.jpg",
   "panel.eyebrow": "FIELD READINESS",
   "panel.title": "24–48h Cairo Response",
   "panel.description": "Dedicated biomedical engineers covering 24 of 27 Egyptian governorates with remote diagnostics within 4 hours.",
@@ -214,7 +214,7 @@ export default function Home() {
         <section className="relative isolate min-h-[640px] overflow-hidden border-b border-[#0a4052] bg-[#061f2b] text-white sm:min-h-[720px] lg:min-h-[760px]">
           <img
             src={heroImage}
-            alt="SPM biomedical engineer working on hospital medical imaging equipment"
+            alt="Premium mobile C-Arm medical imaging system in a cinematic studio setting"
             fetchPriority="high"
             decoding="async"
             className="absolute inset-0 h-full w-full object-cover object-center transition duration-1000 hover:scale-[1.01]"
