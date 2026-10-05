@@ -24,6 +24,8 @@ import {
   sparePartBrands,
   spareParts,
   documentRequests,
+  italrayPresentationOverrides,
+  InsertItalrayPresentationOverride,
   userPermissions,
   users,
   UserRole,
@@ -867,4 +869,34 @@ export async function getDocumentRequestByToken(token: string) {
   if (!req.downloadExpiresAt || req.downloadExpiresAt < new Date()) return undefined;
   await db.update(documentRequests).set({ downloadedAt: new Date(), downloadTokenHash: null, downloadExpiresAt: null }).where(eq(documentRequests.id, req.id));
   return req;
+}
+
+export async function listItalrayPresentationOverrides(onlyVisible = false) {
+  const db = await getDb();
+  if (!db) return [];
+  const query = db.select().from(italrayPresentationOverrides);
+  const rows = onlyVisible ? await query.where(eq(italrayPresentationOverrides.isVisible, true)).orderBy(italrayPresentationOverrides.displayOrder, desc(italrayPresentationOverrides.updatedAt)) : await query.orderBy(italrayPresentationOverrides.displayOrder, desc(italrayPresentationOverrides.updatedAt));
+  return rows;
+}
+
+export async function getItalrayPresentationOverrideByHandle(handle: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(italrayPresentationOverrides).where(eq(italrayPresentationOverrides.handle, handle)).limit(1);
+  return rows[0];
+}
+
+export async function upsertItalrayPresentationOverride(input: InsertItalrayPresentationOverride) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const existing = await getItalrayPresentationOverrideByHandle(input.handle);
+  if (existing) {
+    await db.update(italrayPresentationOverrides).set({
+      ...input,
+      updatedAt: new Date(),
+    }).where(eq(italrayPresentationOverrides.id, existing.id));
+    return existing.id;
+  }
+  const res = await db.insert(italrayPresentationOverrides).values(input);
+  return Number(res[0].insertId);
 }

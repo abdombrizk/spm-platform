@@ -38,6 +38,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
+import MarketingItalrayWorkspace from "@/components/MarketingItalrayWorkspace";
 
 type ProductType = "medical_device" | "spare_part" | "accessory";
 type Availability = "available" | "on_request" | "discontinued" | "coming_soon";
@@ -191,7 +192,7 @@ export default function ProductManager() {
   const products = trpc.products.list.useQuery(undefined, { enabled: Boolean(auth.data) });
   const utils = trpc.useUtils();
 
-  const [activeMainTab, setActiveMainTab] = useState<"equipment" | "menu" | "parts" | "documents">("equipment");
+  const [activeMainTab, setActiveMainTab] = useState<"italray_marketing" | "equipment" | "menu" | "parts" | "documents">("italray_marketing");
   const [editingId, setEditingId] = useState<number | undefined>();
   const [slug, setSlug] = useState("");
   const [productType, setProductType] = useState<ProductType>("medical_device");
@@ -512,6 +513,14 @@ export default function ProductManager() {
         {/* Workspace Top Tabs */}
         <div className="flex flex-wrap gap-2 rounded-2xl border border-[#dce7eb] bg-white p-2 shadow-sm">
           <button
+            onClick={() => setActiveMainTab("italray_marketing")}
+            className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold transition-all ${
+              activeMainTab === "italray_marketing" ? "bg-[#0a4052] text-white shadow" : "text-[#475569] hover:bg-[#f1f5f9]"
+            }`}
+          >
+            <Sparkles className="h-4 w-4 text-amber-400" /> Italray Marketing Studio
+          </button>
+          <button
             onClick={() => setActiveMainTab("equipment")}
             className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold transition-all ${
               activeMainTab === "equipment" ? "bg-[#0a4052] text-white shadow" : "text-[#475569] hover:bg-[#f1f5f9]"
@@ -546,6 +555,10 @@ export default function ProductManager() {
         </div>
 
         {/* TAB 1: Equipment Management */}
+        {activeMainTab === "italray_marketing" ? (
+          <MarketingItalrayWorkspace />
+        ) : null}
+
         {activeMainTab === "equipment" ? (
           <>
             <Card className="border-slate-200">

@@ -452,3 +452,37 @@ export type ProductMenuItem = typeof productMenuItems.$inferSelect;
 export type SparePartBrand = typeof sparePartBrands.$inferSelect;
 export type SparePart = typeof spareParts.$inferSelect;
 export type DocumentRequest = typeof documentRequests.$inferSelect;
+
+export const italrayPresentationOverrides = mysqlTable("italray_presentation_overrides", {
+  id: int("id").autoincrement().primaryKey(),
+  handle: varchar("handle", { length: 180 }).notNull().unique(),
+  title: varchar("title", { length: 255 }).notNull(),
+  badge: varchar("badge", { length: 255 }),
+  headline: varchar("headline", { length: 255 }),
+  subheadline: varchar("subheadline", { length: 255 }),
+  leadParagraph: text("leadParagraph"),
+  secondaryParagraph: text("secondaryParagraph"),
+  heroImage: varchar("heroImage", { length: 1000 }).notNull(),
+  heroObjectPosition: varchar("heroObjectPosition", { length: 64 }).default("center center").notNull(),
+  heroScalePercent: int("heroScalePercent").default(100).notNull(),
+  descriptionImage: varchar("descriptionImage", { length: 1000 }),
+  descriptionObjectPosition: varchar("descriptionObjectPosition", { length: 64 }).default("center center").notNull(),
+  brochureUrl: varchar("brochureUrl", { length: 1000 }),
+  brochureTitle: varchar("brochureTitle", { length: 255 }),
+  highlightsJson: text("highlightsJson"),
+  pillarsJson: text("pillarsJson"),
+  clinicalGalleryJson: text("clinicalGalleryJson"),
+  upgradesJson: text("upgradesJson"),
+  specificationsJson: text("specificationsJson"),
+  galleryImagesJson: text("galleryImagesJson"),
+  imagePositionsJson: text("imagePositionsJson"),
+  commercialModel: mysqlEnum("commercialModel", ["quote_only", "checkout", "both"]).default("quote_only").notNull(),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  isVisible: boolean("isVisible").default(true).notNull(),
+  updatedBy: int("updatedBy"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ItalrayPresentationOverride = typeof italrayPresentationOverrides.$inferSelect;
+export type InsertItalrayPresentationOverride = typeof italrayPresentationOverrides.$inferInsert;

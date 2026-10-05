@@ -501,6 +501,66 @@ export const appRouter = router({
       const uploaded = await storagePut(`products/${input.id}/${input.field}.${extension}`, buffer, input.contentType);
       return { url: uploaded.url };
     }),
+    italrayPresentation: publicProcedure.input(z.object({ handle: z.string().min(1).max(180) })).query(async ({ input }) => {
+      return db.getItalrayPresentationOverrideByHandle(input.handle);
+    }),
+    listItalrayPresentations: publicProcedure.query(async () => {
+      return db.listItalrayPresentationOverrides(false);
+    }),
+    saveItalrayPresentation: permissionProcedure("products.edit").input(z.object({
+      handle: z.string().min(1).max(180),
+      title: z.string().min(1).max(255),
+      badge: z.string().max(255).optional(),
+      headline: z.string().max(255).optional(),
+      subheadline: z.string().max(255).optional(),
+      leadParagraph: z.string().max(10000).optional(),
+      secondaryParagraph: z.string().max(10000).optional(),
+      heroImage: safeAssetUrl,
+      heroObjectPosition: z.string().max(64).default("center center"),
+      heroScalePercent: z.number().int().min(50).max(200).default(100),
+      descriptionImage: safeAssetUrl.optional(),
+      descriptionObjectPosition: z.string().max(64).default("center center"),
+      brochureUrl: safeAssetUrl.optional(),
+      brochureTitle: z.string().max(255).optional(),
+      highlightsJson: z.string().max(30000).optional(),
+      pillarsJson: z.string().max(100000).optional(),
+      clinicalGalleryJson: z.string().max(100000).optional(),
+      upgradesJson: z.string().max(100000).optional(),
+      specificationsJson: z.string().max(100000).optional(),
+      galleryImagesJson: z.string().max(100000).optional(),
+      imagePositionsJson: z.string().max(50000).optional(),
+      commercialModel: z.enum(["quote_only", "checkout", "both"]).default("quote_only"),
+      displayOrder: z.number().int().min(0).max(99999).default(0),
+      isVisible: z.boolean().default(true),
+    })).mutation(async ({ ctx, input }) => {
+      const id = await db.upsertItalrayPresentationOverride({
+        ...input,
+        updatedBy: ctx.user.id,
+      });
+      await db.addAuditLog({
+        actorUserId: ctx.user.id,
+        action: "italray_presentation_saved",
+        entityType: "product",
+        entityId: input.handle,
+        metadata: { handle: input.handle, title: input.title, commercialModel: input.commercialModel },
+        ipAddress: clientIp(ctx.req),
+      });
+      return { success: true, id } as const;
+    }),
+    uploadItalrayMedia: permissionProcedure("products.media").input(z.object({
+      handle: z.string().min(1).max(180),
+      fileName: z.string().min(1).max(180),
+      contentType: z.enum(["image/jpeg", "image/png", "image/webp", "application/pdf"]),
+      dataUrl: z.string().startsWith("data:"),
+    })).mutation(async ({ ctx, input }) => {
+      const encoded = input.dataUrl.split(",")[1];
+      if (!encoded) throw new TRPCError({ code: "BAD_REQUEST", message: "File data is missing." });
+      const buffer = Buffer.from(encoded, "base64");
+      if (buffer.byteLength > 15 * 1024 * 1024) throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: "File must be 15 MB or smaller." });
+      const { extension } = await validateUpload({ buffer, fileName: input.fileName, contentType: input.contentType, maxBytes: 15 * 1024 * 1024 });
+      const uploaded = await storagePut(`products/italray/${input.handle}/${Date.now()}-${randomUUID().slice(0, 8)}.${extension}`, buffer, input.contentType);
+      return { url: uploaded.url };
+    }),
   }),
   services: router({
     permissions: protectedProcedure.query(async ({ ctx }) => {

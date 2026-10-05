@@ -61,14 +61,50 @@ export default function ItalrayProductExperience({ product }: { product: Product
     return getItalrayProductMeta(product.handle);
   }, [product.handle]);
 
+  const overrideQuery = trpc.products.italrayPresentation.useQuery(
+    { handle: product.handle },
+    { staleTime: 30 * 1000 }
+  );
+
+  const activeMeta: ItalrayProductMeta = useMemo(() => {
+    const o = overrideQuery.data;
+    if (!o) return meta;
+    try {
+      return {
+        ...meta,
+        title: o.title || activeMeta.title,
+        badge: o.badge || activeMeta.badge,
+        headline: o.headline || activeMeta.headline,
+        subheadline: o.subheadline || activeMeta.subheadline,
+        leadParagraph: o.leadParagraph || activeMeta.leadParagraph,
+        secondaryParagraph: o.secondaryParagraph || activeMeta.secondaryParagraph,
+        heroImage: o.heroImage || activeMeta.heroImage,
+        descriptionImage: o.descriptionImage || activeMeta.descriptionImage,
+        brochureUrl: o.brochureUrl || activeMeta.brochureUrl,
+        brochureTitle: o.brochureTitle || meta.brochureTitle,
+        highlights: o.highlightsJson ? JSON.parse(o.highlightsJson) : activeMeta.highlights,
+        pillars: o.pillarsJson ? JSON.parse(o.pillarsJson) : activeMeta.pillars,
+        clinicalGallery: o.clinicalGalleryJson ? JSON.parse(o.clinicalGalleryJson) : activeMeta.clinicalGallery,
+        upgrades: o.upgradesJson ? JSON.parse(o.upgradesJson) : meta.upgrades,
+        specifications: o.specificationsJson ? JSON.parse(o.specificationsJson) : meta.specifications,
+      };
+    } catch {
+      return meta;
+    }
+  }, [meta, overrideQuery.data]);
+
+  const heroPosition = overrideQuery.data?.heroObjectPosition || "center center";
+  const heroScale = (overrideQuery.data?.heroScalePercent ?? 100) / 100;
+  const descriptionPosition = overrideQuery.data?.descriptionObjectPosition || "center center";
+
   const [activeSection, setActiveSection] = useState("section-description");
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [selectedGalleryItem, setSelectedGalleryItem] = useState<(typeof meta.clinicalGallery)[0] | null>(null);
+  const [selectedGalleryItem, setSelectedGalleryItem] = useState<(typeof activeMeta.clinicalGallery)[0] | null>(null);
   const [activeClinicalIndex, setActiveClinicalIndex] = useState(0);
   const [activeUpgradeTab, setActiveUpgradeTab] = useState<"hardware" | "software" | "packages">("hardware");
   const [expandedSpecCategories, setExpandedSpecCategories] = useState<Record<string, boolean>>({
-    [meta.specifications[0]?.category || ""]: true,
-    [meta.specifications[1]?.category || ""]: true,
+    [activeMeta.specifications[0]?.category || ""]: true,
+    [activeMeta.specifications[1]?.category || ""]: true,
   });
 
   // Track scroll progress and active section
@@ -98,22 +134,22 @@ export default function ItalrayProductExperience({ product }: { product: Product
   }, []);
 
   useEffect(() => {
-    if (meta.clinicalGallery.length < 2) return;
+    if (activeMeta.clinicalGallery.length < 2) return;
     const timer = window.setInterval(() => {
-      setActiveClinicalIndex((current) => (current + 1) % meta.clinicalGallery.length);
+      setActiveClinicalIndex((current) => (current + 1) % activeMeta.clinicalGallery.length);
     }, 6500);
     return () => window.clearInterval(timer);
-  }, [meta.clinicalGallery.length]);
+  }, [activeMeta.clinicalGallery.length]);
 
-  const quoteHref = `/request-a-quote?equipment=${encodeURIComponent(meta.title)}&brand=Italray&model=${encodeURIComponent(meta.handle)}`;
-  const serviceHref = `/request-service?equipment=${encodeURIComponent(meta.title)}&brand=Italray&model=${encodeURIComponent(meta.handle)}`;
-  const activeClinicalItem = meta.clinicalGallery[activeClinicalIndex] || meta.clinicalGallery[0];
+  const quoteHref = `/request-a-quote?equipment=${encodeURIComponent(activeMeta.title)}&brand=Italray&model=${encodeURIComponent(activeMeta.handle)}`;
+  const serviceHref = `/request-service?equipment=${encodeURIComponent(activeMeta.title)}&brand=Italray&model=${encodeURIComponent(activeMeta.handle)}`;
+  const activeClinicalItem = activeMeta.clinicalGallery[activeClinicalIndex] || activeMeta.clinicalGallery[0];
 
   const moveClinicalSlide = (direction: -1 | 1) => {
     setActiveClinicalIndex((current) => {
       const next = current + direction;
-      if (next < 0) return meta.clinicalGallery.length - 1;
-      if (next >= meta.clinicalGallery.length) return 0;
+      if (next < 0) return activeMeta.clinicalGallery.length - 1;
+      if (next >= activeMeta.clinicalGallery.length) return 0;
       return next;
     });
   };
@@ -135,7 +171,7 @@ export default function ItalrayProductExperience({ product }: { product: Product
 
   const expandAllSpecs = () => {
     const all: Record<string, boolean> = {};
-    meta.specifications.forEach((s) => (all[s.category] = true));
+    activeMeta.specifications.forEach((s) => (all[s.category] = true));
     setExpandedSpecCategories(all);
   };
 
@@ -146,10 +182,10 @@ export default function ItalrayProductExperience({ product }: { product: Product
   return (
     <>
       <SEOHead
-        title={`${meta.title} | Italray Medical Imaging`}
-        description={meta.leadParagraph}
-        image={meta.heroImage}
-        url={`/store/products/${meta.handle}`}
+        title={`${activeMeta.title} | Italray Medical Imaging`}
+        description={activeMeta.leadParagraph}
+        image={activeMeta.heroImage}
+        url={`/store/products/${activeMeta.handle}`}
       />
 
       <div className="bg-white text-[#17212b] antialiased selection:bg-[#0a4052] selection:text-white">
@@ -167,7 +203,7 @@ export default function ItalrayProductExperience({ product }: { product: Product
                 Product Portfolio
               </Link>
               <span className="text-[#cbd5e1]">&gt;</span>
-              <span className="truncate font-bold text-[#0a4052]">{meta.title}</span>
+              <span className="truncate font-bold text-[#0a4052]">{activeMeta.title}</span>
             </nav>
 
             <div className="hidden items-center gap-3 sm:flex">
@@ -195,15 +231,15 @@ export default function ItalrayProductExperience({ product }: { product: Product
                   className="h-10 w-auto object-contain transition-transform duration-300 hover:scale-105"
                 />
                 <span className="h-4 w-px bg-[#cbd5e1]" />
-                <span className="text-xs font-bold uppercase tracking-[.22em] text-[#0f6fae]">{meta.badge}</span>
+                <span className="text-xs font-bold uppercase tracking-[.22em] text-[#0f6fae]">{activeMeta.badge}</span>
               </div>
 
               <h1 className="mt-5 text-4xl font-extrabold tracking-[-.04em] text-[#0a4052] sm:text-6xl lg:text-7xl">
-                {meta.title}
+                {activeMeta.title}
               </h1>
 
               <p className="mx-auto mt-4 max-w-2xl text-lg font-medium text-[#475569] sm:text-xl">
-                {meta.headline}
+                {activeMeta.headline}
               </p>
             </div>
 
@@ -218,10 +254,14 @@ export default function ItalrayProductExperience({ product }: { product: Product
               {/* Main Image Stage */}
               <div className="relative z-10 flex min-h-[380px] items-center justify-center rounded-3xl border border-[#e2e8f0]/80 bg-white/70 p-6 shadow-xl backdrop-blur-sm sm:min-h-[520px] sm:p-12">
                 <img
-                  src={meta.heroImage}
-                  alt={meta.title}
+                  src={activeMeta.heroImage}
+                  alt={activeMeta.title}
                   loading="eager"
                   decoding="async"
+                  style={{
+                    objectPosition: heroPosition,
+                    transform: heroScale !== 1 ? `scale(${heroScale})` : undefined,
+                  }}
                   className="pdp-product-image max-h-[460px] w-auto max-w-full object-contain drop-shadow-2xl transition-transform duration-500 hover:scale-105"
                 />
 
@@ -255,7 +295,7 @@ export default function ItalrayProductExperience({ product }: { product: Product
 
             {/* Centered Highlights Ribbon */}
             <div className="mx-auto mt-8 flex flex-wrap justify-center gap-2 sm:gap-3">
-              {meta.highlights.map((h, i) => (
+              {activeMeta.highlights.map((h, i) => (
                 <span
                   key={i}
                   className="inline-flex items-center gap-2 rounded-full border border-[#dce7eb] bg-white px-4 py-2 text-xs font-bold text-[#334155] shadow-xs"
@@ -288,7 +328,7 @@ export default function ItalrayProductExperience({ product }: { product: Product
             </Link>
 
             <a
-              href={meta.brochureUrl}
+              href={activeMeta.brochureUrl}
               target="_blank"
               rel="noreferrer"
               className="group flex items-center gap-3 rounded-2xl border border-[#dce7eb] bg-white px-4 py-3 text-[#0a4052] shadow-xl transition-all duration-200 hover:-translate-x-1 hover:border-[#0a4052] hover:bg-[#f8fafc] active:scale-95"
@@ -344,7 +384,7 @@ export default function ItalrayProductExperience({ product }: { product: Product
             {/* Quick CTA on the sticky bar */}
             <div className="hidden shrink-0 items-center gap-2 md:flex">
               <a
-                href={meta.brochureUrl}
+                href={activeMeta.brochureUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 rounded-xl border border-[#dce7eb] bg-white px-3 py-1.5 text-xs font-bold text-[#0a4052] hover:bg-[#eaf4fa]"
@@ -372,13 +412,13 @@ export default function ItalrayProductExperience({ product }: { product: Product
                   Clinical Architecture & Overview
                 </span>
                 <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-[#0a4052] sm:text-5xl">
-                  {meta.subheadline}
+                  {activeMeta.subheadline}
                 </h2>
                 <p className="mt-6 text-base leading-relaxed text-[#334155] sm:text-lg">
-                  {meta.leadParagraph}
+                  {activeMeta.leadParagraph}
                 </p>
                 <p className="mt-4 text-sm leading-relaxed text-[#64748b]">
-                  {meta.secondaryParagraph}
+                  {activeMeta.secondaryParagraph}
                 </p>
 
                 <div className="mt-8 flex flex-wrap items-center gap-4">
@@ -387,7 +427,7 @@ export default function ItalrayProductExperience({ product }: { product: Product
                       Request Hospital Quotation <ArrowUpRight className="ml-2 h-4 w-4" />
                     </Button>
                   </Link>
-                  <a href={meta.brochureUrl} target="_blank" rel="noreferrer">
+                  <a href={activeMeta.brochureUrl} target="_blank" rel="noreferrer">
                     <Button size="lg" variant="outline" className="h-12 rounded-xl border-[#0a4052] font-bold text-[#0a4052] hover:bg-[#eaf4fa]">
                       <Download className="mr-2 h-4 w-4" /> Download PDF Specifications
                     </Button>
@@ -400,10 +440,11 @@ export default function ItalrayProductExperience({ product }: { product: Product
                 <div className="group relative overflow-hidden rounded-3xl border border-[#dce7eb] bg-[#f8fafc] p-6 shadow-md transition-all duration-300 hover:shadow-xl sm:p-10">
                   <div className="aspect-4/3 w-full overflow-hidden">
                     <img
-                      src={meta.descriptionImage}
-                      alt={`${meta.title} detailed system setup`}
+                      src={activeMeta.descriptionImage}
+                      alt={`${activeMeta.title} detailed system setup`}
                       loading="lazy"
                       decoding="async"
+                      style={{ objectPosition: descriptionPosition }}
                       className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
@@ -427,7 +468,7 @@ export default function ItalrayProductExperience({ product }: { product: Product
               </div>
 
               <div className="mt-12 grid gap-6 md:grid-cols-2">
-                {meta.pillars.map((pillar) => (
+                {activeMeta.pillars.map((pillar) => (
                   <div
                     key={pillar.number}
                     className="relative overflow-hidden rounded-3xl border border-[#e2e8f0] bg-white p-7 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-[#0f6fae]/50 hover:shadow-xl sm:p-9"
@@ -475,7 +516,7 @@ export default function ItalrayProductExperience({ product }: { product: Product
                   Clinical Diagnostics in Focus
                 </p>
                 <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-[#0a4052] sm:text-5xl">
-                  The clinical image quality of {meta.title}
+                  The clinical image quality of {activeMeta.title}
                 </h2>
                 <p className="mt-3 text-sm text-[#64748b]">
                   Inspect live clinical procedures, bone trabecular sharpness, and soft-tissue delineation.
@@ -500,7 +541,7 @@ export default function ItalrayProductExperience({ product }: { product: Product
                     Clinical Image Gallery
                   </p>
                   <h3 className="mt-3 max-w-3xl text-3xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl">
-                    The best clinical images of the <span className="text-[#5ed8db]">{meta.title}</span>
+                    The best clinical images of the <span className="text-[#5ed8db]">{activeMeta.title}</span>
                   </h3>
                 </div>
                 <span className="inline-flex items-center gap-2 text-xs font-bold text-white/55">
@@ -521,10 +562,10 @@ export default function ItalrayProductExperience({ product }: { product: Product
 
                   <div className="min-w-0 flex-1 overflow-hidden">
                     <div className="flex items-stretch justify-center gap-3 sm:gap-5">
-                      {meta.clinicalGallery.map((item, idx) => {
+                      {activeMeta.clinicalGallery.map((item, idx) => {
                         const distance = Math.abs(idx - activeClinicalIndex);
                         const isActive = idx === activeClinicalIndex;
-                        const isVisible = distance <= 1 || meta.clinicalGallery.length <= 3;
+                        const isVisible = distance <= 1 || activeMeta.clinicalGallery.length <= 3;
                         if (!isVisible) return null;
                         return (
                           <button
@@ -585,7 +626,7 @@ export default function ItalrayProductExperience({ product }: { product: Product
                 </div>
 
                 <div className="mt-6 flex items-center justify-center gap-2">
-                  {meta.clinicalGallery.map((item, idx) => (
+                  {activeMeta.clinicalGallery.map((item, idx) => (
                     <button
                       key={`dot-${item.title}`}
                       type="button"
@@ -666,7 +707,7 @@ export default function ItalrayProductExperience({ product }: { product: Product
                 Find out more about the versatile possibilities in clinical use
               </h2>
               <p className="mt-4 text-sm leading-relaxed text-[#64748b]">
-                Download official manufacturer brochures, site planning specifications, and procurement dossiers for {meta.title}.
+                Download official manufacturer brochures, site planning specifications, and procurement dossiers for {activeMeta.title}.
               </p>
             </div>
 
@@ -692,7 +733,7 @@ export default function ItalrayProductExperience({ product }: { product: Product
 
                 <div className="mt-8 border-t border-[#f1f5f9] pt-5">
                   <a
-                    href={meta.brochureUrl}
+                    href={activeMeta.brochureUrl}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0a4052] px-4 py-3 text-xs font-bold text-white transition hover:bg-[#072c38]"
@@ -821,7 +862,7 @@ export default function ItalrayProductExperience({ product }: { product: Product
 
             {/* Upgrades Cards Grid */}
             <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {meta.upgrades[activeUpgradeTab].map((up, i) => (
+              {activeMeta.upgrades[activeUpgradeTab].map((up, i) => (
                 <div
                   key={i}
                   className="group relative flex flex-col justify-between rounded-3xl border border-[#dce7eb] bg-white p-6 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-[#0f6fae] hover:shadow-lg sm:p-7"
@@ -876,7 +917,7 @@ export default function ItalrayProductExperience({ product }: { product: Product
                   Technical specifications
                 </h2>
                 <p className="mt-3 text-sm text-[#64748b]">
-                  Detailed physical, optical, mechanical, and regulatory data for {meta.title}.
+                  Detailed physical, optical, mechanical, and regulatory data for {activeMeta.title}.
                 </p>
               </div>
 
@@ -900,7 +941,7 @@ export default function ItalrayProductExperience({ product }: { product: Product
 
             {/* Accordion / Table Groups */}
             <div className="mt-12 space-y-4">
-              {meta.specifications.map((catGroup) => {
+              {activeMeta.specifications.map((catGroup) => {
                 const isExpanded = Boolean(expandedSpecCategories[catGroup.category]);
                 return (
                   <div
