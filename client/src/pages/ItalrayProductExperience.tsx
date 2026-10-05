@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "wouter";
 import {
   Activity,
@@ -10,206 +10,1088 @@ import {
   ChevronDown,
   ChevronRight,
   Download,
+  ExternalLink,
+  Eye,
+  FileDown,
   FileText,
+  HelpCircle,
+  Info,
   Layers,
+  Mail,
   Maximize2,
   Monitor,
+  PhoneCall,
   Play,
+  RotateCcw,
   ScanLine,
+  Search,
   Settings2,
   ShieldCheck,
+  Sparkles,
   Stethoscope,
   Wrench,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import SEOHead from "@/components/SEOHead";
 import { trpc } from "@/lib/trpc";
 import type { Product } from "@shared/commerce/types";
+import { getItalrayProductMeta, type ItalrayProductMeta } from "@shared/commerce/italrayMeta";
 
 const italrayLogo = "/manus-storage/italray-logo_57cfff13.png";
-const carmexBrochure = "/manus-storage/CARMEXFP_ENG_TR_9872ec0c.pdf";
 
-type Hotspot = { id: string; label: string; detail: string; top: string; left: string };
-type TechCard = { icon: typeof ScanLine; eyebrow: string; title: string; text: string };
-type SpecGroup = { id: string; title: string; rows: Array<[string, string]> };
-type QuickSpec = { icon: typeof ScanLine; metric: string; label: string };
-type GalleryImage = { url: string; altText: string | null };
+type SubnavItem = {
+  id: string;
+  label: string;
+};
 
-const carmexHighlights = [
-  "Dynamic flat panel detector: 21×21 cm or 30×30 cm.",
-  "3.5 kW, 5 kW or 15 kW high-frequency generator options.",
-  "15-inch medical-grade touch screen, rotatable ±180°.",
-  "Continuous and pulsed fluoroscopy with digital radiography workflow.",
+const SUBNAV_SECTIONS: SubnavItem[] = [
+  { id: "section-description", label: "Description" },
+  { id: "section-gallery", label: "Clinical Images" },
+  { id: "section-inuse", label: "In Use & Resources" },
+  { id: "section-upgrades", label: "Upgrades" },
+  { id: "section-specifications", label: "Technical Information" },
+  { id: "section-service", label: "SPM Service & Support" },
+  { id: "section-contact", label: "Contact Us" },
 ];
-
-const genericHighlights = [
-  "Configure the system around the clinical workflow and room requirements.",
-  "Official technical documentation available through the SPM team.",
-  "Installation, commissioning, training and service planning available.",
-  "Quote-led procurement with a clear technical review before supply.",
-];
-
-const carmexHotspots: Hotspot[] = [
-  { id: "tube", label: "X-ray tube", detail: "CARMEX FP is built for fluoroscopy and radiography workflows with stationary or rotating anode options.", top: "35%", left: "71%" },
-  { id: "detector", label: "Dynamic flat panel", detail: "Select a 21×21 cm or 30×30 cm dynamic flat panel detector configuration.", top: "72%", left: "75%" },
-  { id: "display", label: "Medical display", detail: "The system includes a 15-inch medical-grade touch screen and supports separate monitors or a 27/32-inch display option.", top: "47%", left: "21%" },
-  { id: "mobile", label: "Mobile workflow", detail: "Compact, lightweight and balanced for positioning in orthopedics, surgery, interventional procedures and emergency care.", top: "65%", left: "50%" },
-];
-
-const genericHotspots: Hotspot[] = [
-  { id: "system", label: "Imaging system", detail: "Explore the product images and request the official configuration pack from SPM.", top: "42%", left: "56%" },
-  { id: "workflow", label: "Clinical workflow", detail: "Tell SPM about your department, room and intended application so the right configuration can be proposed.", top: "66%", left: "34%" },
-  { id: "support", label: "Lifecycle support", detail: "Installation, commissioning, training, spare parts and maintenance can be scoped with the quotation.", top: "58%", left: "78%" },
-];
-
-function quoteHref(product: Product) {
-  return `/request-a-quote?equipment=${encodeURIComponent(product.title)}&brand=${encodeURIComponent(product.vendor || "Italray")}&model=${encodeURIComponent(product.handle)}`;
-}
-
-function serviceHref(product: Product) {
-  return `/request-service?equipment=${encodeURIComponent(product.title)}&brand=${encodeURIComponent(product.vendor || "Italray")}&model=${encodeURIComponent(product.handle)}`;
-}
-
-function getProductData(product: Product) {
-  const isCarmex = /carmex/i.test(`${product.title} ${product.handle}`);
-  const hotspots = isCarmex ? carmexHotspots : genericHotspots;
-  const highlights = isCarmex ? carmexHighlights : genericHighlights;
-  const quickSpecs: QuickSpec[] = isCarmex
-    ? [
-        { icon: Settings2, metric: "3.5 / 5 / 15 kW", label: "Generator options" },
-        { icon: ScanLine, metric: "21×21 / 30×30 cm", label: "Dynamic flat panel" },
-        { icon: Monitor, metric: "15-inch", label: "Medical touch screen" },
-        { icon: Activity, metric: "40 / 100 mA", label: "Fluoro / radiography" },
-      ]
-    : [
-        { icon: Settings2, metric: "Configurable", label: "Project package" },
-        { icon: ScanLine, metric: "Italray", label: "Manufacturer" },
-        { icon: Monitor, metric: "Digital", label: "Imaging workflow" },
-        { icon: Wrench, metric: "SPM", label: "Lifecycle support" },
-      ];
-  const technicalCards: TechCard[] = isCarmex
-    ? [
-        { icon: ScanLine, eyebrow: "Imaging modes", title: "Fluoroscopy + radiography", text: "Designed for continuous and pulsed fluoroscopy as well as digital radiography in one mobile workflow." },
-        { icon: Layers, eyebrow: "Detector platform", title: "Dynamic flat panel", text: "Choose the 21×21 cm or 30×30 cm detector size that fits the procedure and field of view." },
-        { icon: Monitor, eyebrow: "Control & display", title: "Operator-first control", text: "A rotatable 15-inch medical-grade touch screen with configurable medical monitor options." },
-        { icon: Settings2, eyebrow: "Procedure tools", title: "Optional image processing", text: "Advanced tools include ABC, edge enhancement, noise reduction and vascular procedure packages." },
-      ]
-    : [
-        { icon: ScanLine, eyebrow: "Imaging workflow", title: "Built around the application", text: "Review the product images, intended use and available configurations with the SPM technical team." },
-        { icon: Layers, eyebrow: "Configuration", title: "Select the right package", text: "Detector, generator, workstation and room requirements can be aligned to the project brief." },
-        { icon: Monitor, eyebrow: "Documentation", title: "Technical clarity", text: "Official brochures, datasheets and preparation documents are available through the approved request flow." },
-        { icon: Settings2, eyebrow: "Lifecycle", title: "Support beyond delivery", text: "SPM can coordinate installation, commissioning, training, genuine parts and maintenance planning." },
-      ];
-  const specGroups: SpecGroup[] = isCarmex
-    ? [
-        { id: "generator", title: "Generator & tube", rows: [["Generator options", "3.5 kW / 5 kW / 15 kW"], ["Fluoroscopy current", "40 mA maximum"], ["Radiography current", "100 mA maximum"], ["Anode", "Stationary or rotating anode"]] },
-        { id: "detector", title: "Detector & display", rows: [["Detector", "Dynamic flat panel"], ["Detector sizes", "21×21 cm or 30×30 cm"], ["Touch screen", "15-inch medical-grade touch screen"], ["Touch screen movement", "Rotatable ±180°"], ["Monitor options", "Two 19-inch medical monitors or one 27/32-inch display"]] },
-        { id: "mechanics", title: "Mechanical & workflow", rows: [["Primary use", "Fluoroscopy and radiography"], ["Configuration", "Compact, lightweight and balanced mobile C-arm"], ["Applications", "Orthopedics, surgery, interventional procedures and emergency care"], ["Availability", "Confirmed by project quotation and selected configuration"]] },
-        { id: "processing", title: "Workstation & processing", rows: [["Image processing", "ABC, edge enhancement and noise reduction"], ["Optional package", "Advanced vascular and interventional tools"], ["Documentation", "Official technical brochure available"], ["Planning", "Installation and project requirements reviewed by SPM"]] },
-      ]
-    : [
-        { id: "configuration", title: "Configuration", rows: [["Product family", product.productType || "Italray medical imaging system"], ["Manufacturer", product.vendor || "Italray"], ["Commercial model", "Quote-led project configuration"], ["Availability", "Confirmed with the SPM technical and commercial team"]] },
-        { id: "workflow", title: "Clinical workflow", rows: [["Primary application", "To be confirmed for the project"], ["Room requirements", "Reviewed during technical qualification"], ["Training", "Available as part of the project scope"], ["Service", "Commissioning and maintenance planning available"]] },
-      ];
-  return { isCarmex, hotspots, highlights, quickSpecs, technicalCards, specGroups };
-}
-
-function ProductImage({ image, product, className = "" }: { image?: GalleryImage; product: Product; className?: string }) {
-  return image ? <img src={image.url} alt={image.altText || product.title} loading="lazy" decoding="async" className={`pdp-product-image h-full w-full object-contain ${className}`} /> : <div className="flex h-full items-center justify-center text-sm text-[#617180]">Product image available on request</div>;
-}
-
-function HotspotFigure({ product, hotspots }: { product: Product; hotspots: Hotspot[] }) {
-  const [activeId, setActiveId] = useState(hotspots[0]?.id || "");
-  const active = hotspots.find(item => item.id === activeId) || hotspots[0];
-  const image = product.images[0];
-  return <div className="overflow-hidden rounded-lg border border-[#e5e7eb] bg-[#f4f8fa] shadow-sm"><div className="relative aspect-[16/10] min-h-[300px] overflow-hidden sm:min-h-[430px]"><ProductImage image={image} product={product} className="p-7 sm:p-12" /><div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_100%,rgba(15,111,174,.12),transparent_50%)]" aria-hidden="true" />{hotspots.map(hotspot => <button key={hotspot.id} type="button" aria-label={`Explore ${hotspot.label}`} onClick={() => setActiveId(hotspot.id)} className={`absolute flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-white shadow-lg transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#0f6fae]/30 ${activeId === hotspot.id ? "scale-110 bg-[#c2410c]" : "bg-[#0f6fae]/90 hover:scale-110 hover:bg-[#c2410c]"}`} style={{ top: hotspot.top, left: hotspot.left }}><span className="h-2.5 w-2.5 rounded-full bg-white" /></button>)}</div><div className="grid gap-4 border-t border-[#e5e7eb] bg-white p-5 sm:grid-cols-[.75fr_1.25fr] sm:p-6"><div><p className="text-xs font-bold uppercase tracking-[.18em] text-[#0f6fae]">Explore the system</p><div className="mt-3 flex flex-wrap gap-2">{hotspots.map(hotspot => <button key={hotspot.id} type="button" onClick={() => setActiveId(hotspot.id)} className={`px-3 py-2 text-xs font-bold transition ${activeId === hotspot.id ? "bg-[#0a4052] text-white" : "bg-[#eaf4fa] text-[#0a4052] hover:bg-[#d7edf5]"}`}>{hotspot.label}</button>)}</div></div>{active ? <div className="bg-[#f7fafc] p-4"><div className="flex items-start gap-3"><Maximize2 className="mt-0.5 h-4 w-4 shrink-0 text-[#c2410c]" aria-hidden="true" /><div><h3 className="text-sm font-extrabold text-[#0a4052]">{active.label}</h3><p className="mt-1 text-sm leading-6 text-[#617180]">{active.detail}</p></div></div></div> : null}</div></div>;
-}
-
-function StickyProductNav({ product }: { product: Product }) {
-  const [active, setActive] = useState("overview");
-  const links = ["overview", "technology", "specs", "gallery", "resources", "service"];
-  useEffect(() => {
-    const observer = new IntersectionObserver(entries => entries.forEach(entry => entry.isIntersecting && setActive(entry.target.id)), { rootMargin: "-22% 0px -68% 0px" });
-    links.forEach(id => { const element = document.getElementById(id); if (element) observer.observe(element); });
-    return () => observer.disconnect();
-  }, []);
-  return <nav aria-label={`${product.title} sections`} className="sticky top-[72px] z-20 border-y border-[#e5e7eb] bg-white/95 backdrop-blur"><div className="mx-auto flex max-w-[1280px] gap-1 overflow-x-auto px-5 py-2 lg:px-8">{links.map(id => <a key={id} href={`#${id}`} onClick={() => setActive(id)} className={`shrink-0 px-3 py-2 text-[11px] font-bold uppercase tracking-[.12em] transition ${active === id ? "bg-[#0a4052] text-white" : "text-[#64748b] hover:bg-[#eaf4fa] hover:text-[#0a4052]"}`}>{id}</a>)}</div></nav>;
-}
-
-function TechSpecs({ groups }: { groups: SpecGroup[] }) {
-  const [activeId, setActiveId] = useState(groups[0]?.id || "");
-  const active = groups.find(group => group.id === activeId) || groups[0];
-  return <><div className="hidden gap-7 lg:grid lg:grid-cols-[.7fr_1.3fr] lg:items-start"><div className="flex flex-col gap-2">{groups.map(group => <button key={group.id} type="button" onClick={() => setActiveId(group.id)} className={`flex items-center justify-between px-5 py-4 text-left text-sm font-bold transition ${activeId === group.id ? "bg-white text-[#0a4052] shadow-sm" : "text-white/65 hover:bg-white/10 hover:text-white"}`}><span>{group.title}</span><ChevronRight className={`h-4 w-4 ${activeId === group.id ? "text-[#c2410c]" : "text-white/40"}`} /></button>)}</div>{active ? <SpecTable group={active} /> : null}</div><div className="space-y-2 lg:hidden">{groups.map(group => <div key={group.id} className="border border-white/10 bg-white"><button type="button" onClick={() => setActiveId(activeId === group.id ? "" : group.id)} className="flex w-full items-center justify-between px-4 py-4 text-left text-sm font-bold text-[#0a4052]"><span>{group.title}</span><ChevronDown className={`h-4 w-4 transition ${activeId === group.id ? "rotate-180" : ""}`} /></button>{activeId === group.id ? <SpecRows group={group} /> : null}</div>)}</div></>;
-}
-
-function SpecTable({ group }: { group: SpecGroup }) { return <div className="overflow-hidden border border-white/10 bg-white text-[#17212b] shadow-xl"><div className="border-b border-[#e5e7eb] px-6 py-5"><p className="text-xs font-bold uppercase tracking-[.18em] text-[#0f6fae]">Technical specifications</p><h3 className="mt-2 text-2xl font-extrabold text-[#0a4052]">{group.title}</h3></div><SpecRows group={group} /></div>; }
-function SpecRows({ group }: { group: SpecGroup }) { return <div className="divide-y divide-[#edf2f5]">{group.rows.map(([label, value]) => <div key={label} className="grid gap-2 px-6 py-4 sm:grid-cols-[.7fr_1.3fr]"><span className="text-xs font-bold uppercase tracking-wide text-[#64748b]">{label}</span><span className="text-sm font-semibold text-[#334155]">{value}</span></div>)}</div>; }
-
-function LightboxGallery({ product }: { product: Product }) {
-  const [selected, setSelected] = useState<GalleryImage | null>(null);
-  const images = product.images;
-  if (!images.length) return null;
-  return <section id="gallery" className="border-b border-[#e5e7eb] bg-white py-16 sm:py-20"><div className="mx-auto max-w-[1280px] px-5 lg:px-8"><div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-[#0f6fae]">Clinical image gallery</p><h2 className="mt-4 text-3xl font-extrabold tracking-[-.03em] text-[#0a4052] sm:text-4xl">See the system in focus.</h2></div><p className="text-sm text-[#64748b]">Select an image to expand.</p></div><div className="mt-10 grid auto-rows-[150px] grid-cols-2 gap-3 sm:auto-rows-[190px] sm:grid-cols-4">{images.slice(0, 6).map((image, index) => <button key={image.url} type="button" onClick={() => setSelected(image)} className={`group relative overflow-hidden border border-[#e5e7eb] bg-[#f4f8fa] text-left ${index === 0 ? "col-span-2 row-span-2" : index === 1 ? "row-span-2" : ""}`}><ProductImage image={image} product={product} className="p-4 pdp-gallery-image" /><span className="absolute bottom-3 left-3 bg-white/90 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-[#0a4052]">Click to expand</span></button>)}</div></div>{selected ? <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#020617]/95 p-5" role="dialog" aria-modal="true" aria-label="Expanded product image" onClick={() => setSelected(null)}><button type="button" aria-label="Close image" onClick={() => setSelected(null)} className="absolute right-5 top-5 flex h-11 w-11 items-center justify-center border border-white/20 bg-white/10 text-white hover:bg-white/20"><X className="h-5 w-5" /></button><img src={selected.url} alt={selected.altText || product.title} className="max-h-[88vh] max-w-[92vw] object-contain" onClick={event => event.stopPropagation()} /></div> : null}</section>;
-}
 
 export default function ItalrayProductExperience({ product }: { product: Product }) {
-  const { isCarmex, hotspots, highlights, quickSpecs, technicalCards, specGroups } = useMemo(() => getProductData(product), [product]);
-  const relatedQuery = trpc.commerce.products.list.useQuery({ first: 50 }, { staleTime: 60 * 1000 });
-  const relatedProducts = useMemo(() => (relatedQuery.data || []).filter(item => item.id !== product.id && item.vendor?.toLowerCase() === "italray").slice(0, 4), [product.id, relatedQuery.data]);
-  const quoteUrl = quoteHref(product);
-  const serviceUrl = serviceHref(product);
-  const productImage = product.images[0];
-  const secondaryImage = product.images[1] || product.images[0];
-  const seoDescription = isCarmex ? "Italray CARMEX FP21 and FP30 mobile C-Arm for fluoroscopy and radiography, configured and supported by SPM in Egypt." : `${product.title} by Italray, configured and supported by SPM in Egypt.`;
+  const meta: ItalrayProductMeta = useMemo(() => {
+    return getItalrayProductMeta(product.handle);
+  }, [product.handle]);
 
-  return <>
-    <SEOHead title={`${product.title} | Italray`} description={seoDescription} image={productImage?.url} url={`/store/products/${product.handle}`} />
-    <main className="bg-white text-[#17212b]">
-      <div className="border-b border-[#e5e7eb] bg-white"><div className="mx-auto flex max-w-[1280px] items-center justify-between gap-4 px-5 py-3 lg:px-8"><Link href="/catalogue/italray" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#64748b] hover:text-[#0a4052]"><ArrowLeft className="h-3.5 w-3.5" /> Italray portfolio</Link><span className="hidden truncate text-xs font-semibold text-[#94a3b8] sm:block">SPM / Italray / {product.title}</span></div></div>
+  const [activeSection, setActiveSection] = useState("section-description");
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [selectedGalleryItem, setSelectedGalleryItem] = useState<(typeof meta.clinicalGallery)[0] | null>(null);
+  const [activeUpgradeTab, setActiveUpgradeTab] = useState<"hardware" | "software" | "packages">("hardware");
+  const [expandedSpecCategories, setExpandedSpecCategories] = useState<Record<string, boolean>>({
+    [meta.specifications[0]?.category || ""]: true,
+    [meta.specifications[1]?.category || ""]: true,
+  });
 
-      <StickyProductNav product={product} />
-      <section id="overview" className="scroll-mt-32 border-b border-[#e5e7eb] bg-white">
-        <div className="mx-auto max-w-[1280px] px-5 py-12 sm:py-16 lg:px-8 lg:py-20">
-          <div className="mx-auto max-w-4xl text-center">
-            <img src={italrayLogo} alt="Italray" loading="lazy" decoding="async" className="mx-auto h-10 w-auto object-contain" />
-            <p className="mt-7 text-xs font-bold uppercase tracking-[.2em] text-[#0f6fae]">{isCarmex ? "Mobile C-Arm for fluoroscopy and radiography" : product.productType || "Medical imaging system"}</p>
-            <h1 className="mt-3 text-4xl font-extrabold leading-[1.02] tracking-[-.04em] text-[#0a4052] sm:text-6xl">{product.title}</h1>
-            <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-[#617180]">{isCarmex ? "The essential solution for C-arm imaging, combining mobile positioning with high-quality fluoroscopy and radiography for demanding clinical workflows." : product.description || "A configured Italray imaging system supported by SPM from project definition through service."}</p>
-            <div className="mt-8 flex flex-wrap justify-center gap-3">
-              <Link href={quoteUrl}><Button size="lg" className="h-12 rounded-md bg-[#c2410c] px-6 font-bold text-white shadow-lg shadow-[#c2410c]/20 hover:bg-[#9a3412]">Request a project quote <ArrowUpRight className="ml-2 h-4 w-4" /></Button></Link>
-              {isCarmex ? <a href={carmexBrochure} target="_blank" rel="noreferrer"><Button size="lg" variant="outline" className="h-12 rounded-md border-[#0a4052] bg-white px-5 font-bold text-[#0a4052] hover:bg-[#eaf4fa]"><Download className="mr-2 h-4 w-4" />Download brochure</Button></a> : <Link href="/contact"><Button size="lg" variant="outline" className="h-12 rounded-md border-[#0a4052] bg-white px-5 font-bold text-[#0a4052] hover:bg-[#eaf4fa]">Talk to an expert <ArrowUpRight className="ml-2 h-4 w-4" /></Button></Link>}
+  // Track scroll progress and active section
+  useEffect(() => {
+    const handleScroll = () => {
+      const winScroll = document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+      setScrollProgress(scrolled);
+
+      // Check current section
+      for (let i = SUBNAV_SECTIONS.length - 1; i >= 0; i--) {
+        const sec = document.getElementById(SUBNAV_SECTIONS[i].id);
+        if (sec) {
+          const rect = sec.getBoundingClientRect();
+          if (rect.top <= 140) {
+            setActiveSection(SUBNAV_SECTIONS[i].id);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const quoteHref = `/request-a-quote?equipment=${encodeURIComponent(meta.title)}&brand=Italray&model=${encodeURIComponent(meta.handle)}`;
+  const serviceHref = `/request-service?equipment=${encodeURIComponent(meta.title)}&brand=Italray&model=${encodeURIComponent(meta.handle)}`;
+
+  // Related products query
+  const relatedQuery = trpc.commerce.products.list.useQuery({ first: 20 }, { staleTime: 60 * 1000 });
+  const relatedItalray = useMemo(() => {
+    return (relatedQuery.data || [])
+      .filter((p) => p.id !== product.id && (p.vendor?.toLowerCase() === "italray" || p.title.toLowerCase().includes("italray")))
+      .slice(0, 4);
+  }, [product.id, relatedQuery.data]);
+
+  const toggleCategory = (cat: string) => {
+    setExpandedSpecCategories((prev) => ({
+      ...prev,
+      [cat]: !prev[cat],
+    }));
+  };
+
+  const expandAllSpecs = () => {
+    const all: Record<string, boolean> = {};
+    meta.specifications.forEach((s) => (all[s.category] = true));
+    setExpandedSpecCategories(all);
+  };
+
+  const collapseAllSpecs = () => {
+    setExpandedSpecCategories({});
+  };
+
+  return (
+    <>
+      <SEOHead
+        title={`${meta.title} | Italray Medical Imaging`}
+        description={meta.leadParagraph}
+        image={meta.heroImage}
+        url={`/store/products/${meta.handle}`}
+      />
+
+      <div className="bg-white text-[#17212b] antialiased selection:bg-[#0a4052] selection:text-white">
+        {/* ========================================================= */}
+        {/* 1. BREADCRUMBS & TOP CONTEXT */}
+        {/* ========================================================= */}
+        <div className="border-b border-[#e5e7eb] bg-[#f8fafc]">
+          <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-4 px-5 py-3 lg:px-10">
+            <nav className="flex items-center gap-2 text-xs font-semibold text-[#64748b]">
+              <Link href="/" className="hover:text-[#0a4052]">
+                Home
+              </Link>
+              <span className="text-[#cbd5e1]">&gt;</span>
+              <Link href="/catalogue/italray" className="hover:text-[#0a4052]">
+                Product Portfolio
+              </Link>
+              <span className="text-[#cbd5e1]">&gt;</span>
+              <span className="truncate font-bold text-[#0a4052]">{meta.title}</span>
+            </nav>
+
+            <div className="hidden items-center gap-3 sm:flex">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#bcdde2] bg-[#eaf4fa] px-3 py-1 text-[11px] font-bold text-[#0a4052]">
+                <ShieldCheck className="h-3.5 w-3.5 text-[#0f6fae]" />
+                SPM Exclusive Authorized Agency
+              </span>
             </div>
           </div>
-          <div className="mx-auto mt-12 max-w-6xl"><HotspotFigure product={product} hotspots={hotspots} /></div>
-          <div className="mx-auto mt-8 grid max-w-4xl gap-3 sm:grid-cols-2 lg:grid-cols-4">{highlights.map(item => <div key={item} className="flex items-start gap-3 border border-[#e5e7eb] bg-[#f7fafc] p-4 text-left text-sm leading-6 text-[#334155]"><span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center bg-[#fff1ed] text-[#c2410c]"><Check className="h-3.5 w-3.5" aria-hidden="true" /></span><span>{item}</span></div>)}</div>
-          <p className="mt-5 text-center text-xs leading-5 text-[#64748b]">Final availability, configuration, delivery and warranty terms are confirmed in the formal SPM quotation.</p>
         </div>
-      </section>
 
-      <section aria-label="Quick specifications" className="border-b border-white/10 bg-[#061f2b] text-white">
-        <div className="mx-auto grid max-w-[1280px] sm:grid-cols-2 lg:grid-cols-4 lg:px-8">{quickSpecs.map(spec => <div key={spec.label} className="flex items-center gap-4 border-b border-white/10 px-5 py-6 last:border-0 sm:border-r lg:border-b-0 lg:px-6"><spec.icon className="h-6 w-6 shrink-0 text-[#8be0d5]" aria-hidden="true" /><div><p className="text-sm font-extrabold">{spec.metric}</p><p className="mt-1 text-[10px] font-bold uppercase tracking-[.14em] text-white/55">{spec.label}</p></div></div>)}</div>
-      </section>
+        {/* ========================================================= */}
+        {/* 2. PRODUCT HERO STAGE (Ziehm-Style Centered Showcase) */}
+        {/* ========================================================= */}
+        <section className="relative overflow-hidden bg-gradient-to-b from-[#f8fafc] via-white to-white pb-12 pt-8 sm:pb-20 sm:pt-14">
+          <div className="mx-auto max-w-[1400px] px-5 lg:px-10">
+            {/* Centered Brand & Headline */}
+            <div className="mx-auto max-w-4xl text-center">
+              <div className="inline-flex items-center justify-center gap-3">
+                <img
+                  src={italrayLogo}
+                  alt="Italray"
+                  loading="lazy"
+                  decoding="async"
+                  className="h-10 w-auto object-contain transition-transform duration-300 hover:scale-105"
+                />
+                <span className="h-4 w-px bg-[#cbd5e1]" />
+                <span className="text-xs font-bold uppercase tracking-[.22em] text-[#0f6fae]">{meta.badge}</span>
+              </div>
 
+              <h1 className="mt-5 text-4xl font-extrabold tracking-[-.04em] text-[#0a4052] sm:text-6xl lg:text-7xl">
+                {meta.title}
+              </h1>
 
+              <p className="mx-auto mt-4 max-w-2xl text-lg font-medium text-[#475569] sm:text-xl">
+                {meta.headline}
+              </p>
+            </div>
 
-      <section id="technology" className="scroll-mt-32 bg-[#061f2b] py-16 text-white sm:py-20"><div className="mx-auto max-w-[1280px] px-5 lg:px-8"><div className="max-w-2xl"><p className="text-xs font-bold uppercase tracking-[.2em] text-[#8be0d5]">Core technology</p><h2 className="mt-4 text-3xl font-extrabold tracking-[-.03em] sm:text-4xl">A closer look at the engineering decisions behind the system.</h2></div><div className="mt-12 grid gap-12 lg:grid-cols-2 lg:items-center"><div><p className="text-xs font-bold uppercase tracking-[.18em] text-[#8be0d5]">01 / Imaging platform</p><h3 className="mt-3 text-2xl font-extrabold">Designed for movement, control and image clarity.</h3><p className="mt-4 text-sm leading-7 text-white/70">{isCarmex ? "The CARMEX platform combines a mobile C-arm geometry with a dynamic flat panel detector and selectable generator configurations for a range of clinical procedures." : "The product configuration is reviewed with your department so imaging, room, display and support requirements are aligned before the formal quotation."}</p><ul className="mt-6 grid gap-3 text-sm text-white/80">{technicalCards.slice(0, 3).map(card => <li key={card.title} className="flex items-start gap-3"><CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#8be0d5]" />{card.title}</li>)}</ul></div><div className="min-h-[300px] border border-white/10 bg-white/[.06] p-6"><ProductImage image={productImage} product={product} className="p-4" /></div></div><div className="mt-12 grid gap-12 lg:grid-cols-2 lg:items-center"><div className="order-2 min-h-[300px] border border-white/10 bg-white/[.06] p-6 lg:order-1"><ProductImage image={secondaryImage} product={product} className="p-4" /></div><div className="order-1 lg:order-2"><p className="text-xs font-bold uppercase tracking-[.18em] text-[#8be0d5]">02 / Workflow intelligence</p><h3 className="mt-3 text-2xl font-extrabold">From the first brief to long-term support.</h3><p className="mt-4 text-sm leading-7 text-white/70">SPM connects the product choice to the operational reality of your department, including installation, training, genuine parts, maintenance planning and technical documentation.</p><div className="mt-6 grid gap-3 sm:grid-cols-2">{technicalCards.slice(2).map(card => <div key={card.title} className="border border-white/10 p-4"><card.icon className="h-5 w-5 text-[#8be0d5]" /><p className="mt-3 text-sm font-bold">{card.title}</p><p className="mt-2 text-xs leading-5 text-white/60">{card.text}</p></div>)}</div></div></div></div></section>
+            {/* Prominent Hero Showcase with Ambient Glow & Floating Badges */}
+            <div className="relative mx-auto mt-10 max-w-5xl">
+              {/* Radial backdrop glow */}
+              <div
+                className="pointer-events-none absolute inset-0 -top-12 z-0 mx-auto h-[480px] w-[80%] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(15,111,174,0.14),transparent_65%)] blur-2xl"
+                aria-hidden="true"
+              />
 
-      <section id="applications" className="scroll-mt-32 border-b border-[#e5e7eb] bg-white py-16 sm:py-20"><div className="mx-auto max-w-[1280px] px-5 lg:px-8"><div className="max-w-2xl"><p className="text-xs font-bold uppercase tracking-[.2em] text-[#0f6fae]">Clinical applications</p><h2 className="mt-4 text-3xl font-extrabold tracking-[-.03em] text-[#0a4052] sm:text-4xl">A system selected around the procedure.</h2></div><div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{(isCarmex ? [[Stethoscope, "Orthopedics & traumatology", "Positioning and imaging support for orthopedic and trauma procedures."], [Activity, "Surgery", "A mobile imaging workflow for operating room procedures."], [ScanLine, "Interventional procedures", "Fluoroscopy and radiography support with optional advanced tools."], [ShieldCheck, "Emergency care", "A compact mobile configuration for fast, precise workflow support."]] : [[Stethoscope, "Clinical application", "Confirm the intended procedure and workflow with the SPM team."], [Activity, "Department fit", "Align the configuration with the room, staff and throughput needs."], [ScanLine, "Technical planning", "Review detector, workstation, installation and documentation requirements."], [ShieldCheck, "Lifecycle support", "Plan commissioning, training, service and genuine parts from the start."]]).map(([Icon, title, text]) => <article key={String(title)} className="border border-[#e5e7eb] bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"><div className="flex h-12 w-12 items-center justify-center bg-[#eaf4fa] text-[#0f6fae]"><Icon className="h-6 w-6" aria-hidden="true" /></div><h3 className="mt-6 text-lg font-extrabold text-[#0a4052]">{String(title)}</h3><p className="mt-3 text-sm leading-6 text-[#617180]">{String(text)}</p></article>)}</div></div></section>
+              {/* Main Image Stage */}
+              <div className="relative z-10 flex min-h-[380px] items-center justify-center rounded-3xl border border-[#e2e8f0]/80 bg-white/70 p-6 shadow-xl backdrop-blur-sm sm:min-h-[520px] sm:p-12">
+                <img
+                  src={meta.heroImage}
+                  alt={meta.title}
+                  loading="eager"
+                  decoding="async"
+                  className="pdp-product-image max-h-[460px] w-auto max-w-full object-contain drop-shadow-2xl transition-transform duration-500 hover:scale-105"
+                />
 
+                {/* Left Floating Feature Badge */}
+                <div className="absolute bottom-6 left-6 hidden rounded-2xl border border-white/80 bg-white/95 p-4 shadow-lg backdrop-blur md:block">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#eaf4fa] text-[#0a4052]">
+                      <ScanLine className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-[#64748b]">Engineered In</p>
+                      <p className="text-sm font-extrabold text-[#0a4052]">Florence, Italy</p>
+                    </div>
+                  </div>
+                </div>
 
+                {/* Right Floating Feature Badge */}
+                <div className="absolute bottom-6 right-6 hidden rounded-2xl border border-white/80 bg-white/95 p-4 shadow-lg backdrop-blur md:block">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#fff1ed] text-[#c2410c]">
+                      <ShieldCheck className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-[#64748b]">Supported Across Egypt</p>
+                      <p className="text-sm font-extrabold text-[#0a4052]">By SPM Certified Engineers</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-      <LightboxGallery product={product} />
+            {/* Centered Highlights Ribbon */}
+            <div className="mx-auto mt-8 flex flex-wrap justify-center gap-2 sm:gap-3">
+              {meta.highlights.map((h, i) => (
+                <span
+                  key={i}
+                  className="inline-flex items-center gap-2 rounded-full border border-[#dce7eb] bg-white px-4 py-2 text-xs font-bold text-[#334155] shadow-xs"
+                >
+                  <Check className="h-3.5 w-3.5 text-[#047857]" />
+                  {h}
+                </span>
+              ))}
+            </div>
+          </div>
 
-      <section id="specs" className="scroll-mt-32 bg-[#061f2b] py-16 sm:py-20"><div className="mx-auto max-w-[1280px] px-5 lg:px-8"><div className="mb-10 max-w-2xl"><p className="text-xs font-bold uppercase tracking-[.2em] text-[#8be0d5]">Structured technical specs</p><h2 className="mt-4 text-3xl font-extrabold tracking-[-.03em] text-white sm:text-4xl">The detail your project team needs.</h2><p className="mt-4 text-base leading-7 text-white/70">Desktop tabs become touch-friendly accordions on mobile.</p></div><TechSpecs groups={specGroups} /></div></section>
+          {/* ========================================================= */}
+          {/* QUICK-ACCESS FLOATING WIDGET (Like Ziehm Right-Side Flags) */}
+          {/* ========================================================= */}
+          <aside
+            aria-label="Quick Actions"
+            className="fixed bottom-6 right-6 z-40 hidden flex-col gap-2.5 xl:flex"
+          >
+            <Link
+              href={quoteHref}
+              className="group flex items-center gap-3 rounded-2xl border border-[#0a4052] bg-[#0a4052] px-4 py-3 text-white shadow-2xl transition-all duration-200 hover:-translate-x-1 hover:bg-[#072c38] active:scale-95"
+            >
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 text-white">
+                <Mail className="h-4 w-4" />
+              </div>
+              <div className="text-left">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-white/70">Direct Inquiry</p>
+                <p className="text-xs font-extrabold text-white">Request Quotation</p>
+              </div>
+            </Link>
 
-      {isCarmex ? <section id="resources" className="scroll-mt-32 border-b border-[#e5e7eb] bg-white py-16 sm:py-20"><div className="mx-auto max-w-[1280px] px-5 lg:px-8"><div className="grid gap-8 border border-[#e5e7eb] bg-[#f7fafc] p-7 sm:p-10 lg:grid-cols-[1fr_1.1fr] lg:items-center lg:p-14"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-[#0f6fae]">Downloads & resources</p><h2 className="mt-4 text-3xl font-extrabold tracking-[-.03em] text-[#0a4052] sm:text-4xl">Prepare the project before the system arrives.</h2><p className="mt-5 max-w-xl text-sm leading-7 text-[#617180]">SPM helps your team move from product selection to a clear project brief, including technical documentation and installation planning.</p><div className="mt-7 flex flex-wrap gap-3"><Link href={quoteUrl}><Button className="h-11 rounded-md bg-[#c2410c] font-bold text-white hover:bg-[#9a3412]">Build the project brief <ArrowUpRight className="ml-2 h-4 w-4" /></Button></Link><Link href={serviceUrl}><Button variant="outline" className="h-11 rounded-md border-[#0a4052] font-bold text-[#0a4052] hover:bg-white"><Wrench className="mr-2 h-4 w-4" />Request technical service</Button></Link></div></div><div className="grid gap-3 sm:grid-cols-2"><a href={carmexBrochure} target="_blank" rel="noreferrer" className="group border border-[#e5e7eb] bg-white p-5 transition hover:-translate-y-1 hover:shadow-lg"><FileText className="h-6 w-6 text-[#0f6fae]" /><h3 className="mt-5 text-sm font-extrabold text-[#0a4052]">CARMEX FP21 & FP30 brochure</h3><p className="mt-2 text-xs leading-5 text-[#617180]">Official product information and configuration highlights.</p><span className="mt-4 inline-flex items-center text-xs font-bold text-[#c2410c]">Download PDF<Download className="ml-1.5 h-3.5 w-3.5" /></span></a><Link href="/contact" className="group border border-[#e5e7eb] bg-white p-5 transition hover:-translate-y-1 hover:shadow-lg"><Maximize2 className="h-6 w-6 text-[#0f6fae]" /><h3 className="mt-5 text-sm font-extrabold text-[#0a4052]">Pre-installation planning</h3><p className="mt-2 text-xs leading-5 text-[#617180]">Request a project conversation about site, room and delivery requirements.</p><span className="mt-4 inline-flex items-center text-xs font-bold text-[#c2410c]">Talk to SPM<ArrowUpRight className="ml-1.5 h-3.5 w-3.5" /></span></Link></div></div></div></section> : null}
+            <a
+              href={meta.brochureUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="group flex items-center gap-3 rounded-2xl border border-[#dce7eb] bg-white px-4 py-3 text-[#0a4052] shadow-xl transition-all duration-200 hover:-translate-x-1 hover:border-[#0a4052] hover:bg-[#f8fafc] active:scale-95"
+            >
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#eaf4fa] text-[#0a4052]">
+                <FileDown className="h-4 w-4" />
+              </div>
+              <div className="text-left">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#64748b]">Official PDF</p>
+                <p className="text-xs font-extrabold text-[#0a4052]">Download Brochure</p>
+              </div>
+            </a>
+          </aside>
+        </section>
 
-      <section id="service" className="scroll-mt-32 bg-[#0a4052] py-16 text-white sm:py-20"><div className="mx-auto grid max-w-[1280px] gap-10 px-5 lg:grid-cols-[1fr_.8fr] lg:items-center lg:px-8"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-[#8be0d5]">SPM service integration</p><h2 className="mt-4 text-3xl font-extrabold tracking-[-.03em] sm:text-4xl">The product is only as valuable as the support behind it.</h2><p className="mt-5 max-w-2xl text-sm leading-7 text-white/75">Connect the selected Italray system to SPM's engineering ecosystem: installation, commissioning, operator training, preventive maintenance, corrective service and genuine spare parts.</p><div className="mt-7 flex flex-wrap gap-3"><Link href={serviceUrl}><Button className="h-11 rounded-md bg-[#c2410c] font-bold text-white hover:bg-[#9a3412]">Request technical service <ArrowUpRight className="ml-2 h-4 w-4" /></Button></Link><Link href="/maintenance-contracts"><Button variant="outline" className="h-11 rounded-md border-white/40 bg-white/10 font-bold text-white hover:bg-white/20">Explore service contracts</Button></Link></div></div><div className="grid gap-3 sm:grid-cols-2"><div className="border border-white/10 bg-white/10 p-5"><Wrench className="h-6 w-6 text-[#8be0d5]" /><p className="mt-5 text-sm font-bold">Field engineering</p><p className="mt-2 text-xs leading-5 text-white/60">On-site support and commissioning planning.</p></div><div className="border border-white/10 bg-white/10 p-5"><ShieldCheck className="h-6 w-6 text-[#8be0d5]" /><p className="mt-5 text-sm font-bold">Lifecycle continuity</p><p className="mt-2 text-xs leading-5 text-white/60">Maintenance, training and genuine parts coordination.</p></div></div></div></section>
+        {/* ========================================================= */}
+        {/* 3. STICKY SUB-NAVIGATION WITH SCROLL INDICATOR */}
+        {/* ========================================================= */}
+        <div
+          id="scrollindicator"
+          className="sticky top-0 z-30 border-y border-[#dce7eb] bg-white/95 shadow-xs backdrop-blur-md"
+        >
+          {/* Scroll progress bar */}
+          <div className="h-1 w-full bg-[#f1f5f9]">
+            <div
+              className="h-full bg-gradient-to-r from-[#0a4052] via-[#0f6fae] to-[#2b8c88] transition-all duration-150"
+              style={{ width: `${scrollProgress}%` }}
+            />
+          </div>
 
-      {relatedProducts.length ? <section className="border-b border-[#e5e7eb] bg-white py-16 sm:py-20"><div className="mx-auto max-w-[1280px] px-5 lg:px-8"><div className="flex items-end justify-between gap-5"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-[#0f6fae]">Related Italray systems</p><h2 className="mt-4 text-3xl font-extrabold tracking-[-.03em] text-[#0a4052] sm:text-4xl">Continue exploring the portfolio.</h2></div><Link href="/catalogue/italray" className="hidden items-center text-sm font-bold text-[#c2410c] sm:inline-flex">View all systems <ArrowRight className="ml-2 h-4 w-4" /></Link></div><div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{relatedProducts.map(related => <Link key={related.id} href={`/store/products/${related.handle}`} className="group border border-[#e5e7eb] bg-white p-4 transition hover:-translate-y-1 hover:shadow-lg"><div className="aspect-[4/3] bg-[#f4f8fa]"><ProductImage image={related.images[0]} product={related} /></div><p className="mt-5 text-[10px] font-bold uppercase tracking-[.15em] text-[#0f6fae]">{related.productType || "Italray system"}</p><h3 className="mt-2 line-clamp-2 text-sm font-extrabold leading-5 text-[#0a4052] group-hover:text-[#0f6fae]">{related.title}</h3><span className="mt-4 inline-flex items-center text-xs font-bold text-[#c2410c]">View product <ArrowUpRight className="ml-1.5 h-3.5 w-3.5" /></span></Link>)}</div></div></section> : null}
+          <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-4 px-5 py-2.5 lg:px-10">
+            {/* Scrollable anchor tabs */}
+            <nav className="flex items-center gap-1 overflow-x-auto scrollbar-none">
+              {SUBNAV_SECTIONS.map((tab) => {
+                const isActive = activeSection === tab.id;
+                return (
+                  <a
+                    key={tab.id}
+                    href={`#${tab.id}`}
+                    onClick={() => setActiveSection(tab.id)}
+                    className={`whitespace-nowrap rounded-xl px-3.5 py-2 text-xs font-bold transition-all duration-150 ${
+                      isActive
+                        ? "bg-[#0a4052] text-white shadow-xs"
+                        : "text-[#64748b] hover:bg-[#eaf4fa] hover:text-[#0a4052]"
+                    }`}
+                  >
+                    {tab.label}
+                  </a>
+                );
+              })}
+            </nav>
 
-      <section className="border-t border-[#e5e7eb] bg-[#eaf4fa] py-10"><div className="mx-auto flex max-w-[1280px] flex-col items-start justify-between gap-5 px-5 sm:flex-row sm:items-center lg:px-8"><div><p className="text-sm font-extrabold text-[#0a4052]">Ready to discuss this Italray system?</p><p className="mt-1 text-xs text-[#617180]">Share your department, intended procedure and room requirements.</p></div><Link href={quoteUrl}><Button className="h-11 rounded-md bg-[#c2410c] font-bold text-white hover:bg-[#9a3412]">Request a project quote <ArrowUpRight className="ml-2 h-4 w-4" /></Button></Link></div></section>
-    </main>
-  </>;
+            {/* Quick CTA on the sticky bar */}
+            <div className="hidden shrink-0 items-center gap-2 md:flex">
+              <a
+                href={meta.brochureUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-[#dce7eb] bg-white px-3 py-1.5 text-xs font-bold text-[#0a4052] hover:bg-[#eaf4fa]"
+              >
+                <Download className="h-3.5 w-3.5" /> Brochure
+              </a>
+              <Link href={quoteHref}>
+                <Button size="sm" className="h-8 rounded-xl bg-[#c2410c] px-3.5 text-xs font-bold text-white hover:bg-[#9a3412]">
+                  Request Quote <ArrowUpRight className="ml-1 h-3.5 w-3.5" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* ========================================================= */}
+        {/* 4. SECTION: DESCRIPTION & TECHNICAL PILLARS */}
+        {/* ========================================================= */}
+        <section id="section-description" className="scroll-mt-16 border-b border-[#e5e7eb] py-16 sm:py-24">
+          <div className="mx-auto max-w-[1400px] px-5 lg:px-10">
+            {/* Editorial Lead Block */}
+            <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
+              <div className="lg:col-span-7">
+                <span className="text-xs font-bold uppercase tracking-[.22em] text-[#0f6fae]">
+                  Clinical Architecture & Overview
+                </span>
+                <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-[#0a4052] sm:text-5xl">
+                  {meta.subheadline}
+                </h2>
+                <p className="mt-6 text-base leading-relaxed text-[#334155] sm:text-lg">
+                  {meta.leadParagraph}
+                </p>
+                <p className="mt-4 text-sm leading-relaxed text-[#64748b]">
+                  {meta.secondaryParagraph}
+                </p>
+
+                <div className="mt-8 flex flex-wrap items-center gap-4">
+                  <Link href={quoteHref}>
+                    <Button size="lg" className="h-12 rounded-xl bg-[#c2410c] px-6 font-bold text-white shadow-md shadow-[#c2410c]/20 hover:bg-[#9a3412]">
+                      Request Hospital Quotation <ArrowUpRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+                  <a href={meta.brochureUrl} target="_blank" rel="noreferrer">
+                    <Button size="lg" variant="outline" className="h-12 rounded-xl border-[#0a4052] font-bold text-[#0a4052] hover:bg-[#eaf4fa]">
+                      <Download className="mr-2 h-4 w-4" /> Download PDF Specifications
+                    </Button>
+                  </a>
+                </div>
+              </div>
+
+              {/* Secondary Detail Image Showcase */}
+              <div className="lg:col-span-5">
+                <div className="group relative overflow-hidden rounded-3xl border border-[#dce7eb] bg-[#f8fafc] p-6 shadow-md transition-all duration-300 hover:shadow-xl sm:p-10">
+                  <div className="aspect-4/3 w-full overflow-hidden">
+                    <img
+                      src={meta.descriptionImage}
+                      alt={`${meta.title} detailed system setup`}
+                      loading="lazy"
+                      decoding="async"
+                      className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                  <div className="mt-4 border-t border-[#e2e8f0] pt-4 text-center">
+                    <p className="text-xs font-bold text-[#0a4052]">Italray Modular Engineering</p>
+                    <p className="mt-0.5 text-[11px] text-[#64748b]">Calibrated and serviced by SPM biomedical personnel</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 4 Pillars Grid (Ziehm-style feature cards with clean typography) */}
+            <div className="mt-20">
+              <div className="text-center">
+                <p className="text-xs font-bold uppercase tracking-[.22em] text-[#0f6fae]">
+                  Engineering Innovations
+                </p>
+                <h3 className="mt-2 text-2xl font-extrabold text-[#0a4052] sm:text-4xl">
+                  Technological pillars that define this platform
+                </h3>
+              </div>
+
+              <div className="mt-12 grid gap-6 md:grid-cols-2">
+                {meta.pillars.map((pillar) => (
+                  <div
+                    key={pillar.number}
+                    className="relative overflow-hidden rounded-3xl border border-[#e2e8f0] bg-white p-7 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-[#0f6fae]/50 hover:shadow-xl sm:p-9"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-extrabold tracking-widest text-[#0f6fae]">
+                        PILLAR {pillar.number}
+                      </span>
+                      <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#eaf4fa] font-mono text-xs font-extrabold text-[#0a4052]">
+                        {pillar.number}
+                      </span>
+                    </div>
+
+                    <h4 className="mt-4 text-xl font-extrabold tracking-tight text-[#0a4052]">
+                      {pillar.title}
+                    </h4>
+
+                    <p className="mt-3 text-sm leading-relaxed text-[#64748b]">
+                      {pillar.description}
+                    </p>
+
+                    <ul className="mt-6 space-y-2.5 border-t border-[#f1f5f9] pt-6">
+                      {pillar.points.map((pt, idx) => (
+                        <li key={idx} className="flex items-start gap-3 text-xs font-semibold leading-relaxed text-[#334155]">
+                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#0f6fae]" />
+                          <span>{pt}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ========================================================= */}
+        {/* 5. SECTION: CLINICAL IMAGE GALLERY (Ziehm-Style Lightbox) */}
+        {/* ========================================================= */}
+        <section id="section-gallery" className="scroll-mt-16 border-b border-[#e5e7eb] bg-[#f8fafc] py-16 sm:py-24">
+          <div className="mx-auto max-w-[1400px] px-5 lg:px-10">
+            <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[.22em] text-[#0f6fae]">
+                  Clinical Diagnostics in Focus
+                </p>
+                <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-[#0a4052] sm:text-5xl">
+                  The clinical image quality of {meta.title}
+                </h2>
+                <p className="mt-3 text-sm text-[#64748b]">
+                  Inspect live clinical procedures, bone trabecular sharpness, and soft-tissue delineation.
+                </p>
+              </div>
+
+              <span className="inline-flex items-center gap-2 text-xs font-bold text-[#64748b]">
+                <Maximize2 className="h-4 w-4 text-[#0f6fae]" /> Click any case to enlarge
+              </span>
+            </div>
+
+            {/* Gallery Grid */}
+            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {meta.clinicalGallery.map((item, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setSelectedGalleryItem(item)}
+                  className="group relative flex flex-col overflow-hidden rounded-3xl border border-[#dce7eb] bg-white text-left shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:border-[#0f6fae] hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6fae]"
+                >
+                  <div className="relative aspect-4/3 w-full overflow-hidden bg-[#061f2b]">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      loading="lazy"
+                      decoding="async"
+                      className="h-full w-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-105 group-hover:opacity-100"
+                    />
+                    <div className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-xl bg-black/60 text-white backdrop-blur transition group-hover:bg-[#0f6fae]">
+                      <Maximize2 className="h-4 w-4" />
+                    </div>
+                    <span className="absolute bottom-3 left-3 rounded-lg bg-black/70 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur">
+                      {item.category}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-1 flex-col justify-between p-5">
+                    <div>
+                      <h3 className="text-sm font-extrabold text-[#0a4052] transition group-hover:text-[#0f6fae]">
+                        {item.title}
+                      </h3>
+                      <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-[#64748b]">
+                        {item.description}
+                      </p>
+                    </div>
+
+                    <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#0f6fae]">
+                      Inspect case <ChevronRight className="h-3.5 w-3.5 transition group-hover:translate-x-1" />
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Lightbox Modal */}
+          {selectedGalleryItem && (
+            <div
+              role="dialog"
+              aria-modal="true"
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4 backdrop-blur-md animate-in fade-in duration-200"
+              onClick={() => setSelectedGalleryItem(null)}
+            >
+              <div
+                className="relative max-h-[92vh] max-w-4xl overflow-hidden rounded-3xl border border-white/20 bg-[#061f2b] p-6 text-white shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  type="button"
+                  aria-label="Close dialog"
+                  onClick={() => setSelectedGalleryItem(null)}
+                  className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+
+                <div className="aspect-16/10 w-full overflow-hidden rounded-2xl bg-black/60">
+                  <img
+                    src={selectedGalleryItem.image}
+                    alt={selectedGalleryItem.title}
+                    className="h-full w-full object-contain"
+                  />
+                </div>
+
+                <div className="mt-5">
+                  <span className="rounded-md bg-[#0f6fae] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+                    {selectedGalleryItem.category}
+                  </span>
+                  <h3 className="mt-2 text-xl font-bold text-white">{selectedGalleryItem.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[#94a3b8]">{selectedGalleryItem.description}</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* ========================================================= */}
+        {/* 6. SECTION: IN USE & RESOURCES (Ziehm-Style Documentation Cards) */}
+        {/* ========================================================= */}
+        <section id="section-inuse" className="scroll-mt-16 border-b border-[#e5e7eb] py-16 sm:py-24">
+          <div className="mx-auto max-w-[1400px] px-5 lg:px-10">
+            <div className="mx-auto max-w-3xl text-center">
+              <p className="text-xs font-bold uppercase tracking-[.22em] text-[#0f6fae]">
+                Clinical Documentation & Planning
+              </p>
+              <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-[#0a4052] sm:text-5xl">
+                Find out more about the versatile possibilities in clinical use
+              </h2>
+              <p className="mt-4 text-sm leading-relaxed text-[#64748b]">
+                Download official manufacturer brochures, site planning specifications, and procurement dossiers for {meta.title}.
+              </p>
+            </div>
+
+            <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {/* Card 1: Official Product Brochure */}
+              <div className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-[#dce7eb] bg-white p-7 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-[#0a4052] hover:shadow-xl sm:p-8">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="rounded-lg bg-[#eaf4fa] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[#0a4052]">
+                      Product Brochure
+                    </span>
+                    <span className="text-xs text-[#94a3b8]">Reading: {meta.readingMinutes} min</span>
+                  </div>
+
+                  <h3 className="mt-6 text-xl font-extrabold text-[#0a4052] group-hover:text-[#0f6fae]">
+                    {meta.brochureTitle}
+                  </h3>
+
+                  <p className="mt-3 text-xs leading-relaxed text-[#64748b]">
+                    Detailed mechanical layouts, electrical input tolerances, detector MTF curves, and room clearance diagrams.
+                  </p>
+                </div>
+
+                <div className="mt-8 border-t border-[#f1f5f9] pt-5">
+                  <a
+                    href={meta.brochureUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0a4052] px-4 py-3 text-xs font-bold text-white transition hover:bg-[#072c38]"
+                  >
+                    <Download className="h-4 w-4" /> Open Official PDF
+                  </a>
+                </div>
+              </div>
+
+              {/* Card 2: Pre-Installation & Site Survey Pack */}
+              <div className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-[#dce7eb] bg-white p-7 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-[#0a4052] hover:shadow-xl sm:p-8">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="rounded-lg bg-[#fff1ed] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[#c2410c]">
+                      Architectural Guide
+                    </span>
+                    <span className="text-xs text-[#94a3b8]">SPM Engineering</span>
+                  </div>
+
+                  <h3 className="mt-6 text-xl font-extrabold text-[#0a4052] group-hover:text-[#c2410c]">
+                    Pre-Installation & Shielding Checklist
+                  </h3>
+
+                  <p className="mt-3 text-xs leading-relaxed text-[#64748b]">
+                    Lead glass calculations, power supply stabilization (3-phase/single-phase), ceiling anchor structural loads, and floor leveling guidelines.
+                  </p>
+                </div>
+
+                <div className="mt-8 border-t border-[#f1f5f9] pt-5">
+                  <Link
+                    href={serviceHref}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#0a4052] bg-white px-4 py-3 text-xs font-bold text-[#0a4052] transition hover:bg-[#eaf4fa]"
+                  >
+                    <Wrench className="h-4 w-4" /> Request Site Survey
+                  </Link>
+                </div>
+              </div>
+
+              {/* Card 3: SPM Agency & Support Dossier */}
+              <div className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-[#dce7eb] bg-white p-7 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-[#047857] hover:shadow-xl sm:p-8">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="rounded-lg bg-[#ecfdf5] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[#047857]">
+                      Service & SLA
+                    </span>
+                    <span className="text-xs text-[#94a3b8]">Nationwide Egypt</span>
+                  </div>
+
+                  <h3 className="mt-6 text-xl font-extrabold text-[#0a4052] group-hover:text-[#047857]">
+                    SPM Maintenance & Genuine Parts Pack
+                  </h3>
+
+                  <p className="mt-3 text-xs leading-relaxed text-[#64748b]">
+                    Details on SPM's preventive maintenance protocol, emergency response times within 4 hours, and guaranteed 10-year OEM spare parts reserve in Cairo.
+                  </p>
+                </div>
+
+                <div className="mt-8 border-t border-[#f1f5f9] pt-5">
+                  <Link
+                    href="/maintenance-contracts"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#dce7eb] bg-[#f8fafc] px-4 py-3 text-xs font-bold text-[#334155] transition hover:bg-white hover:text-[#0a4052]"
+                  >
+                    <ShieldCheck className="h-4 w-4 text-[#047857]" /> Review Service Contracts
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ========================================================= */}
+        {/* 7. SECTION: UPGRADES & PACKAGES (Ziehm-Style Swiper Tabs) */}
+        {/* ========================================================= */}
+        <section id="section-upgrades" className="scroll-mt-16 border-b border-[#e5e7eb] bg-[#f8fafc] py-16 sm:py-24">
+          <div className="mx-auto max-w-[1400px] px-5 lg:px-10">
+            <div className="text-center">
+              <p className="text-xs font-bold uppercase tracking-[.22em] text-[#0f6fae]">
+                Tailored Configurations
+              </p>
+              <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-[#0a4052] sm:text-5xl">
+                Individual upgrades for your hospital requirements
+              </h2>
+              <p className="mt-3 text-sm text-[#64748b]">
+                Select hardware enhancements, advanced software packages, or all-inclusive turnkey hospital suites.
+              </p>
+            </div>
+
+            {/* Segmented Tab Buttons (Ziehm-style active line) */}
+            <div className="mt-10 flex justify-center">
+              <div className="inline-flex rounded-2xl border border-[#dce7eb] bg-white p-1.5 shadow-xs">
+                <button
+                  type="button"
+                  onClick={() => setActiveUpgradeTab("hardware")}
+                  className={`rounded-xl px-5 py-2.5 text-xs font-extrabold transition-all duration-150 ${
+                    activeUpgradeTab === "hardware"
+                      ? "bg-[#0a4052] text-white shadow-xs"
+                      : "text-[#64748b] hover:text-[#0a4052]"
+                  }`}
+                >
+                  Hardware-Upgrades ({meta.upgrades.hardware.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveUpgradeTab("software")}
+                  className={`rounded-xl px-5 py-2.5 text-xs font-extrabold transition-all duration-150 ${
+                    activeUpgradeTab === "software"
+                      ? "bg-[#0a4052] text-white shadow-xs"
+                      : "text-[#64748b] hover:text-[#0a4052]"
+                  }`}
+                >
+                  Software-Upgrades ({meta.upgrades.software.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveUpgradeTab("packages")}
+                  className={`rounded-xl px-5 py-2.5 text-xs font-extrabold transition-all duration-150 ${
+                    activeUpgradeTab === "packages"
+                      ? "bg-[#0a4052] text-white shadow-xs"
+                      : "text-[#64748b] hover:text-[#0a4052]"
+                  }`}
+                >
+                  Packages ({meta.upgrades.packages.length})
+                </button>
+              </div>
+            </div>
+
+            {/* Upgrades Cards Grid */}
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {meta.upgrades[activeUpgradeTab].map((up, i) => (
+                <div
+                  key={i}
+                  className="group relative flex flex-col justify-between rounded-3xl border border-[#dce7eb] bg-white p-6 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-[#0f6fae] hover:shadow-lg sm:p-7"
+                >
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#0f6fae]">
+                        {up.tag}
+                      </span>
+                      {up.badge && (
+                        <span className="rounded-full bg-[#eaf4fa] px-2.5 py-0.5 text-[10px] font-bold text-[#0a4052]">
+                          {up.badge}
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 className="mt-4 text-base font-extrabold text-[#0a4052]">
+                      {up.title}
+                    </h3>
+
+                    <p className="mt-2 text-xs leading-relaxed text-[#64748b]">
+                      {up.description}
+                    </p>
+                  </div>
+
+                  <div className="mt-6 flex items-center justify-between border-t border-[#f1f5f9] pt-4">
+                    <span className="text-[11px] font-semibold text-[#94a3b8]">Configure with Quote</span>
+                    <Link
+                      href={quoteHref}
+                      className="inline-flex items-center gap-1 text-xs font-bold text-[#c2410c] hover:underline"
+                    >
+                      Inquire <ArrowUpRight className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ========================================================= */}
+        {/* 8. SECTION: TECHNICAL SPECIFICATIONS (Ziehm-Style Structured Table) */}
+        {/* ========================================================= */}
+        <section id="section-specifications" className="scroll-mt-16 border-b border-[#e5e7eb] py-16 sm:py-24">
+          <div className="mx-auto max-w-[1400px] px-5 lg:px-10">
+            <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[.22em] text-[#0f6fae]">
+                  Engineering Datasheet
+                </p>
+                <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-[#0a4052] sm:text-5xl">
+                  Technical specifications
+                </h2>
+                <p className="mt-3 text-sm text-[#64748b]">
+                  Detailed physical, optical, mechanical, and regulatory data for {meta.title}.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={expandAllSpecs}
+                  className="rounded-xl border border-[#dce7eb] bg-white px-3 py-1.5 text-xs font-bold text-[#0a4052] hover:bg-[#eaf4fa]"
+                >
+                  Expand All
+                </button>
+                <button
+                  type="button"
+                  onClick={collapseAllSpecs}
+                  className="rounded-xl border border-[#dce7eb] bg-white px-3 py-1.5 text-xs font-bold text-[#64748b] hover:bg-[#f1f5f9]"
+                >
+                  Collapse All
+                </button>
+              </div>
+            </div>
+
+            {/* Accordion / Table Groups */}
+            <div className="mt-12 space-y-4">
+              {meta.specifications.map((catGroup) => {
+                const isExpanded = Boolean(expandedSpecCategories[catGroup.category]);
+                return (
+                  <div
+                    key={catGroup.category}
+                    className="overflow-hidden rounded-3xl border border-[#e2e8f0] bg-white shadow-xs transition"
+                  >
+                    {/* Category Header */}
+                    <button
+                      type="button"
+                      onClick={() => toggleCategory(catGroup.category)}
+                      aria-expanded={isExpanded}
+                      className="flex w-full items-center justify-between border-b border-[#e2e8f0] bg-[#f8fafc] px-6 py-5 text-left transition hover:bg-[#f1f5f9]"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#eaf4fa] text-[#0a4052]">
+                          <Info className="h-4 w-4" />
+                        </span>
+                        <h3 className="text-base font-extrabold text-[#0a4052]">
+                          {catGroup.category}
+                        </h3>
+                        <span className="text-xs text-[#94a3b8]">({catGroup.specs.length} items)</span>
+                      </div>
+                      <ChevronDown
+                        className={`h-5 w-5 text-[#64748b] transition-transform duration-200 ${
+                          isExpanded ? "rotate-180 text-[#0a4052]" : ""
+                        }`}
+                      />
+                    </button>
+
+                    {/* Table Rows (Clean Ziehm grid) */}
+                    {isExpanded && (
+                      <div className="divide-y divide-[#edf2f5]">
+                        {catGroup.specs.map((item, idx) => (
+                          <div
+                            key={idx}
+                            className="grid grid-cols-1 gap-2 px-6 py-4 transition hover:bg-[#f8fafc] sm:grid-cols-12 sm:items-center sm:gap-4"
+                          >
+                            <div className="sm:col-span-5 flex items-center gap-2">
+                              <span className="text-xs font-bold uppercase tracking-wider text-[#64748b]">
+                                {item.label}
+                              </span>
+                              {item.tooltip && (
+                                <span title={item.tooltip} className="cursor-help inline-flex">
+                                  <HelpCircle className="h-3.5 w-3.5 text-[#94a3b8]" />
+                                </span>
+                              )}
+                            </div>
+                            <div className="sm:col-span-7 text-sm font-semibold text-[#1e293b]">
+                              {item.value}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* ========================================================= */}
+        {/* 9. SECTION: SPM SERVICE & LIFECYCLE COMMITMENT */}
+        {/* ========================================================= */}
+        <section id="section-service" className="scroll-mt-16 border-b border-[#e5e7eb] bg-[#061f2b] py-16 text-white sm:py-24">
+          <div className="mx-auto max-w-[1400px] px-5 lg:px-10">
+            <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
+              <div className="lg:col-span-7">
+                <p className="text-xs font-bold uppercase tracking-[.22em] text-[#8be0d5]">
+                  Our Extensive Range of Training Courses & Services
+                </p>
+                <h2 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-5xl">
+                  Empower yourself and your hospital team to achieve top performance
+                </h2>
+                <p className="mt-6 text-base leading-relaxed text-white/80">
+                  Investing in high-end medical imaging requires absolute operational confidence. SPM is not merely a supplier — we are an authorized engineering house providing turnkey installation, European standard lead shielding validation, continuous preventive maintenance, and 24/7 technical hotline coverage throughout all Egyptian governorates.
+                </p>
+
+                <div className="mt-10 grid gap-6 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+                    <Wrench className="h-6 w-6 text-[#8be0d5]" />
+                    <h3 className="mt-4 text-base font-extrabold">Ensure the Best Performance of Your System</h3>
+                    <p className="mt-2 text-xs leading-relaxed text-white/70">
+                      Scheduled multi-point calibrations, radiation output audits, and sensor alignment by factory-certified specialists.
+                    </p>
+                    <Link
+                      href={serviceHref}
+                      className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#8be0d5] hover:underline"
+                    >
+                      To Customer Service <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
+
+                  <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+                    <Stethoscope className="h-6 w-6 text-[#8be0d5]" />
+                    <h3 className="mt-4 text-base font-extrabold">Clinical Application Training</h3>
+                    <p className="mt-2 text-xs leading-relaxed text-white/70">
+                      On-site orientation for surgical and radiographer teams covering APR selection, dose reduction techniques, and PACS workflows.
+                    </p>
+                    <Link
+                      href="/contact"
+                      className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#8be0d5] hover:underline"
+                    >
+                      Book Training Session <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+              {/* Service KPI & Assurance Card */}
+              <div className="lg:col-span-5">
+                <div className="rounded-3xl border border-white/15 bg-gradient-to-br from-[#0a4052] to-[#04212c] p-8 shadow-2xl sm:p-10">
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#8be0d5]">
+                    SPM Commitment in Egypt
+                  </p>
+                  <h3 className="mt-2 text-2xl font-extrabold text-white">
+                    Backed by Certified Biomedical Infrastructure
+                  </h3>
+
+                  <div className="mt-8 space-y-4">
+                    <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                      <span className="text-xs text-white/70">Emergency Callout SLA</span>
+                      <span className="text-sm font-extrabold text-[#8be0d5]">Within 4 Hours (Cairo)</span>
+                    </div>
+                    <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                      <span className="text-xs text-white/70">Local OEM Spare Parts Stock</span>
+                      <span className="text-sm font-extrabold text-[#8be0d5]">Cairo Bonded Depot</span>
+                    </div>
+                    <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                      <span className="text-xs text-white/70">Governorates Covered</span>
+                      <span className="text-sm font-extrabold text-[#8be0d5]">All 27 Egyptian Governorates</span>
+                    </div>
+                    <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                      <span className="text-xs text-white/70">Agency Authentication</span>
+                      <span className="text-sm font-extrabold text-[#8be0d5]">Direct Italray Sole Agent</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-8">
+                    <Link href="/maintenance-contracts">
+                      <Button className="w-full h-12 rounded-xl bg-[#c2410c] text-sm font-bold text-white shadow-lg hover:bg-[#9a3412]">
+                        Explore Annual Maintenance Contracts (AMC)
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ========================================================= */}
+        {/* 10. SECTION: CONTACT & INQUIRY FORM (Ziehm-Style Inquiry Box) */}
+        {/* ========================================================= */}
+        <section id="section-contact" className="scroll-mt-16 bg-white py-16 sm:py-24">
+          <div className="mx-auto max-w-[1400px] px-5 lg:px-10">
+            <div className="overflow-hidden rounded-3xl border border-[#dce7eb] bg-[#f8fafc] shadow-lg">
+              <div className="grid gap-10 p-8 sm:p-14 lg:grid-cols-12 lg:items-center">
+                <div className="lg:col-span-7">
+                  <span className="rounded-full bg-[#eaf4fa] px-3.5 py-1 text-xs font-extrabold text-[#0a4052]">
+                    Interested in learning more?
+                  </span>
+                  <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-[#0a4052] sm:text-5xl">
+                    We look forward to receiving your inquiry
+                  </h2>
+                  <p className="mt-4 max-w-xl text-sm leading-relaxed text-[#64748b]">
+                    Whether you require a formal institutional tender quotation, site shielding evaluation, or clinical demonstration, our biomedical team will respond with complete documentation.
+                  </p>
+
+                  <div className="mt-8 flex flex-wrap gap-4">
+                    <Link href={quoteHref}>
+                      <Button size="lg" className="h-12 rounded-xl bg-[#c2410c] px-6 text-sm font-bold text-white shadow-md hover:bg-[#9a3412]">
+                        Request Project Quotation <ArrowUpRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </Link>
+                    <a
+                      href="https://wa.me/201281729000?text=Hello%20SPM,%20I%20would%20like%20to%20inquire%20about%20the%20Italray%20medical%20imaging%20systems."
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-[#25d366] bg-white px-5 text-sm font-bold text-[#128c7e] transition hover:bg-[#25d366]/10"
+                    >
+                      <PhoneCall className="h-4 w-4" /> Chat on WhatsApp
+                    </a>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-5 rounded-2xl border border-[#dce7eb] bg-white p-6 shadow-xs">
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#0a4052]">Fast Technical Assistance</p>
+                  <p className="mt-1 text-xs text-[#64748b]">Direct contact with SPM central office in Cairo:</p>
+
+                  <div className="mt-5 space-y-3.5 text-xs">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#eaf4fa] text-[#0a4052]">
+                        <Mail className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-[#0a4052]">Email Procurement</p>
+                        <a href="mailto:info@spm-med.com" className="text-[#0f6fae] hover:underline">
+                          info@spm-med.com
+                        </a>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#eaf4fa] text-[#0a4052]">
+                        <PhoneCall className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-[#0a4052]">Telephone & Hotline</p>
+                        <a href="tel:+201281729000" className="text-[#0f6fae] hover:underline">
+                          +20 128 172 9000
+                        </a>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#eaf4fa] text-[#0a4052]">
+                        <ShieldCheck className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-[#0a4052]">Sole Authorized Agent</p>
+                        <p className="text-[#64748b]">SPM Systems for Projects & Maintenance</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ========================================================= */}
+        {/* 11. RELATED ITALRAY PORTFOLIO CAROUSEL */}
+        {/* ========================================================= */}
+        {relatedItalray.length > 0 && (
+          <section className="border-t border-[#e5e7eb] bg-[#f8fafc] py-16">
+            <div className="mx-auto max-w-[1400px] px-5 lg:px-10">
+              <div className="flex items-end justify-between">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[.22em] text-[#0f6fae]">
+                    Italray Imaging Systems
+                  </p>
+                  <h2 className="mt-2 text-2xl font-extrabold text-[#0a4052] sm:text-3xl">
+                    Explore other systems in the portfolio
+                  </h2>
+                </div>
+                <Link
+                  href="/catalogue/italray"
+                  className="hidden items-center gap-1.5 text-xs font-bold text-[#0a4052] hover:text-[#0f6fae] sm:inline-flex"
+                >
+                  All Italray Systems <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+
+              <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                {relatedItalray.map((rel) => (
+                  <Link
+                    key={rel.id}
+                    href={`/store/products/${rel.handle}`}
+                    className="group flex flex-col overflow-hidden rounded-2xl border border-[#dce7eb] bg-white p-5 shadow-xs transition-all duration-200 hover:-translate-y-1 hover:border-[#0a4052] hover:shadow-lg"
+                  >
+                    <div className="aspect-4/3 w-full overflow-hidden rounded-xl bg-[#f8fafc] p-3">
+                      {rel.images[0] ? (
+                        <img
+                          src={rel.images[0].url}
+                          alt={rel.title}
+                          loading="lazy"
+                          className="h-full w-full object-contain transition group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-xs text-[#94a3b8]">
+                          Product Visual
+                        </div>
+                      )}
+                    </div>
+                    <span className="mt-4 text-[10px] font-bold uppercase tracking-wider text-[#0f6fae]">
+                      {rel.productType || "Italray Solution"}
+                    </span>
+                    <h3 className="mt-1 line-clamp-2 text-sm font-extrabold text-[#0a4052] group-hover:text-[#0f6fae]">
+                      {rel.title}
+                    </h3>
+                    <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#c2410c]">
+                      View details <ArrowUpRight className="h-3.5 w-3.5" />
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+      </div>
+    </>
+  );
 }

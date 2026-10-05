@@ -327,7 +327,6 @@ export default function StoreProductDetail() {
   const [, params] = useRoute("/store/products/:handle");
   const handle = params?.handle || "";
   const utils = trpc.useUtils();
-  const isCarmexHandle = handle === "italray-carmex-fp21-fp30";
 
   const { data: product, isLoading, error } = trpc.commerce.products.byHandle.useQuery(
     { handle },
@@ -335,24 +334,28 @@ export default function StoreProductDetail() {
       enabled: Boolean(handle),
       staleTime: 60 * 1000,
       initialData: () => {
-        if (isCarmexHandle) {
+        const list = utils.commerce.products.list.getData();
+        const found = list?.find((item) => item.handle === handle);
+        if (found) return found;
+
+        // Fallback for registered Italray products so they render immediately
+        if (handle.startsWith("italray-")) {
           return {
-            id: "gid://shopify/Product/carmex-fp",
-            handle: "italray-carmex-fp21-fp30",
-            title: "Italray CARMEX FP21 & FP30 Mobile C-Arm",
-            description: "Mobile C-Arm unit for fluoroscopy and radiography with dynamic flat panel detector.",
+            id: `gid://shopify/Product/${handle}`,
+            handle,
+            title: handle.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase()),
+            description: "Italray clinical imaging system backed by SPM engineering in Egypt.",
             descriptionHtml: "",
-            productType: "Mobile C-Arm",
+            productType: "Medical Imaging System",
             vendor: "Italray",
-            tags: ["Quote Only", "C-Arm", "Fluoroscopy", "Radiography"],
-            images: [{ url: "https://cdn.shopify.com/s/files/1/1002/9672/0673/files/ZQUPAJOOFlsXsxEP.jpg?v=1790775799", altText: "Italray CARMEX FP21 & FP30 Mobile C-Arm" }],
+            tags: ["Quote Only", "Italray"],
+            images: [{ url: "https://cdn.shopify.com/s/files/1/1002/9672/0673/files/ZQUPAJOOFlsXsxEP.jpg?v=1790775799", altText: handle }],
             priceRange: { min: { amount: "1.0", currencyCode: "EGP" }, max: { amount: "1.0", currencyCode: "EGP" } },
             options: [],
-            variants: [{ id: "carmex-default", title: "Default Title", price: { amount: "1.0", currencyCode: "EGP" }, compareAtPrice: null, availableForSale: true, selectedOptions: [] }],
+            variants: [{ id: `${handle}-default`, title: "Default Title", price: { amount: "1.0", currencyCode: "EGP" }, compareAtPrice: null, availableForSale: true, selectedOptions: [] }],
           };
         }
-        const list = utils.commerce.products.list.getData();
-        return list?.find((item) => item.handle === handle);
+        return undefined;
       },
     }
   );
