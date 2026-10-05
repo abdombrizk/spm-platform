@@ -919,6 +919,20 @@ export default function ProductManager() {
                           <ImagePlus className="mr-2 h-4 w-4" /> Upload main equipment image
                         </Button>
                       </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <Label>Additional gallery image URLs</Label>
+                        <p className="text-xs leading-5 text-slate-500">Add clean product views, room shots, or technical close-ups. The first image is used as the PDP hero.</p>
+                        <div className="space-y-2">
+                          {draft.additionalImages.map((url, index) => (
+                            <div key={`${url}-${index}`} className="flex gap-2">
+                              <Input value={url} onChange={e => updateField("additionalImages", draft.additionalImages.map((item, itemIndex) => itemIndex === index ? e.target.value : item))} placeholder="https://…" />
+                              <Button type="button" variant="ghost" size="icon" aria-label={`Remove gallery image ${index + 1}`} onClick={() => updateField("additionalImages", draft.additionalImages.filter((_, itemIndex) => itemIndex !== index))}><Trash2 className="h-4 w-4 text-red-600" /></Button>
+                            </div>
+                          ))}
+                          <Button type="button" variant="outline" className="text-xs" onClick={() => updateField("additionalImages", [...draft.additionalImages, ""])}><Plus className="mr-2 h-4 w-4" />Add gallery image</Button>
+                        </div>
+                        {draft.mainImage || draft.additionalImages.some(Boolean) ? <div className="grid grid-cols-2 gap-3 pt-2 sm:grid-cols-4">{[draft.mainImage, ...draft.additionalImages].filter(Boolean).map((url, index) => <div key={`${url}-preview-${index}`} className="overflow-hidden border border-slate-200 bg-slate-50"><img src={url} alt={`Gallery preview ${index + 1}`} loading="lazy" className="aspect-[4/3] h-full w-full object-contain p-2" /></div>)}</div> : null}
+                      </div>
                       <div className="space-y-2">
                         <Label>Brochure PDF URL</Label>
                         <Input value={draft.brochureUrl} onChange={e => updateField("brochureUrl", e.target.value)} />

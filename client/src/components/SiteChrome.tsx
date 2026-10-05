@@ -397,11 +397,6 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
           {/* Action CTAs */}
           <div className="hidden items-center gap-3 lg:flex">
             <SiteSearchDialog items={searchItems} />
-            <Link href="/request-a-quote">
-              <Button className="h-11 rounded-xl bg-[#c2410c] px-5 text-sm font-bold text-white shadow-md shadow-[#c2410c]/20 transition-all hover:bg-[#9a3412] hover:shadow-lg active:scale-95">
-                Request a Quote <ArrowUpRight className="ml-1.5 h-4 w-4" />
-              </Button>
-            </Link>
             <Link href="/contact" className="text-sm font-semibold text-[#0a4052] hover:text-[#0f6fae]">Contact</Link>
           </div>
 
@@ -422,7 +417,6 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
           <div className="max-h-[80vh] overflow-y-auto border-t border-[#dce7eb] bg-white px-5 py-6 lg:hidden">
             <div className="mb-4 flex items-center gap-2">
               <SiteSearchDialog items={searchItems} />
-              <Link href="/request-a-quote" onClick={() => setOpen(false)} className="flex min-h-11 flex-1 items-center justify-center rounded-xl bg-[#c2410c] px-4 text-sm font-bold text-white">Request a Quote</Link>
             </div>
 
             <div className="space-y-4 divide-y divide-[#f1f5f9]">

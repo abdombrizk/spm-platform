@@ -190,3 +190,33 @@
   background: #22b95a;
 }
 
+@keyframes spm-product-image-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -0.5rem, 0) scale(1.015);
+  }
+}
+
+.pdp-product-image {
+  animation: spm-product-image-drift 7s ease-in-out infinite;
+  will-change: transform;
+}
+
+.pdp-gallery-image {
+  transition: transform 240ms cubic-bezier(0.23, 1, 0.32, 1), opacity 240ms ease;
+}
+
+.pdp-gallery-image:hover {
+  transform: scale(1.04);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pdp-product-image,
+  .pdp-gallery-image {
+    animation: none;
+    transition: none;
+  }
+}
