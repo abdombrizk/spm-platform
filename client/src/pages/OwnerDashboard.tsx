@@ -176,7 +176,7 @@ function AuditLogPanel() {
 
 export default function OwnerDashboard() {
   const [, setLocation] = useLocation();
-  const auth = trpc.auth.me.useQuery();
+  const auth = trpc.auth.me.useQuery(undefined, { retry: false, refetchOnWindowFocus: false });
   const homepageDraftAccess = trpc.homepage.draft.useQuery(undefined, { enabled: Boolean(auth.data) });
   const cmsAccess = trpc.cms.permissions.useQuery(undefined, { enabled: Boolean(auth.data) });
   const users = trpc.owner.listUsers.useQuery(undefined, { enabled: auth.data?.role === "owner" });
@@ -189,7 +189,11 @@ export default function OwnerDashboard() {
   const [search, setSearch] = useState("");
   const [message, setMessage] = useState("");
 
-  useEffect(() => { if (!auth.isLoading && !auth.data) setLocation("/login"); }, [auth.isLoading, auth.data, setLocation]);
+  useEffect(() => {
+    if (!auth.isLoading && !auth.data) {
+      window.location.href = "/login";
+    }
+  }, [auth.isLoading, auth.data]);
 
   const filteredUsers = useMemo(() => (users.data ?? []).filter(user => `${user.name ?? ""} ${user.email ?? ""} ${user.role}`.toLowerCase().includes(search.toLowerCase())), [users.data, search]);
   const role = auth.data?.role;
@@ -197,7 +201,7 @@ export default function OwnerDashboard() {
   const isManager = role === "manager";
   const canAccessHomepage = isOwner || homepageDraftAccess.isSuccess;
   const canAccessContent = isOwner || Boolean(cmsAccess.data?.includes("content.view"));
-  if (auth.isLoading || (auth.data && isOwner && users.isLoading) || (auth.data && homepageDraftAccess.isLoading) || (auth.data && cmsAccess.isLoading)) return <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white">Loading SPM workspace…</div>;
+  if (auth.isLoading) return <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white">Checking SPM session…</div>;
   if (!auth.data) return null;
   if (auth.data.mustChangePassword) return <FirstLoginPasswordChange onComplete={() => auth.refetch()} />;
 

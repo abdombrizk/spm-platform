@@ -187,7 +187,7 @@ function linesToArray(value: string[]) {
 
 export default function ProductManager() {
   const [, setLocation] = useLocation();
-  const auth = trpc.auth.me.useQuery();
+  const auth = trpc.auth.me.useQuery(undefined, { retry: false, refetchOnWindowFocus: false });
   const permissionsQuery = trpc.products.permissions.useQuery(undefined, { enabled: Boolean(auth.data) });
   const products = trpc.products.list.useQuery(undefined, { enabled: Boolean(auth.data) });
   const utils = trpc.useUtils();
@@ -464,7 +464,7 @@ export default function ProductManager() {
 
   if (auth.isLoading) return <div className="p-8 text-center text-sm">Checking access…</div>;
   if (!user) return <div className="p-8 text-center text-sm">Sign in required.</div>;
-  if (!canView && !isOwner) {
+  if (!isOwner && !canView) {
     return (
       <div className="mx-auto max-w-xl p-8 text-center">
         <ShieldAlert className="mx-auto h-12 w-12 text-amber-500" />
