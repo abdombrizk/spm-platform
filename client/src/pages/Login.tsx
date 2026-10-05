@@ -14,13 +14,11 @@ export default function Login() {
   const [error, setError] = useState("");
   const utils = trpc.useUtils();
   const login = trpc.auth.login.useMutation({
-    onSuccess: async (result) => {
-      const user = await utils.auth.me.fetch();
-      if (user?.role === "marketing") {
-        setLocation("/owner/products");
-      } else {
-        setLocation("/owner");
-      }
+    onSuccess: async () => {
+      // Do not block the navigation on a second auth.me request. The dashboard
+      // validates the new httpOnly session cookie on its first render.
+      void utils.auth.me.invalidate();
+      setLocation("/owner");
     },
     onError: (err) => setError(err.message),
   });
