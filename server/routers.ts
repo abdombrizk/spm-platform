@@ -221,7 +221,7 @@ export const appRouter = router({
       await db.createInternalSession(user.id, hashSessionToken(token), sessionExpiresAt());
       await db.addAuditLog({ actorUserId: user.id, action: "login_success", entityType: "user", entityId: String(user.id), ipAddress: clientIp(ctx.req) });
       ctx.res.cookie(INTERNAL_SESSION_COOKIE, token, { ...getSessionCookieOptions(ctx.req), maxAge: 8 * 60 * 60 * 1000 });
-      return { success: true, mustChangePassword: user.mustChangePassword } as const;
+      return { success: true, user: safeUser(user) } as const;
     }),
     logout: publicProcedure.mutation(async ({ ctx }) => {
       const header = ctx.req.headers.cookie;

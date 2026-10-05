@@ -14,11 +14,11 @@ export default function Login() {
   const [error, setError] = useState("");
   const utils = trpc.useUtils();
   const login = trpc.auth.login.useMutation({
-    onSuccess: () => {
-      // Use a full window navigation so the browser synchronously attaches the
-      // newly set httpOnly session cookie to the initial document request and all
-      // dashboard child queries, preventing client router hydration race conditions.
-      window.location.href = "/owner";
+    onSuccess: ({ user }) => {
+      // Seed auth.me before navigating. The dashboard can render immediately
+      // while its background validation confirms the new httpOnly session.
+      utils.auth.me.setData(undefined, user);
+      setLocation("/owner");
     },
     onError: (err) => setError(err.message),
   });

@@ -9,8 +9,8 @@ import { CartProvider } from "./contexts/CartContext";
 import { CartDrawer } from "./components/CartDrawer";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import OwnerDashboard from "@/pages/OwnerDashboard";
 
-const OwnerDashboard = lazy(() => import("@/pages/OwnerDashboard"));
 const ProductManager = lazy(() => import("@/pages/ProductManager"));
 const Catalogue = lazy(() => import("@/pages/Catalogue"));
 const ItalrayPortfolio = lazy(() => import("@/pages/ItalrayPortfolio"));

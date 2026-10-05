@@ -181,7 +181,7 @@ export default function OwnerDashboard() {
   const cmsAccess = trpc.cms.permissions.useQuery(undefined, { enabled: Boolean(auth.data) });
   const users = trpc.owner.listUsers.useQuery(undefined, { enabled: auth.data?.role === "owner" });
   const utils = trpc.useUtils();
-  const logout = trpc.auth.logout.useMutation({ onSuccess: () => setLocation("/login") });
+  const logout = trpc.auth.logout.useMutation({ onSuccess: () => { utils.auth.me.setData(undefined, null); setLocation("/login"); } });
   const createUser = trpc.owner.createUser.useMutation({ onSuccess: () => { utils.owner.listUsers.invalidate(); setMessage("User created. Give the temporary password directly to the user."); setForm({ name: "", email: "", role: "marketing", password: "" }); }, onError: err => setMessage(err.message) });
   const updateUser = trpc.owner.updateUser.useMutation({ onSuccess: () => utils.owner.listUsers.invalidate(), onError: err => setMessage(err.message) });
   const resetPassword = trpc.owner.resetPassword.useMutation({ onSuccess: () => { utils.owner.listUsers.invalidate(); setMessage("Password reset. Give the temporary password directly to the user."); }, onError: err => setMessage(err.message) });
@@ -194,6 +194,9 @@ export default function OwnerDashboard() {
       window.location.href = "/login";
     }
   }, [auth.isLoading, auth.data]);
+  useEffect(() => {
+    if (auth.data) void import("./ProductManager");
+  }, [auth.data]);
 
   const filteredUsers = useMemo(() => (users.data ?? []).filter(user => `${user.name ?? ""} ${user.email ?? ""} ${user.role}`.toLowerCase().includes(search.toLowerCase())), [users.data, search]);
   const role = auth.data?.role;

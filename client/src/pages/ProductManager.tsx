@@ -209,6 +209,9 @@ export default function ProductManager() {
   // Dynamic Menu state
   const menuBrandsQuery = trpc.menu.manageBrands.useQuery(undefined, { enabled: Boolean(auth.data) });
   const menuItemsQuery = trpc.menu.manageItems.useQuery(undefined, { enabled: Boolean(auth.data) });
+  useEffect(() => {
+    if (!auth.isLoading && !auth.data) window.location.href = "/login";
+  }, [auth.isLoading, auth.data]);
   const saveBrandMutation = trpc.menu.saveBrand.useMutation({
     onSuccess: () => {
       setMessage("Brand record saved successfully.");
