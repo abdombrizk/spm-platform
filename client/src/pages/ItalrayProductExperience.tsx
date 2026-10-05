@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
 import {
   Activity,
@@ -64,6 +64,7 @@ export default function ItalrayProductExperience({ product }: { product: Product
   const [activeSection, setActiveSection] = useState("section-description");
   const [scrollProgress, setScrollProgress] = useState(0);
   const [selectedGalleryItem, setSelectedGalleryItem] = useState<(typeof meta.clinicalGallery)[0] | null>(null);
+  const [activeClinicalIndex, setActiveClinicalIndex] = useState(0);
   const [activeUpgradeTab, setActiveUpgradeTab] = useState<"hardware" | "software" | "packages">("hardware");
   const [expandedSpecCategories, setExpandedSpecCategories] = useState<Record<string, boolean>>({
     [meta.specifications[0]?.category || ""]: true,
@@ -96,8 +97,26 @@ export default function ItalrayProductExperience({ product }: { product: Product
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (meta.clinicalGallery.length < 2) return;
+    const timer = window.setInterval(() => {
+      setActiveClinicalIndex((current) => (current + 1) % meta.clinicalGallery.length);
+    }, 6500);
+    return () => window.clearInterval(timer);
+  }, [meta.clinicalGallery.length]);
+
   const quoteHref = `/request-a-quote?equipment=${encodeURIComponent(meta.title)}&brand=Italray&model=${encodeURIComponent(meta.handle)}`;
   const serviceHref = `/request-service?equipment=${encodeURIComponent(meta.title)}&brand=Italray&model=${encodeURIComponent(meta.handle)}`;
+  const activeClinicalItem = meta.clinicalGallery[activeClinicalIndex] || meta.clinicalGallery[0];
+
+  const moveClinicalSlide = (direction: -1 | 1) => {
+    setActiveClinicalIndex((current) => {
+      const next = current + direction;
+      if (next < 0) return meta.clinicalGallery.length - 1;
+      if (next >= meta.clinicalGallery.length) return 0;
+      return next;
+    });
+  };
 
   // Related products query
   const relatedQuery = trpc.commerce.products.list.useQuery({ first: 20 }, { staleTime: 60 * 1000 });
@@ -468,47 +487,128 @@ export default function ItalrayProductExperience({ product }: { product: Product
               </span>
             </div>
 
-            {/* Gallery Grid */}
-            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {meta.clinicalGallery.map((item, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => setSelectedGalleryItem(item)}
-                  className="group relative flex flex-col overflow-hidden rounded-3xl border border-[#dce7eb] bg-white text-left shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:border-[#0f6fae] hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6fae]"
-                >
-                  <div className="relative aspect-4/3 w-full overflow-hidden bg-[#061f2b]">
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      loading="lazy"
-                      decoding="async"
-                      className="h-full w-full object-cover opacity-90 transition-transform duration-500 group-hover:scale-105 group-hover:opacity-100"
+            {/* Ziehm-style clinical image carousel */}
+            <div className="relative mt-12 overflow-hidden rounded-[2rem] bg-[#181a1d] px-5 py-10 shadow-2xl sm:px-10 sm:py-14 lg:px-16">
+              <div className="pointer-events-none absolute inset-0 opacity-70" aria-hidden="true">
+                <div className="absolute -left-24 top-0 h-72 w-72 rounded-full bg-[#0f6fae]/20 blur-3xl" />
+                <div className="absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-[#2b8c88]/10 blur-3xl" />
+              </div>
+
+              <div className="relative z-10 flex flex-col justify-between gap-5 md:flex-row md:items-end">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[.22em] text-[#8be0d5]">
+                    Clinical Image Gallery
+                  </p>
+                  <h3 className="mt-3 max-w-3xl text-3xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl">
+                    The best clinical images of the <span className="text-[#5ed8db]">{meta.title}</span>
+                  </h3>
+                </div>
+                <span className="inline-flex items-center gap-2 text-xs font-bold text-white/55">
+                  <Maximize2 className="h-4 w-4" /> Click an image to enlarge
+                </span>
+              </div>
+
+              <div className="relative z-10 mt-10">
+                <div className="flex items-center gap-3 sm:gap-6">
+                  <button
+                    type="button"
+                    aria-label="Previous clinical image"
+                    onClick={() => moveClinicalSlide(-1)}
+                    className="z-20 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition hover:border-[#5ed8db] hover:bg-[#5ed8db] hover:text-[#0b252d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5ed8db] sm:h-12 sm:w-12"
+                  >
+                    <ArrowLeft className="h-5 w-5" />
+                  </button>
+
+                  <div className="min-w-0 flex-1 overflow-hidden">
+                    <div className="flex items-stretch justify-center gap-3 sm:gap-5">
+                      {meta.clinicalGallery.map((item, idx) => {
+                        const distance = Math.abs(idx - activeClinicalIndex);
+                        const isActive = idx === activeClinicalIndex;
+                        const isVisible = distance <= 1 || meta.clinicalGallery.length <= 3;
+                        if (!isVisible) return null;
+                        return (
+                          <button
+                            key={`${item.title}-${idx}`}
+                            type="button"
+                            aria-label={`View ${item.title}`}
+                            aria-current={isActive ? "true" : undefined}
+                            onClick={() => {
+                              setActiveClinicalIndex(idx);
+                              setSelectedGalleryItem(item);
+                            }}
+                            className={`group relative min-w-0 overflow-hidden rounded-xl border text-left transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5ed8db] ${
+                              isActive
+                                ? "w-[min(68vw,620px)] border-[#5ed8db]/70 bg-black shadow-[0_0_0_1px_rgba(94,216,219,.18),0_18px_55px_rgba(0,0,0,.4)] sm:w-[min(52vw,620px)]"
+                                : "hidden w-[min(24vw,250px)] border-white/10 bg-black/60 opacity-45 hover:opacity-80 sm:block"
+                            }`}
+                          >
+                            <div className="relative aspect-[16/8.5] overflow-hidden bg-[#0b0d0f]">
+                              <img
+                                src={item.image}
+                                alt={item.title}
+                                loading={isActive ? "eager" : "lazy"}
+                                decoding="async"
+                                className={`h-full w-full object-cover transition duration-700 ${
+                                  isActive ? "scale-100 group-hover:scale-105" : "scale-105 group-hover:scale-100"
+                                }`}
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/5 to-transparent" />
+                              <span className="absolute bottom-3 left-3 rounded-md bg-black/65 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur">
+                                {item.category}
+                              </span>
+                              {isActive && (
+                                <span className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-lg bg-black/65 text-white backdrop-blur">
+                                  <Maximize2 className="h-4 w-4" />
+                                </span>
+                              )}
+                            </div>
+                            {isActive && (
+                              <div className="border-t border-white/10 bg-[#111315] px-4 py-3 sm:px-5">
+                                <h4 className="text-sm font-extrabold text-white sm:text-base">{item.title}</h4>
+                                <p className="mt-1 line-clamp-1 text-xs text-white/55">{item.description}</p>
+                              </div>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    aria-label="Next clinical image"
+                    onClick={() => moveClinicalSlide(1)}
+                    className="z-20 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition hover:border-[#5ed8db] hover:bg-[#5ed8db] hover:text-[#0b252d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5ed8db] sm:h-12 sm:w-12"
+                  >
+                    <ArrowRight className="h-5 w-5" />
+                  </button>
+                </div>
+
+                <div className="mt-6 flex items-center justify-center gap-2">
+                  {meta.clinicalGallery.map((item, idx) => (
+                    <button
+                      key={`dot-${item.title}`}
+                      type="button"
+                      aria-label={`Go to clinical image ${idx + 1}`}
+                      aria-current={idx === activeClinicalIndex ? "true" : undefined}
+                      onClick={() => setActiveClinicalIndex(idx)}
+                      className={`h-1.5 rounded-full transition-all duration-300 ${
+                        idx === activeClinicalIndex ? "w-8 bg-[#5ed8db]" : "w-1.5 bg-white/30 hover:bg-white/60"
+                      }`}
                     />
-                    <div className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-xl bg-black/60 text-white backdrop-blur transition group-hover:bg-[#0f6fae]">
-                      <Maximize2 className="h-4 w-4" />
-                    </div>
-                    <span className="absolute bottom-3 left-3 rounded-lg bg-black/70 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur">
-                      {item.category}
-                    </span>
-                  </div>
+                  ))}
+                </div>
 
-                  <div className="flex flex-1 flex-col justify-between p-5">
-                    <div>
-                      <h3 className="text-sm font-extrabold text-[#0a4052] transition group-hover:text-[#0f6fae]">
-                        {item.title}
-                      </h3>
-                      <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-[#64748b]">
-                        {item.description}
-                      </p>
-                    </div>
-
-                    <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-[#0f6fae]">
-                      Inspect case <ChevronRight className="h-3.5 w-3.5 transition group-hover:translate-x-1" />
-                    </span>
-                  </div>
-                </button>
-              ))}
+                <div className="mt-5 flex justify-center">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedGalleryItem(activeClinicalItem)}
+                    className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-bold text-white/75 transition hover:border-[#5ed8db] hover:bg-white/10 hover:text-white"
+                  >
+                    <Eye className="h-4 w-4 text-[#5ed8db]" /> Inspect active clinical case
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
