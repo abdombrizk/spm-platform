@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import SiteSearchDialog from "@/components/SiteSearchDialog";
-import { ChevronDown, ChevronRight, Menu, X, ArrowUpRight, Boxes, Stethoscope, MessageCircle, Wrench } from "lucide-react";
+import { ChevronDown, ChevronRight, Menu, X, ArrowUpRight, Boxes, Stethoscope, MessageCircle, Wrench, LogIn } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
@@ -537,10 +537,17 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
 
           <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs text-[#64748b] sm:flex-row">
             <p>&copy; {new Date().getFullYear()} SPM (Systems for Projects & Maintenance). All rights reserved.</p>
-            <div className="flex gap-4">
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:justify-end">
               <Link href="/privacy" className="hover:text-white">Privacy Policy</Link>
               <Link href="/terms" className="hover:text-white">Terms of Use</Link>
-              <Link href="/login" className="hover:text-white">Internal Staff Sign in</Link>
+              <Link
+                href="/login"
+                aria-label="Open internal staff sign in"
+                className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-3.5 py-2 font-semibold text-[#cbd5e1] transition hover:border-[#5ed8db]/50 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5ed8db]"
+              >
+                <LogIn className="h-3.5 w-3.5" aria-hidden="true" />
+                Internal Access
+              </Link>
             </div>
           </div>
         </div>
