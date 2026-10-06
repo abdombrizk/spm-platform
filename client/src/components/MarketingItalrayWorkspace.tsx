@@ -149,6 +149,20 @@ export default function MarketingItalrayWorkspace() {
 
   const handleFileUpload = async (file: File) => {
     if (!uploadingField) return;
+    const maxBytes = 15 * 1024 * 1024;
+    const allowedTypes = uploadingField === "brochureUrl"
+      ? ["application/pdf"]
+      : ["image/jpeg", "image/png", "image/webp"];
+    if (!allowedTypes.includes(file.type)) {
+      alert(`Unsupported file type. Please choose ${uploadingField === "brochureUrl" ? "a PDF" : "a JPG, PNG, or WebP image"}.`);
+      setUploadingField(null);
+      return;
+    }
+    if (file.size > maxBytes) {
+      alert("The selected file is too large. Please choose a file smaller than 15 MB.");
+      setUploadingField(null);
+      return;
+    }
     const reader = new FileReader();
     reader.onload = async () => {
       try {

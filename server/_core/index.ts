@@ -50,7 +50,7 @@ async function startServer() {
     referrerPolicy: { policy: "no-referrer" },
   }));
   app.use((req, res, next) => {
-    const parser = express.json({ limit: /\/(uploadMedia|uploadImage|uploadAttachment)$/.test(req.path) ? "35mb" : "1mb" });
+    const parser = express.json({ limit: /(?:\/|\.)(uploadMedia|uploadImage|uploadItalrayMedia|uploadAttachment)$/.test(req.path) ? "35mb" : "1mb" });
     parser(req, res, next);
   });
   app.use(express.urlencoded({ limit: "1mb", extended: true }));
