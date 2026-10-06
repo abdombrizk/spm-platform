@@ -42,7 +42,7 @@ const fallback = {
   geography:
     "We support customers across Egypt and selected MENA markets, with service operations spanning 24 of Egypt's 27 governorates—from Alexandria to Aswan.",
   address: "16 Ahmed Hassan El Zyaat Street, 7th District, Nasr City, Cairo, Egypt",
-  heroImage: "/manus-storage/spm-italray-product-hero_c7063612.jpg",
+  heroImage: "/manus-storage/spm-service-engineer_96348b80.jpg",
   profileDocument: "",
   careersVisible: "true",
 };
@@ -92,9 +92,9 @@ const fallbackData: AboutData = {
     { name: "Hermann Medizintechnik", status: "Authorized Agent in Egypt", text: "Specialized medical technology support through an approved partner relationship." },
   ],
   quality: [
-    { title: "Industrial Control Authority", text: "Certified maintenance center under the Industrial Control Authority of the Ministry of Trade and Industry." },
-    { title: "ISO 9001 Certified", text: "A structured quality framework supporting consistent service delivery and operational reliability." },
-    { title: "License No. 2528/7", text: "Accredited service-center license reference recorded in the official company profile." },
+    { title: "Industrial Control Authority", text: "Maintenance and service documentation is organized for responsible technical review." },
+    { title: "ISO 9001 Certified", text: "A structured operating framework supports consistent service delivery and operational reliability." },
+    { title: "License No. 2528/7", text: "Official company and service records remain available for controlled internal review." },
     { title: "Quality-aware communication", text: "Product, CE and regulatory evidence is controlled through internal review before publication." },
   ],
 };
@@ -121,7 +121,7 @@ const qualityIcons = [Scale, BadgeCheck, FileCheck2, ClipboardCheck];
 export default function AboutPage() {
   const pageQuery = trpc.cms.publishedBySlug.useQuery({ slug: "about" });
   const page = mergeAboutData(pageQuery.data?.data);
-  const heroImage = page.heroImage?.includes("spm-hero-medical-engineer") ? fallbackData.heroImage : page.heroImage;
+  const heroImage = page.heroImage?.includes("spm-hero-medical-engineer") || page.heroImage?.includes("spm-italray-product-hero") ? fallbackData.heroImage : page.heroImage;
 
   return (
     <SiteChrome>
@@ -147,13 +147,21 @@ export default function AboutPage() {
               </div>
             </div>
             <div className="relative min-h-[390px] overflow-hidden rounded-[30px] bg-[#0a4052] shadow-2xl shadow-[#0a4052]/20 lg:min-h-[520px]">
-              <img src={heroImage} alt="Premium mobile C-Arm medical imaging system" className="absolute inset-0 h-full w-full object-cover object-[68%_center]" />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#061f2b]/10 via-transparent to-transparent" />
+              <img src={heroImage} alt="SPM field engineer maintaining a medical imaging system" loading="eager" decoding="async" className="absolute inset-0 h-full w-full object-cover object-[58%_center] transition duration-700 hover:scale-[1.02]" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#061f2b]/45 via-[#061f2b]/10 to-transparent" />
+              <div className="absolute right-5 top-5 flex flex-col items-end gap-2 sm:right-7 sm:top-7">
+                <div className="rounded-xl border border-white/20 bg-white/90 px-3 py-2 shadow-lg backdrop-blur-sm">
+                  <img src={partnerLogos.italray} alt="Italray official partner logo" loading="lazy" decoding="async" className="h-7 w-auto max-w-[132px] object-contain" />
+                </div>
+                <div className="rounded-xl border border-white/20 bg-white/90 px-3 py-2 shadow-lg backdrop-blur-sm">
+                  <img src={partnerLogos.hermann} alt="Hermann Medizintechnik official partner logo" loading="lazy" decoding="async" className="h-7 w-auto max-w-[132px] object-contain" />
+                </div>
+              </div>
               <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-7">
                 <div className="max-w-[78%] rounded-2xl border border-white/20 bg-[#061f2b]/75 p-5 text-white backdrop-blur-md">
                   <p className="text-xs font-bold uppercase tracking-[.18em] text-[#8be0d5]">Engineered lifecycle support</p>
-                  <p className="mt-2 text-xl font-semibold">From equipment supply to long-term system performance.</p>
-                  <p className="mt-2 text-sm leading-6 text-white/75">SPM connects technology, service, parts and operational readiness around the realities of healthcare facilities.</p>
+                  <p className="mt-2 text-xl font-semibold">Maintenance, technology and trusted partner support in one operating model.</p>
+                  <p className="mt-2 text-sm leading-6 text-white/75">SPM keeps Italray and Hermann systems supported through responsive engineering, genuine parts and practical lifecycle guidance.</p>
                 </div>
               </div>
             </div>
@@ -192,9 +200,68 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-[1240px] px-5 py-20 lg:px-8 lg:py-24"><div className="grid gap-12 lg:grid-cols-[.8fr_1.2fr] lg:items-start"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-[#0f6fae]">Strategic partnerships</p><h2 className="mt-4 text-4xl font-semibold tracking-[-.04em] text-[#0a4052]">Global technology, local accountability.</h2><p className="mt-5 leading-8 text-[#617180]">SPM combines manufacturer relationships with local engineering responsibility and after-sales support.</p></div><div className="grid gap-5 sm:grid-cols-2">{page.partners?.map(partner => { const key = partner.name.toLowerCase(); const logoUrl = partner.logoUrl || (key.includes("italray") ? partnerLogos.italray : key.includes("hermann") ? partnerLogos.hermann : undefined); return <article key={partner.name} className="rounded-2xl border border-[#d7e0e7] bg-white p-7 shadow-sm"><div className="flex h-16 items-center justify-start rounded-xl bg-[#f7fafc] px-4">{logoUrl ? <img src={logoUrl} alt={`${partner.name} logo`} loading="lazy" decoding="async" className="max-h-12 max-w-[190px] object-contain" /> : <div className="flex items-center gap-3 text-[#0f6fae]"><BadgeCheck className="h-6 w-6" /><span className="font-bold">Verified partner</span></div>}</div><p className="mt-5 inline-flex rounded-full bg-[#eaf4fa] px-3 py-1 text-xs font-bold text-[#0f6fae]">{partner.status}</p><p className="mt-4 text-sm leading-7 text-[#617180]">{partner.text}</p></article>; })}</div></div></section>
+        <section className="border-y border-[#dce7eb] bg-[#f7fafc] py-20 lg:py-24">
+          <div className="mx-auto max-w-[1240px] px-5 lg:px-8">
+            <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full border border-[#bcdde2] bg-[#eaf4fa] px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#0a4052]">
+                  <BadgeCheck className="h-3.5 w-3.5 text-[#0f6fae]" /> Strategic Partnerships
+                </div>
+                <h2 className="mt-4 max-w-3xl text-4xl font-extrabold leading-tight tracking-[-.04em] text-[#0a4052] sm:text-5xl">Global technology, local accountability.</h2>
+                <p className="mt-4 max-w-2xl text-base leading-7 text-[#617180]">SPM combines manufacturer relationships with local engineering responsibility and after-sales support, so every system has a clear path from installation to ongoing performance.</p>
+              </div>
+              <p className="max-w-xs text-sm font-semibold leading-6 text-[#0f6fae]">Two trusted technology relationships. One accountable SPM support model.</p>
+            </div>
+            <div className="mt-12 grid gap-6 lg:grid-cols-2">
+              {page.partners?.map((partner, index) => {
+                const key = partner.name.toLowerCase();
+                const logoUrl = partner.logoUrl || (key.includes("italray") ? partnerLogos.italray : key.includes("hermann") ? partnerLogos.hermann : undefined);
+                return (
+                  <article key={partner.name} className="group relative overflow-hidden rounded-3xl border border-[#dce7eb] bg-white p-7 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-[#0a4052] hover:shadow-xl sm:p-9">
+                    <div className="absolute right-0 top-0 h-28 w-28 rounded-bl-[72px] bg-[#eaf4fa] transition-transform duration-500 group-hover:scale-125" aria-hidden="true" />
+                    <div className="relative flex items-start justify-between gap-5">
+                      <div className="flex h-20 min-w-[150px] items-center rounded-2xl border border-[#e5edf1] bg-[#fafcfd] px-5">
+                        {logoUrl ? <img src={logoUrl} alt={`${partner.name} official logo`} loading="lazy" decoding="async" className="max-h-12 max-w-[190px] object-contain" /> : <span className="font-bold text-[#0f6fae]">{partner.name}</span>}
+                      </div>
+                      <span className="mt-1 rounded-full bg-[#eaf4fa] px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[#0f6fae]">0{index + 1}</span>
+                    </div>
+                    <p className="relative mt-7 inline-flex rounded-full bg-[#fff1e9] px-3 py-1 text-xs font-bold text-[#c2410c]">{partner.status}</p>
+                    <h3 className="relative mt-4 text-2xl font-bold text-[#0a4052]">{partner.name}</h3>
+                    <p className="relative mt-3 max-w-xl text-sm leading-7 text-[#617180]">{partner.text}</p>
+                    <div className="relative mt-7 flex flex-wrap gap-2 text-xs font-semibold text-[#536474]">
+                      <span className="rounded-full border border-[#dce7eb] px-3 py-1.5">Equipment supply</span>
+                      <span className="rounded-full border border-[#dce7eb] px-3 py-1.5">Technical support</span>
+                      <span className="rounded-full border border-[#dce7eb] px-3 py-1.5">Lifecycle care</span>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
 
-        <section className="bg-[#eaf4fa] py-20 lg:py-24"><div className="mx-auto max-w-[1240px] px-5 lg:px-8"><div className="max-w-2xl"><p className="text-xs font-bold uppercase tracking-[.2em] text-[#0f6fae]">Quality & regulatory commitment</p><h2 className="mt-4 text-4xl font-semibold tracking-[-.04em] text-[#0a4052]">Evidence-led communication for healthcare technology.</h2><p className="mt-5 leading-8 text-[#617180]">SPM operates with a quality-aware service model. Official certificates, agency documents and product evidence remain controlled by the responsible SPM reviewers before publication.</p></div><div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{page.quality?.map((item, index) => { const Icon = qualityIcons[index % qualityIcons.length]; return <article key={item.title} className="overflow-hidden rounded-2xl bg-white shadow-sm"><div className="flex h-28 items-center justify-center border-b border-[#e5edf1] bg-[#f8fbfc] p-4">{item.imageUrl ? <img src={item.imageUrl} alt={`${item.title} evidence document`} loading="lazy" decoding="async" className="h-full w-full object-contain" /> : <div className="flex h-20 w-16 flex-col items-center justify-center rounded-md border-2 border-dashed border-[#9fcbd3] bg-white text-[#0f6fae]"><FileCheck2 className="h-6 w-6" /><span className="mt-1 text-[8px] font-bold uppercase tracking-wider">Official file</span></div>}</div><div className="p-6"><Icon className="h-6 w-6 text-[#0f6fae]" /><h3 className="mt-5 text-lg font-bold text-[#0a4052]">{item.title}</h3><p className="mt-3 text-sm leading-7 text-[#617180]">{item.text}</p>{!item.imageUrl ? <p className="mt-4 text-[11px] font-semibold uppercase tracking-wide text-[#94a3b8]">Thumbnail pending official upload</p> : null}</div></article>; })}</div></div></section>
+        <section className="bg-[#eaf4fa] py-20 lg:py-24">
+          <div className="mx-auto max-w-[1240px] px-5 lg:px-8">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#bcdde2] bg-white px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#0a4052]"><ShieldCheck className="h-3.5 w-3.5 text-[#0f6fae]" /> Quality commitment</div>
+              <h2 className="mt-4 text-4xl font-extrabold tracking-[-.04em] text-[#0a4052]">Clear evidence. Responsible communication.</h2>
+              <p className="mt-5 leading-8 text-[#617180]">SPM keeps public product and service information reviewable, traceable and ready for the official evidence that belongs with each claim.</p>
+            </div>
+            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {page.quality?.map((item, index) => {
+                const Icon = qualityIcons[index % qualityIcons.length];
+                return (
+                  <article key={item.title} className="group rounded-2xl border border-[#dce7eb] bg-white p-6 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eaf4fa] text-[#0f6fae] transition-colors group-hover:bg-[#0a4052] group-hover:text-white"><Icon className="h-6 w-6" /></div>
+                    <p className="mt-6 text-[11px] font-extrabold uppercase tracking-[.16em] text-[#0f6fae]">0{index + 1} / SPM STANDARD</p>
+                    <h3 className="mt-3 text-lg font-bold text-[#0a4052]">{item.title}</h3>
+                    <p className="mt-3 text-sm leading-7 text-[#617180]">{item.text}</p>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
 
         <section className="mx-auto max-w-[1240px] px-5 py-20 lg:px-8 lg:py-24"><div className="grid gap-8 rounded-3xl bg-[#061f2b] p-8 text-white sm:p-10 lg:grid-cols-[1fr_auto] lg:items-center"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-[#8be0d5]">Support across Egypt</p><h2 className="mt-4 text-3xl font-bold sm:text-4xl">Let us understand the system behind the request.</h2><div className="mt-5 flex items-start gap-3 text-sm leading-6 text-white/75"><MapPin className="mt-1 h-5 w-5 shrink-0 text-[#8be0d5]" /><span>{page.address}<br />{page.geography}</span></div></div><div className="flex flex-wrap gap-3 lg:justify-end"><Button size="lg" className="bg-[#c2410c] text-white hover:bg-[#c2410c]" asChild><Link href="/contact">Contact SPM <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button><Button size="lg" variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10" asChild><Link href="/request-service">Request Service <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button></div></div></section>
       </main>
