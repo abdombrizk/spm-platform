@@ -42,7 +42,7 @@ const fallback = {
   geography:
     "We support customers across Egypt and selected MENA markets, with service operations spanning 24 of Egypt's 27 governorates—from Alexandria to Aswan.",
   address: "16 Ahmed Hassan El Zyaat Street, 7th District, Nasr City, Cairo, Egypt",
-  heroImage: "/manus-storage/spm-service-engineer_96348b80.jpg",
+  heroImage: "/manus-storage/thorax_LAT_redacted_d4037aba.jpg",
   profileDocument: "",
   careersVisible: "true",
 };
@@ -121,7 +121,7 @@ const qualityIcons = [Scale, BadgeCheck, FileCheck2, ClipboardCheck];
 export default function AboutPage() {
   const pageQuery = trpc.cms.publishedBySlug.useQuery({ slug: "about" });
   const page = mergeAboutData(pageQuery.data?.data);
-  const heroImage = page.heroImage?.includes("spm-hero-medical-engineer") || page.heroImage?.includes("spm-italray-product-hero") ? fallbackData.heroImage : page.heroImage;
+  const heroImage = page.heroImage?.includes("spm-hero-medical-engineer") || page.heroImage?.includes("spm-italray-product-hero") || page.heroImage?.includes("spm-service-engineer") || page.heroImage?.includes("thorax_LAT_55986ca1") ? fallbackData.heroImage : page.heroImage;
 
   return (
     <SiteChrome>
@@ -147,14 +147,16 @@ export default function AboutPage() {
               </div>
             </div>
             <div className="relative min-h-[390px] overflow-hidden rounded-[30px] bg-[#0a4052] shadow-2xl shadow-[#0a4052]/20 lg:min-h-[520px]">
-              <img src={heroImage} alt="SPM field engineer maintaining a medical imaging system" loading="eager" decoding="async" className="absolute inset-0 h-full w-full object-cover object-[58%_center] transition duration-700 hover:scale-[1.02]" />
+              <img src={heroImage} alt="Thorax X-ray radiograph representing SPM medical imaging expertise" loading="eager" decoding="async" className="absolute inset-0 h-full w-full object-cover object-center transition duration-700 hover:scale-[1.02]" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#061f2b]/45 via-[#061f2b]/10 to-transparent" />
-              <div className="absolute right-5 top-5 flex flex-col items-end gap-2 sm:right-7 sm:top-7">
-                <div className="rounded-xl border border-white/20 bg-white/90 px-3 py-2 shadow-lg backdrop-blur-sm">
-                  <img src={partnerLogos.italray} alt="Italray official partner logo" loading="lazy" decoding="async" className="h-7 w-auto max-w-[132px] object-contain" />
-                </div>
-                <div className="rounded-xl border border-white/20 bg-white/90 px-3 py-2 shadow-lg backdrop-blur-sm">
-                  <img src={partnerLogos.hermann} alt="Hermann Medizintechnik official partner logo" loading="lazy" decoding="async" className="h-7 w-auto max-w-[132px] object-contain" />
+              <div className="absolute right-5 top-5 sm:right-7 sm:top-7">
+                <div className="rounded-2xl border border-white/20 bg-[#061f2b]/80 p-3 shadow-xl backdrop-blur-md">
+                  <p className="text-[9px] font-extrabold uppercase tracking-[.18em] text-[#8be0d5]">Official imaging partners</p>
+                  <div className="mt-2 flex items-center gap-2">
+                    <div className="flex h-9 w-[92px] items-center justify-center rounded-lg bg-white px-2"><img src={partnerLogos.italray} alt="Italray official partner logo" loading="lazy" decoding="async" className="max-h-6 w-auto max-w-full object-contain" /></div>
+                    <span className="text-sm font-bold text-white/50" aria-hidden="true">+</span>
+                    <div className="flex h-9 w-[92px] items-center justify-center rounded-lg bg-white px-2"><img src={partnerLogos.hermann} alt="Hermann Medizintechnik official partner logo" loading="lazy" decoding="async" className="max-h-6 w-auto max-w-full object-contain" /></div>
+                  </div>
                 </div>
               </div>
               <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-7">
@@ -215,7 +217,7 @@ export default function AboutPage() {
             <div className="mt-12 grid gap-6 lg:grid-cols-2">
               {page.partners?.map((partner, index) => {
                 const key = partner.name.toLowerCase();
-                const logoUrl = partner.logoUrl || (key.includes("italray") ? partnerLogos.italray : key.includes("hermann") ? partnerLogos.hermann : undefined);
+                const logoUrl = key.includes("italray") ? partnerLogos.italray : key.includes("hermann") ? partnerLogos.hermann : partner.logoUrl;
                 return (
                   <article key={partner.name} className="group relative overflow-hidden rounded-3xl border border-[#dce7eb] bg-white p-7 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-[#0a4052] hover:shadow-xl sm:p-9">
                     <div className="absolute right-0 top-0 h-28 w-28 rounded-bl-[72px] bg-[#eaf4fa] transition-transform duration-500 group-hover:scale-125" aria-hidden="true" />
