@@ -64,6 +64,9 @@ type ProductDraft = {
   videoUrl: string;
   availabilityStatus: Availability;
   requestQuote: boolean;
+  commerceMode: "quote_only" | "checkout" | "both";
+  shopifyProductId: string;
+  shopifyHandle: string;
   ceStatus: "available" | "not_available" | "not_applicable" | "under_review";
   qualityReviewStatus: "not_reviewed" | "under_review" | "approved" | "rejected";
   regulatoryDocumentsPublic: boolean;
@@ -120,6 +123,9 @@ const emptyDraft: ProductDraft = {
   videoUrl: "",
   availabilityStatus: "available",
   requestQuote: true,
+  commerceMode: "quote_only",
+  shopifyProductId: "",
+  shopifyHandle: "",
   ceStatus: "under_review",
   qualityReviewStatus: "not_reviewed",
   regulatoryDocumentsPublic: false,
@@ -192,7 +198,7 @@ export default function ProductManager() {
   const products = trpc.products.list.useQuery(undefined, { enabled: Boolean(auth.data) });
   const utils = trpc.useUtils();
 
-  const [activeMainTab, setActiveMainTab] = useState<"italray_marketing" | "equipment" | "menu" | "parts" | "documents">("italray_marketing");
+  const [activeMainTab, setActiveMainTab] = useState<"italray_marketing" | "equipment" | "menu" | "parts" | "documents">("equipment");
   const [editingId, setEditingId] = useState<number | undefined>();
   const [slug, setSlug] = useState("");
   const [productType, setProductType] = useState<ProductType>("medical_device");
@@ -822,6 +828,19 @@ export default function ProductManager() {
                   </div>
                 </div>
 
+                <div className="rounded-2xl border border-[#bcdde2] bg-[#eff9fb] p-4">
+                  <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                    <div>
+                      <p className="text-xs font-extrabold uppercase tracking-wider text-[#0f6fae]">Commerce source</p>
+                      <p className="mt-1 text-sm font-semibold text-[#0a4052]">The Internal Catalog controls the public product page. Shopify is optional for price, inventory and checkout.</p>
+                      <p className="mt-1 text-xs leading-5 text-slate-600">For large medical systems, keep <strong>Request a Quote</strong> as the default. Use Shopify only for products with a fixed price and stock.</p>
+                    </div>
+                    <a href="https://admin.shopify.com/store/spmplatform-nlyjrwcw-apollo-timber-tn2hbuky" target="_blank" rel="noreferrer" className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-[#0f6fae] bg-white px-3 py-2 text-xs font-bold text-[#0f6fae] hover:bg-[#eaf4fa]">
+                      Open Shopify Admin <ArrowUpRight className="h-3.5 w-3.5" />
+                    </a>
+                  </div>
+                </div>
+
                 <div className="grid gap-4 md:grid-cols-4">
                   <div className="space-y-2">
                     <Label>URL slug *</Label>
@@ -878,6 +897,30 @@ export default function ProductManager() {
                         <Label>Country of Origin</Label>
                         <Input value={draft.countryOfOrigin} onChange={e => updateField("countryOfOrigin", e.target.value)} placeholder="e.g. Italy / Germany / Egypt" />
                       </div>
+                    </div>
+                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                      <div className="grid gap-4 md:grid-cols-3">
+                        <div className="space-y-2">
+                          <Label>Commercial model</Label>
+                          <Select value={draft.commerceMode} onValueChange={value => updateField("commerceMode", value as ProductDraft["commerceMode"])}>
+                            <SelectTrigger><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="quote_only">Request a Quote only</SelectItem>
+                              <SelectItem value="checkout">Shopify checkout</SelectItem>
+                              <SelectItem value="both">Quote + Shopify checkout</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Shopify Product ID <span className="font-normal text-slate-400">(optional)</span></Label>
+                          <Input value={draft.shopifyProductId} onChange={e => updateField("shopifyProductId", e.target.value)} placeholder="gid://shopify/Product/..." />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Shopify handle <span className="font-normal text-slate-400">(optional)</span></Label>
+                          <Input value={draft.shopifyHandle} onChange={e => updateField("shopifyHandle", e.target.value)} placeholder="product-handle" />
+                        </div>
+                      </div>
+                      <p className="mt-3 text-xs leading-5 text-slate-500">Do not duplicate a product in Shopify from this form. Create or edit the Shopify record in Shopify Admin, then paste its ID or handle here to connect the two sources.</p>
                     </div>
                   </TabsContent>
 

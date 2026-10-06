@@ -54,6 +54,9 @@ const productDataSchema = z.object({
   videoUrl: safeAssetUrl.optional().default(""),
   availabilityStatus: z.enum(["available", "on_request", "discontinued", "coming_soon"]).default("on_request"),
   requestQuote: z.boolean().default(true),
+  commerceMode: z.enum(["quote_only", "checkout", "both"]).default("quote_only"),
+  shopifyProductId: z.string().max(180).optional().default(""),
+  shopifyHandle: z.string().max(180).optional().default(""),
   ceStatus: z.enum(["available", "not_available", "not_applicable", "under_review"]).default("under_review"),
   qualityReviewStatus: z.enum(["not_reviewed", "under_review", "approved", "rejected"]).default("not_reviewed"),
   regulatoryDocumentsPublic: z.boolean().default(false),
@@ -97,6 +100,7 @@ const publicProductDataSchema = productDataSchema.pick({
   applications: true, technicalSpecifications: true, mainImage: true, additionalImages: true,
   brochureUrl: true, datasheetUrl: true, userManualUrl: true, videoUrl: true,
   availabilityStatus: true, requestQuote: true, ceStatus: true, seoTitle: true, seoDescription: true,
+  commerceMode: true, shopifyProductId: true, shopifyHandle: true,
 });
 const publicServiceDataSchema = serviceDataSchema.pick({
   name: true, code: true, shortDescription: true, fullDescription: true, coveredProductIds: true,
@@ -488,6 +492,7 @@ export const appRouter = router({
       return { success: true } as const;
     }),
     delete: permissionProcedure("products.delete").input(z.object({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => {
+      if (ctx.user.role !== "owner") throw new TRPCError({ code: "FORBIDDEN", message: "Only the Owner can permanently delete a product. Marketing users can archive or hide it." });
       await db.deleteProduct(input.id);
       await db.addAuditLog({ actorUserId: ctx.user.id, action: "product_deleted", entityType: "product", entityId: String(input.id), ipAddress: clientIp(ctx.req) });
       return { success: true } as const;
