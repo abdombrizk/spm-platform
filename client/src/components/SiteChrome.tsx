@@ -1,13 +1,11 @@
 import { useState, useEffect } from "react";
 import SiteSearchDialog from "@/components/SiteSearchDialog";
-import { ChevronDown, ChevronRight, Menu, X, ArrowUpRight, Boxes, Stethoscope, MessageCircle, Wrench, LogIn } from "lucide-react";
+import { ChevronDown, ChevronRight, Menu, X, ArrowUpRight, Stethoscope, MessageCircle, Wrench, LogIn } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
 
 const logo = "/manus-storage/spm-logo-cropped_7b519adc.webp";
-const italrayLogo = "/manus-storage/italray-logo_57cfff13.png";
-const hermannLogo = "/manus-storage/hermann-logo_7f4be603.png";
 
 export default function SiteChrome({ children, transparentHeader = false }: { children: React.ReactNode; transparentHeader?: boolean }) {
   const [open, setOpen] = useState(false);
@@ -65,7 +63,11 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
       >
         <div className="mx-auto flex h-[80px] max-w-[1280px] items-center justify-between gap-6 px-5 lg:px-8">
           <Link href="/" className="flex shrink-0 items-center gap-3" onClick={() => setOpen(false)}>
-            <img src={logo} alt="SPM Medical Imaging Technology" className="h-14 w-auto max-w-[208px] object-contain transition-transform hover:scale-105 sm:h-16" />
+            <img
+              src={logo}
+              alt="SPM Medical Imaging Technology"
+              className={`spm-header-logo h-14 w-auto max-w-[208px] object-contain transition-transform hover:scale-105 sm:h-16 ${isDarkNav ? "" : "mix-blend-multiply"}`}
+            />
             <span className="sr-only">SPM - Systems for Projects & Maintenance</span>
           </Link>
 
@@ -112,7 +114,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
               </div>
             </div>
 
-            {/* 2. Products - 3-Branch Flyout Menu */}
+            {/* Products - text-first category flyout */}
             <div
               className="relative"
               onMouseEnter={() => setActiveMega(true)}
@@ -133,7 +135,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                 <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${isDarkNav ? "text-white/80" : "text-[#94a3b8]"} ${activeMega ? "rotate-180" : ""}`} />
               </Link>
 
-              {/* 3-Tab Hover Cascading Dropdown */}
+              {/* Text-first category flyout: the equipment names stay scannable and image-free. */}
               <div
                 id="products-menu"
                 role="menu"
@@ -156,9 +158,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
-                        <span className={`flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg bg-white p-1 ${activeProductTab === "italray" ? "ring-1 ring-white/60" : "border border-[#dce7eb]"}`}>
-                          <img src={italrayLogo} alt="" className="h-full w-full object-contain" />
-                        </span>
+                        <span className={`flex h-9 w-9 items-center justify-center rounded-lg text-xs font-black ${activeProductTab === "italray" ? "bg-white/15 text-white" : "bg-[#eaf4fa] text-[#0a4052]"}`}>IR</span>
                         <div>
                           <p className="text-sm font-bold">Italray</p>
                           <p className={`text-xs ${activeProductTab === "italray" ? "text-white/80" : "text-[#64748b]"}`}>Exclusive Agent in Egypt</p>
@@ -175,9 +175,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
-                        <span className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg bg-[#c92518] p-1">
-                          <img src={hermannLogo} alt="" className="h-full w-full object-contain" />
-                        </span>
+                        <span className={`flex h-9 w-9 items-center justify-center rounded-lg text-xs font-black ${activeProductTab === "hermann" ? "bg-white/15 text-white" : "bg-[#fef2f2] text-[#c92518]"}`}>HM</span>
                         <div>
                           <p className="text-sm font-bold">Hermann</p>
                           <p className={`text-xs ${activeProductTab === "hermann" ? "text-white/80" : "text-[#64748b]"}`}>Authorized Partner</p>
@@ -194,10 +192,10 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
-                        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#eaf4fa] text-[#0a4052]"><Wrench className="h-4 w-4" /></span>
+                          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#eaf4fa] text-[#0a4052]"><Wrench className="h-4 w-4" aria-hidden="true" /></span>
                         <div>
-                          <p className="text-sm font-bold">Service & Maintenance</p>
-                          <p className={`text-xs ${activeProductTab === "parts" ? "text-white/80" : "text-[#64748b]"}`}>Lifecycle Engineering</p>
+                          <p className="text-sm font-bold">Spare Parts</p>
+                          <p className={`text-xs ${activeProductTab === "parts" ? "text-white/80" : "text-[#64748b]"}`}>Genuine parts & support</p>
                         </div>
                       </div>
                       <ChevronRight className={`h-4 w-4 transition-transform ${activeProductTab === "parts" ? "translate-x-1" : ""}`} />
@@ -209,43 +207,31 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                     {activeProductTab === "italray" ? (
                       <div className="animate-in fade-in slide-in-from-right-2 duration-250">
                         <div className="mb-3 flex items-center justify-between border-b border-[#eef3f5] pb-2">
-                          <span className="text-xs font-bold uppercase tracking-wider text-[#0a4052]">Italray Imaging Systems</span>
+                          <span className="text-xs font-bold uppercase tracking-wider text-[#0a4052]">Italray Product Categories</span>
                           <Link href="/catalogue/italray" onClick={() => setActiveMega(false)} className="text-xs font-semibold text-[#d95316] hover:underline">
-                            Open public catalogue <ArrowUpRight className="ml-1 inline h-3 w-3" />
+                            View all systems
                           </Link>
                         </div>
-                        {italrayStoreProducts.length > 0 ? (
-                          <div className="grid grid-cols-2 gap-2">
-                            {italrayStoreProducts.map(product => (
-                              <Link
-                                key={product.id}
-                                href={`/store/products/${product.handle}`}
-                                onClick={() => setActiveMega(false)}
-                                className="group flex min-w-0 items-center gap-3 rounded-xl border border-[#e2e8f0] bg-[#fafcfd] px-3 py-2.5 transition hover:-translate-y-0.5 hover:border-[#0a4052] hover:bg-white hover:shadow-sm"
-                              >
-                                <span className="h-2 w-2 shrink-0 rounded-full bg-[#d95316] transition group-hover:scale-125" />
-                                <div className="min-w-0 flex-1">
-                                  <p className="line-clamp-2 text-xs font-bold leading-4 text-[#1e293b] group-hover:text-[#0f6fae]">{product.title}</p>
-                                  <p className="mt-0.5 truncate text-xs text-[#94a3b8]">{product.productType || "Medical imaging system"}</p>
-                                </div>
-                                <ArrowUpRight className="h-3.5 w-3.5 shrink-0 text-[#94a3b8] opacity-0 transition group-hover:opacity-100" />
-                              </Link>
-                            ))}
-                          </div>
-                        ) : (
-                          <Link href="/catalogue/italray" onClick={() => setActiveMega(false)} className="group block rounded-2xl border border-[#bcdde2] bg-[#f7fafc] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#0a4052] hover:bg-white hover:shadow-lg">
-                            <div className="flex items-start gap-3">
-                              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#eaf4fa] text-[#0a4052]">
-                                <Boxes className="h-6 w-6" />
-                              </div>
-                              <div>
-                                <p className="text-sm font-bold text-[#0a4052] group-hover:text-[#0f6fae]">Explore the complete Italray catalogue</p>
-                                <p className="mt-1 text-xs leading-5 text-[#64748b]">Browse certified C-Arm, Digital Radiography and fluoroscopy systems supported with exclusive Egyptian agency warranty.</p>
-                              </div>
-                            </div>
-                            <span className="mt-4 inline-flex items-center text-xs font-bold text-[#d95316]">Browse Italray systems <ArrowUpRight className="ml-1 h-3 w-3" /></span>
-                          </Link>
-                        )}
+                        <div className="grid grid-cols-2 gap-2">
+                          {[
+                            ["DRF REMOTE CONTROLLED TABLES", "DRF remote controlled tables"],
+                            ["DIGITAL RADIOGRAPHY", "digital radiography"],
+                            ["DIGITAL PORTABLE", "digital portable"],
+                            ["MAMMOGRAPH", "mammograph"],
+                            ["C ARM", "CARMEX"],
+                            ["TRADITIONAL PORTABLE", "traditional portable"],
+                            ["SOLAR X-RAY", "solar x-ray"],
+                          ].map(([label, search]) => (
+                            <Link
+                              key={search}
+                              href={`/catalogue?q=${encodeURIComponent(search)}`}
+                              onClick={() => setActiveMega(false)}
+                              className="group rounded-xl border border-[#e2e8f0] bg-[#fafcfd] px-3.5 py-3 transition hover:-translate-y-0.5 hover:border-[#0a4052] hover:bg-white hover:shadow-sm"
+                            >
+                              <span className="text-[11px] font-extrabold uppercase tracking-[0.08em] text-[#334155] group-hover:text-[#0f6fae]">{label}</span>
+                            </Link>
+                          ))}
+                        </div>
                       </div>
                     ) : activeProductTab === "hermann" ? (
                       <div>
@@ -286,17 +272,17 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                     ) : (
                       <div>
                         <div className="mb-3 flex items-center justify-between border-b border-[#eef3f5] pb-2">
-                          <span className="text-xs font-bold uppercase tracking-wider text-[#0a4052]">Service & Maintenance</span>
-                          <Link href="/services" className="text-xs font-semibold text-[#d95316] hover:underline">
-                            Explore Service <ArrowUpRight className="ml-1 inline h-3 w-3" />
+                          <span className="text-xs font-bold uppercase tracking-wider text-[#0a4052]">Spare Parts</span>
+                          <Link href="/spare-parts" onClick={() => setActiveMega(false)} className="text-xs font-semibold text-[#d95316] hover:underline">
+                            Open spare parts
                           </Link>
                         </div>
                         <div className="grid grid-cols-2 gap-2">
                           {[
-                            ["Preventive maintenance", "/request-service?type=preventive_maintenance"],
-                            ["Emergency repair", "/request-service?type=emergency_maintenance"],
-                            ["Commissioning & calibration", "/request-service?type=commissioning"],
                             ["Genuine spare parts", "/spare-parts"],
+                            ["Browse part categories", "/spare-parts"],
+                            ["Request a part", "/request-a-quote?source=spare-parts"],
+                            ["Service support", "/request-service?source=spare-parts"],
                           ].map(([label, href]) => (
                             <Link key={label} href={href} className="group rounded-xl border border-[#e2e8f0] bg-[#fafcfd] p-3 transition hover:border-[#0a4052] hover:bg-white hover:shadow-xs">
                               <Wrench className="h-4 w-4 text-[#0f6fae] transition group-hover:text-[#d95316]" />
@@ -431,10 +417,20 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
 
               <div className="pt-4">
                 <p className="text-xs font-bold uppercase tracking-wider text-[#94a3b8]">Products</p>
-                <div className="mt-2 space-y-1">
-                  <Link href="/catalogue/italray" onClick={() => setOpen(false)} className="block min-h-11 py-3 text-sm font-bold text-[#0a4052]">Italray Imaging Systems</Link>
-                  <Link href="/catalogue" onClick={() => setOpen(false)} className="block min-h-11 py-3 text-sm font-bold text-[#0a4052]">Hermann Medizintechnik</Link>
-                  <Link href="/spare-parts" onClick={() => setOpen(false)} className="block min-h-11 py-3 text-sm font-bold text-[#0a4052]">Spare Parts Module</Link>
+                <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
+                  {[
+                    ["DRF Remote Controlled Tables", "DRF remote controlled tables"],
+                    ["Digital Radiography", "digital radiography"],
+                    ["Digital Portable", "digital portable"],
+                    ["Mammograph", "mammograph"],
+                    ["C Arm", "CARMEX"],
+                    ["Traditional Portable", "traditional portable"],
+                    ["Solar X-Ray", "solar x-ray"],
+                  ].map(([label, search]) => (
+                    <Link key={search} href={`/catalogue?q=${encodeURIComponent(search)}`} onClick={() => setOpen(false)} className="block min-h-11 py-3 text-xs font-bold uppercase tracking-wide text-[#0a4052] hover:text-[#0f6fae]">{label}</Link>
+                  ))}
+                  <Link href="/catalogue" onClick={() => setOpen(false)} className="block min-h-11 py-3 text-xs font-bold uppercase tracking-wide text-[#0a4052] hover:text-[#0f6fae]">Hermann</Link>
+                  <Link href="/spare-parts" onClick={() => setOpen(false)} className="block min-h-11 py-3 text-xs font-bold uppercase tracking-wide text-[#0a4052] hover:text-[#0f6fae]">Spare Parts</Link>
                 </div>
               </div>
 
