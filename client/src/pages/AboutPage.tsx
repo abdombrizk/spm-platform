@@ -42,7 +42,7 @@ const fallback = {
   geography:
     "We support customers across Egypt and selected MENA markets, with service operations spanning 24 of Egypt's 27 governorates—from Alexandria to Aswan.",
   address: "16 Ahmed Hassan El Zyaat Street, 7th District, Nasr City, Cairo, Egypt",
-  heroImage: "/manus-storage/thorax_LAT_redacted_d4037aba.jpg",
+  heroImage: "/manus-storage/spm-service-engineer_96348b80.jpg",
   profileDocument: "",
   careersVisible: "true",
 };
@@ -121,7 +121,7 @@ const qualityIcons = [Scale, BadgeCheck, FileCheck2, ClipboardCheck];
 export default function AboutPage() {
   const pageQuery = trpc.cms.publishedBySlug.useQuery({ slug: "about" });
   const page = mergeAboutData(pageQuery.data?.data);
-  const heroImage = page.heroImage?.includes("spm-hero-medical-engineer") || page.heroImage?.includes("spm-italray-product-hero") || page.heroImage?.includes("spm-service-engineer") || page.heroImage?.includes("thorax_LAT_55986ca1") ? fallbackData.heroImage : page.heroImage;
+  const heroImage = page.heroImage?.includes("spm-hero-medical-engineer") || page.heroImage?.includes("spm-italray-product-hero") || page.heroImage?.includes("thorax_LAT_55986ca1") ? fallbackData.heroImage : page.heroImage;
 
   return (
     <SiteChrome>
@@ -147,7 +147,7 @@ export default function AboutPage() {
               </div>
             </div>
             <div className="relative min-h-[390px] overflow-hidden rounded-[30px] bg-[#0a4052] shadow-2xl shadow-[#0a4052]/20 lg:min-h-[520px]">
-              <img src={heroImage} alt="Thorax X-ray radiograph representing SPM medical imaging expertise" loading="eager" decoding="async" className="absolute inset-0 h-full w-full object-cover object-center transition duration-700 hover:scale-[1.02]" />
+              <img src={heroImage} alt="SPM field engineer maintaining a medical imaging system" loading="eager" decoding="async" className="absolute inset-0 h-full w-full object-cover object-[58%_center] transition duration-700 hover:scale-[1.02]" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#061f2b]/45 via-[#061f2b]/10 to-transparent" />
               <div className="absolute right-5 top-5 sm:right-7 sm:top-7">
                 <div className="rounded-2xl border border-white/20 bg-[#061f2b]/80 p-3 shadow-xl backdrop-blur-md">
