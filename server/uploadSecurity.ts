@@ -8,6 +8,7 @@ const MIME_EXTENSIONS: Record<string, string[]> = {
   "application/pdf": ["pdf"],
   "video/mp4": ["mp4"],
   "video/quicktime": ["mov", "qt"],
+  "video/webm": ["webm"],
   "application/msword": ["doc"],
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ["docx"],
   "application/vnd.ms-excel": ["xls"],

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import SiteSearchDialog from "@/components/SiteSearchDialog";
-import { ChevronDown, ChevronRight, Menu, X, ArrowUpRight, Stethoscope, MessageCircle, Wrench, LogIn } from "lucide-react";
+import { ChevronDown, ChevronRight, Menu, X, ArrowUpRight, Facebook, Linkedin, Stethoscope, MessageCircle, Wrench, LogIn } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
@@ -527,6 +527,14 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
               <div className="mt-5 flex gap-2">
                 <Link href="/request-service"><Button size="sm" variant="outline" className="border-white/20 bg-transparent text-white hover:bg-white/10">Request Service</Button></Link>
                 <Link href="/contact"><Button size="sm" className="bg-[#d95316] text-white hover:bg-[#b8430e]">Contact</Button></Link>
+              </div>
+              <div className="mt-5 flex items-center gap-2" aria-label="SPM social media">
+                <a href="https://www.facebook.com/alanzema.Medical.equipment" target="_blank" rel="noreferrer" aria-label="SPM on Facebook" className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-[#cbd5e1] transition hover:border-[#5ed8db]/60 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5ed8db]">
+                  <Facebook className="h-4 w-4" aria-hidden="true" />
+                </a>
+                <a href="https://www.linkedin.com/company/spm-solutions-eg/?viewAsMember=true" target="_blank" rel="noreferrer" aria-label="SPM on LinkedIn" className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-[#cbd5e1] transition hover:border-[#5ed8db]/60 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5ed8db]">
+                  <Linkedin className="h-4 w-4" aria-hidden="true" />
+                </a>
               </div>
             </div>
           </div>

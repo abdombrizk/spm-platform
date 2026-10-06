@@ -550,14 +550,15 @@ export const appRouter = router({
     uploadItalrayMedia: permissionProcedure("products.media").input(z.object({
       handle: z.string().min(1).max(180),
       fileName: z.string().min(1).max(180),
-      contentType: z.enum(["image/jpeg", "image/png", "image/webp", "application/pdf"]),
+      contentType: z.enum(["image/jpeg", "image/png", "image/webp", "application/pdf", "video/mp4", "video/quicktime", "video/webm"]),
       dataUrl: z.string().startsWith("data:"),
     })).mutation(async ({ ctx, input }) => {
       const encoded = input.dataUrl.split(",")[1];
       if (!encoded) throw new TRPCError({ code: "BAD_REQUEST", message: "File data is missing." });
       const buffer = Buffer.from(encoded, "base64");
-      if (buffer.byteLength > 15 * 1024 * 1024) throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: "File must be 15 MB or smaller." });
-      const { extension } = await validateUpload({ buffer, fileName: input.fileName, contentType: input.contentType, maxBytes: 15 * 1024 * 1024 });
+      const maxBytes = input.contentType.startsWith("video/") ? 40 * 1024 * 1024 : 15 * 1024 * 1024;
+      if (buffer.byteLength > maxBytes) throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: `File must be ${Math.round(maxBytes / 1024 / 1024)} MB or smaller.` });
+      const { extension } = await validateUpload({ buffer, fileName: input.fileName, contentType: input.contentType, maxBytes });
       const uploaded = await storagePut(`products/italray/${input.handle}/${Date.now()}-${randomUUID().slice(0, 8)}.${extension}`, buffer, input.contentType);
       return { url: uploaded.url };
     }),

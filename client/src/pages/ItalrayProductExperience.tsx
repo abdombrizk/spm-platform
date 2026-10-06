@@ -72,19 +72,19 @@ export default function ItalrayProductExperience({ product }: { product: Product
     try {
       return {
         ...meta,
-        title: o.title || activeMeta.title,
-        badge: o.badge || activeMeta.badge,
-        headline: o.headline || activeMeta.headline,
-        subheadline: o.subheadline || activeMeta.subheadline,
-        leadParagraph: o.leadParagraph || activeMeta.leadParagraph,
-        secondaryParagraph: o.secondaryParagraph || activeMeta.secondaryParagraph,
-        heroImage: o.heroImage || activeMeta.heroImage,
-        descriptionImage: o.descriptionImage || activeMeta.descriptionImage,
-        brochureUrl: o.brochureUrl || activeMeta.brochureUrl,
+        title: o.title || meta.title,
+        badge: o.badge || meta.badge,
+        headline: o.headline || meta.headline,
+        subheadline: o.subheadline || meta.subheadline,
+        leadParagraph: o.leadParagraph || meta.leadParagraph,
+        secondaryParagraph: o.secondaryParagraph || meta.secondaryParagraph,
+        heroImage: o.heroImage || meta.heroImage,
+        descriptionImage: o.descriptionImage || meta.descriptionImage,
+        brochureUrl: o.brochureUrl || meta.brochureUrl,
         brochureTitle: o.brochureTitle || meta.brochureTitle,
-        highlights: o.highlightsJson ? JSON.parse(o.highlightsJson) : activeMeta.highlights,
-        pillars: o.pillarsJson ? JSON.parse(o.pillarsJson) : activeMeta.pillars,
-        clinicalGallery: o.clinicalGalleryJson ? JSON.parse(o.clinicalGalleryJson) : activeMeta.clinicalGallery,
+        highlights: o.highlightsJson ? JSON.parse(o.highlightsJson) : meta.highlights,
+        pillars: o.pillarsJson ? JSON.parse(o.pillarsJson) : meta.pillars,
+        clinicalGallery: o.clinicalGalleryJson ? JSON.parse(o.clinicalGalleryJson) : meta.clinicalGallery,
         upgrades: o.upgradesJson ? JSON.parse(o.upgradesJson) : meta.upgrades,
         specifications: o.specificationsJson ? JSON.parse(o.specificationsJson) : meta.specifications,
       };
@@ -584,16 +584,34 @@ export default function ItalrayProductExperience({ product }: { product: Product
                             }`}
                           >
                             <div className="relative aspect-[16/8.5] overflow-hidden bg-[#0b0d0f]">
-                              <img
-                                src={item.image}
-                                alt={item.title}
-                                loading={isActive ? "eager" : "lazy"}
-                                decoding="async"
-                                className={`h-full w-full object-cover transition duration-700 ${
-                                  isActive ? "scale-100 group-hover:scale-105" : "scale-105 group-hover:scale-100"
-                                }`}
-                              />
+                              {(item as typeof item & { mediaType?: string }).mediaType === "video" ? (
+                                <video
+                                  src={item.image}
+                                  aria-label={item.title}
+                                  muted
+                                  loop
+                                  playsInline
+                                  autoPlay={isActive}
+                                  controls={isActive}
+                                  className={`h-full w-full object-cover transition duration-700 ${isActive ? "scale-100 group-hover:scale-105" : "scale-105 group-hover:scale-100"}`}
+                                />
+                              ) : (
+                                <img
+                                  src={item.image}
+                                  alt={(item as typeof item & { alt?: string }).alt || item.title}
+                                  loading={isActive ? "eager" : "lazy"}
+                                  decoding="async"
+                                  className={`h-full w-full object-cover transition duration-700 ${
+                                    isActive ? "scale-100 group-hover:scale-105" : "scale-105 group-hover:scale-100"
+                                  }`}
+                                />
+                              )}
                               <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/5 to-transparent" />
+                              {(item as typeof item & { textOverlay?: string }).textOverlay ? (
+                                <span className="absolute left-3 top-3 max-w-[75%] rounded-md bg-[#0f6fae]/90 px-2.5 py-1.5 text-xs font-bold text-white shadow-lg backdrop-blur">
+                                  {(item as typeof item & { textOverlay?: string }).textOverlay}
+                                </span>
+                              ) : null}
                               <span className="absolute bottom-3 left-3 rounded-md bg-black/65 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur">
                                 {item.category}
                               </span>
@@ -675,11 +693,11 @@ export default function ItalrayProductExperience({ product }: { product: Product
                 </button>
 
                 <div className="aspect-16/10 w-full overflow-hidden rounded-2xl bg-black/60">
-                  <img
-                    src={selectedGalleryItem.image}
-                    alt={selectedGalleryItem.title}
-                    className="h-full w-full object-contain"
-                  />
+                  {(selectedGalleryItem as typeof selectedGalleryItem & { mediaType?: string }).mediaType === "video" ? (
+                    <video src={selectedGalleryItem.image} aria-label={selectedGalleryItem.title} controls autoPlay playsInline className="h-full w-full object-contain" />
+                  ) : (
+                    <img src={selectedGalleryItem.image} alt={(selectedGalleryItem as typeof selectedGalleryItem & { alt?: string }).alt || selectedGalleryItem.title} className="h-full w-full object-contain" />
+                  )}
                 </div>
 
                 <div className="mt-5">
