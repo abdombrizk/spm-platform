@@ -80,6 +80,21 @@ const brandLogoOverrides: Record<string, string> = {
   hermann: "/manus-storage/hermann-logo_7f4be603.png",
 };
 
+const strategicPartners = [
+  {
+    name: "Italray",
+    status: "Exclusive Agent in Egypt",
+    text: "Original imaging systems backed by manufacturer standards, technical support, genuine spare parts and after-sales service.",
+    logo: brandLogoOverrides.italray,
+  },
+  {
+    name: "Hermann Medizintechnik",
+    status: "Authorized Agent in Egypt",
+    text: "SPM represents Hermann Medizintechnik in Egypt through an authorized partner relationship supporting specialized medical technology needs.",
+    logo: brandLogoOverrides.hermann,
+  },
+];
+
 function AnimatedCounter({ targetValue, duration = 1200 }: { targetValue: number; duration?: number }) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
@@ -309,34 +324,39 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Section 3: X-ray expertise and partner support */}
-        <section className="border-b border-[#dce7eb] bg-[#f7fafc] py-16 lg:py-20" aria-labelledby="xray-expertise-title">
-          <div className="mx-auto grid max-w-[1280px] gap-10 px-5 lg:grid-cols-[.92fr_1.08fr] lg:items-center lg:px-8">
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#bcdde2] bg-[#eaf4fa] px-3.5 py-1 text-xs font-bold uppercase tracking-[.14em] text-[#0a4052]"><span className="h-2 w-2 rounded-full bg-[#0f6fae]" /> X-ray systems & lifecycle care</div>
-              <h2 id="xray-expertise-title" className="mt-5 max-w-xl text-3xl font-extrabold leading-tight tracking-[-.04em] text-[#0a4052] sm:text-4xl">Imaging expertise that continues after installation.</h2>
-              <p className="mt-5 max-w-xl text-base leading-8 text-[#617180]">SPM focuses on the equipment and engineering work that keeps X-ray, fluoroscopy and C-Arm systems clinically ready—from sourcing and commissioning to service response, genuine parts and practical training.</p>
-              <div className="mt-7 flex flex-wrap gap-3">
-                <Button className="rounded-xl bg-[#c2410c] px-5 font-bold text-white hover:bg-[#9a3412]" asChild><Link href="/catalogue">Explore X-ray systems <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button>
-                <Button variant="outline" className="rounded-xl border-[#0a4052] bg-white px-5 font-bold text-[#0a4052] hover:bg-[#eaf4fa]" asChild><Link href="/services">See technical support <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button>
-              </div>
-              <div className="mt-8 flex flex-wrap items-center gap-3" aria-label="Official imaging partners">
-                <span className="text-[10px] font-extrabold uppercase tracking-[.16em] text-[#64748b]">Official partners</span>
-                <div className="flex h-10 w-[108px] items-center justify-center rounded-xl border border-[#dce7eb] bg-white px-3 shadow-xs"><img src="/manus-storage/italray-logo_57cfff13.png" alt="Italray official partner logo" loading="lazy" decoding="async" className="max-h-7 max-w-full object-contain" /></div>
-                <span className="text-sm font-bold text-[#94a3b8]" aria-hidden="true">+</span>
-                <div className="flex h-10 w-[108px] items-center justify-center rounded-xl border border-[#dce7eb] bg-white px-3 shadow-xs"><img src="/manus-storage/hermann-logo_7f4be603.png" alt="Hermann Medizintechnik official partner logo" loading="lazy" decoding="async" className="max-h-7 max-w-full object-contain" /></div>
-              </div>
-            </div>
-            <div className="relative overflow-hidden rounded-[28px] border border-[#dce7eb] bg-[#061f2b] shadow-xl shadow-[#0a4052]/10">
-              <img src="/manus-storage/thorax_LAT_redacted_d4037aba.jpg" alt="Thorax lateral X-ray radiograph" loading="lazy" decoding="async" className="h-[330px] w-full object-cover object-center transition duration-700 hover:scale-[1.03] sm:h-[410px]" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/95 via-[#061f2b]/10 to-transparent" aria-hidden="true" />
-              <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-7">
-                <div className="max-w-md rounded-2xl border border-white/15 bg-[#061f2b]/75 p-4 text-white backdrop-blur-md sm:p-5">
-                  <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-[#8be0d5]">Clinical imaging focus</p>
-                  <p className="mt-2 text-lg font-bold">Reliable X-ray workflows. Responsive engineering.</p>
-                  <p className="mt-2 text-sm leading-6 text-white/75">A clear SPM support path around the systems healthcare teams depend on every day.</p>
+        {/* Section 3: Strategic Partnerships */}
+        <section className="border-y border-[#dce7eb] bg-[#f7fafc] py-20 lg:py-24" aria-labelledby="strategic-partnerships-title">
+          <div className="mx-auto max-w-[1280px] px-5 lg:px-8">
+            <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full border border-[#bcdde2] bg-[#eaf4fa] px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#0a4052]">
+                  <BadgeCheck className="h-3.5 w-3.5 text-[#0f6fae]" /> Strategic Partnerships
                 </div>
+                <h2 id="strategic-partnerships-title" className="mt-4 max-w-3xl text-4xl font-extrabold leading-tight tracking-[-.04em] text-[#0a4052] sm:text-5xl">Global technology, local accountability.</h2>
+                <p className="mt-4 max-w-2xl text-base leading-7 text-[#617180]">SPM combines manufacturer relationships with local engineering responsibility and after-sales support, so every system has a clear path from installation to ongoing performance.</p>
               </div>
+              <p className="max-w-xs text-sm font-semibold leading-6 text-[#0f6fae]">Two trusted technology relationships. One accountable SPM support model.</p>
+            </div>
+            <div className="mt-12 grid gap-6 lg:grid-cols-2">
+              {strategicPartners.map((partner, index) => (
+                <article key={partner.name} className="group relative overflow-hidden rounded-3xl border border-[#dce7eb] bg-white p-7 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-[#0a4052] hover:shadow-xl sm:p-9">
+                  <div className="absolute right-0 top-0 h-28 w-28 rounded-bl-[72px] bg-[#eaf4fa] transition-transform duration-500 group-hover:scale-125" aria-hidden="true" />
+                  <div className="relative flex items-start justify-between gap-5">
+                    <div className="flex h-20 min-w-[150px] items-center rounded-2xl border border-[#e5edf1] bg-[#fafcfd] px-5">
+                      <img src={partner.logo} alt={`${partner.name} official logo`} loading="lazy" decoding="async" className="max-h-12 max-w-[190px] object-contain" />
+                    </div>
+                    <span className="mt-1 rounded-full bg-[#eaf4fa] px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[#0f6fae]">0{index + 1}</span>
+                  </div>
+                  <p className="relative mt-7 inline-flex rounded-full bg-[#fff1e9] px-3 py-1 text-xs font-bold text-[#c2410c]">{partner.status}</p>
+                  <h3 className="relative mt-4 text-2xl font-bold text-[#0a4052]">{partner.name}</h3>
+                  <p className="relative mt-3 max-w-xl text-sm leading-7 text-[#617180]">{partner.text}</p>
+                  <div className="relative mt-7 flex flex-wrap gap-2 text-xs font-semibold text-[#536474]">
+                    <span className="rounded-full border border-[#dce7eb] px-3 py-1.5">Equipment supply</span>
+                    <span className="rounded-full border border-[#dce7eb] px-3 py-1.5">Technical support</span>
+                    <span className="rounded-full border border-[#dce7eb] px-3 py-1.5">Lifecycle care</span>
+                  </div>
+                </article>
+              ))}
             </div>
           </div>
         </section>
