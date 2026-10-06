@@ -22,6 +22,10 @@ export function registerStorageProxy(app: Express) {
       res.status(400).send("Missing storage key");
       return;
     }
+    if (key.includes("..") || key.includes("\0") || !/^[a-zA-Z0-9_\-\.\/]+$/.test(key)) {
+      res.status(400).send("Invalid storage key");
+      return;
+    }
     if (PRIVATE_PREFIXES.some(prefix => key.startsWith(prefix)) && !(await hasInternalSession(req))) {
       res.status(404).send("Not found");
       return;

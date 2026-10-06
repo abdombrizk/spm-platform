@@ -112,10 +112,8 @@ function ProductCard({ product }: { product: Product }) {
         <h3 className="mt-2 line-clamp-2 text-xl font-extrabold leading-snug text-[#0a4052] transition-colors group-hover:text-[#0f6fae]">{product.title}</h3>
         <p className="mt-3 line-clamp-3 text-sm leading-6 text-[#617180]">{product.description}</p>
         <div className="mt-auto flex gap-2 pt-6">
-          <Link href={`/store/products/${product.handle}`} className="min-w-0 flex-1">
-            <Button className="w-full rounded-xl bg-[#0a4052] text-xs font-bold text-white hover:bg-[#063545]">View product <ArrowUpRight className="ml-1.5 h-3.5 w-3.5" /></Button>
-          </Link>
-          {isQuoteOnly ? <Link href={quoteHref(product)}><Button variant="outline" className="h-10 rounded-xl border-[#c2410c] px-3 text-[#c2410c] hover:bg-[#fff7ed]" aria-label={`Request a quote for ${product.title}`}><Mail className="h-4 w-4" /></Button></Link> : null}
+          <Button className="w-full rounded-xl bg-[#0a4052] text-xs font-bold text-white hover:bg-[#063545]" asChild><Link href={`/store/products/${product.handle}`} className="min-w-0 flex-1">View product <ArrowUpRight className="ml-1.5 h-3.5 w-3.5" /></Link></Button>
+          {isQuoteOnly ? <Button variant="outline" className="h-10 rounded-xl border-[#c2410c] px-3 text-[#c2410c] hover:bg-[#fff7ed]" aria-label={`Request a quote for ${product.title}`} asChild><Link href={quoteHref(product)}><Mail className="h-4 w-4" /></Link></Button> : null}
         </div>
       </CardContent>
     </Card>
@@ -153,8 +151,8 @@ export default function ItalrayPortfolio() {
               <h1 className="mt-6 text-5xl font-extrabold leading-[.98] tracking-[-.05em] text-white sm:text-6xl lg:text-[82px]">Imaging that moves with your clinical ambition.</h1>
               <p className="mt-7 max-w-2xl text-base leading-8 text-white/80 sm:text-lg">A complete portfolio of mobile C-Arms, digital radiography, radio-fluoroscopy and mammography systems—presented, configured and supported by SPM in Egypt.</p>
               <div className="mt-9 flex flex-wrap gap-3">
-                <a href="#italray-families"><Button size="lg" className="h-12 rounded-xl bg-[#c2410c] px-6 text-sm font-bold text-white shadow-xl shadow-[#c2410c]/25 hover:bg-[#9a3412]">Explore product families <ArrowRight className="ml-2 h-4 w-4" /></Button></a>
-                <Link href="/request-a-quote?brand=Italray"><Button size="lg" variant="outline" className="h-12 rounded-xl border-white/40 bg-white/10 px-6 text-sm font-bold text-white hover:bg-white/20">Talk to an Italray specialist <ArrowUpRight className="ml-2 h-4 w-4" /></Button></Link>
+                <Button size="lg" className="h-12 rounded-xl bg-[#c2410c] px-6 text-sm font-bold text-white shadow-xl shadow-[#c2410c]/25 hover:bg-[#9a3412]" asChild><a href="#italray-families">Explore product families <ArrowRight className="ml-2 h-4 w-4" /></a></Button>
+                <Button size="lg" variant="outline" className="h-12 rounded-xl border-white/40 bg-white/10 px-6 text-sm font-bold text-white hover:bg-white/20" asChild><Link href="/request-a-quote?brand=Italray">Talk to an Italray specialist <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
@@ -245,7 +243,7 @@ export default function ItalrayPortfolio() {
         <section id="italray-support" className="mx-auto max-w-[1280px] px-5 py-20 lg:px-8 lg:py-24">
           <div className="rounded-[2rem] bg-[#0a4052] p-7 text-white sm:p-10 lg:p-14">
             <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
-              <div><p className="text-xs font-bold uppercase tracking-[.2em] text-[#8be0d5]">SPM lifecycle support</p><h2 className="mt-4 text-4xl font-extrabold tracking-[-.04em] sm:text-5xl">The portfolio does not stop at delivery.</h2><p className="mt-5 max-w-xl text-sm leading-7 text-white/75">SPM connects the Italray system selection with site planning, installation, commissioning, operator training, service contracts, genuine parts and technical documentation.</p><Link href="/request-a-quote?brand=Italray" className="mt-8 inline-flex"><Button className="h-12 rounded-xl bg-[#c2410c] px-6 text-sm font-bold text-white hover:bg-[#9a3412]">Start an Italray project <ArrowUpRight className="ml-2 h-4 w-4" /></Button></Link></div>
+              <div><p className="text-xs font-bold uppercase tracking-[.2em] text-[#8be0d5]">SPM lifecycle support</p><h2 className="mt-4 text-4xl font-extrabold tracking-[-.04em] sm:text-5xl">The portfolio does not stop at delivery.</h2><p className="mt-5 max-w-xl text-sm leading-7 text-white/75">SPM connects the Italray system selection with site planning, installation, commissioning, operator training, service contracts, genuine parts and technical documentation.</p><Button className="h-12 rounded-xl bg-[#c2410c] px-6 text-sm font-bold text-white hover:bg-[#9a3412]" asChild><Link href="/request-a-quote?brand=Italray" className="mt-8 inline-flex">Start an Italray project <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button></div>
               <div className="grid gap-3 sm:grid-cols-2">
                 {[
                   { icon: Download, label: "Brochures & documents", href: "/downloads", text: "Request official documents and configuration packs." },
@@ -261,7 +259,7 @@ export default function ItalrayPortfolio() {
         <section className="border-t border-[#dce7eb] bg-white py-10">
           <div className="mx-auto flex max-w-[1280px] flex-col items-start justify-between gap-4 px-5 sm:flex-row sm:items-center lg:px-8">
             <div><p className="text-sm font-bold text-[#0a4052]">Need a different configuration?</p><p className="mt-1 text-xs text-[#64748b]">Tell us the room, workflow and clinical application. We will guide the next step.</p></div>
-            <div className="flex flex-wrap gap-2"><Link href="/request-a-quote?brand=Italray"><Button className="rounded-xl bg-[#0a4052] text-white hover:bg-[#063545]">Request a quote</Button></Link><Link href="/contact"><Button variant="outline" className="rounded-xl border-[#0a4052] text-[#0a4052]">Contact SPM</Button></Link></div>
+            <div className="flex flex-wrap gap-2"><Button className="rounded-xl bg-[#0a4052] text-white hover:bg-[#063545]" asChild><Link href="/request-a-quote?brand=Italray">Request a quote</Link></Button><Button variant="outline" className="rounded-xl border-[#0a4052] text-[#0a4052]" asChild><Link href="/contact">Contact SPM</Link></Button></div>
           </div>
         </section>
       </main>

@@ -68,11 +68,9 @@ export default function ContactPage() {
                     +20 12 21888395
                   </a>
                 </div>
-                <Link href="/request-a-quote" className="block pt-2">
-                  <Button className="w-full bg-[#f36b21] font-bold text-white hover:bg-[#d95316]">
+                <Button className="w-full bg-[#f36b21] font-bold text-white hover:bg-[#d95316]" asChild><Link href="/request-a-quote" className="block pt-2">
                     Request a Quote <ArrowUpRight className="ml-1.5 h-4 w-4" />
-                  </Button>
-                </Link>
+                  </Link></Button>
               </CardContent>
             </Card>
 
@@ -98,11 +96,9 @@ export default function ContactPage() {
                     +20 12 21888395 (WhatsApp Support)
                   </a>
                 </div>
-                <Link href="/request-service" className="block pt-2">
-                  <Button variant="outline" className="w-full border-[#0a4052] font-bold text-[#0a4052] hover:bg-[#f0f7fb]">
+                <Button variant="outline" className="w-full border-[#0a4052] font-bold text-[#0a4052] hover:bg-[#f0f7fb]" asChild><Link href="/request-service" className="block pt-2">
                     Log Breakdown Visit <ArrowUpRight className="ml-1.5 h-4 w-4" />
-                  </Button>
-                </Link>
+                  </Link></Button>
               </CardContent>
             </Card>
 

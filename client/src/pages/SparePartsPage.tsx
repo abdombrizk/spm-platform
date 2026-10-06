@@ -47,16 +47,12 @@ export default function SparePartsPage() {
                 SPM sources, tests, and delivers genuine replacement parts for leading global medical imaging manufacturers. Every part request is reviewed by biomedical engineering specialists with serial verification and warranty protection.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Link href="/request-a-quote?type=spare_part">
-                  <Button className="h-12 bg-[#f36b21] px-6 text-sm font-bold text-white shadow-md hover:bg-[#d95316]">
+                <Button className="h-12 bg-[#f36b21] px-6 text-sm font-bold text-white shadow-md hover:bg-[#d95316]" asChild><Link href="/request-a-quote?type=spare_part">
                     Request a Spare Part Quote <ArrowUpRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
-                <Link href="/request-service">
-                  <Button variant="outline" className="h-12 border-[#0a4052] px-6 text-sm font-bold text-[#0a4052] hover:bg-[#f0f7fb]">
+                  </Link></Button>
+                <Button variant="outline" className="h-12 border-[#0a4052] px-6 text-sm font-bold text-[#0a4052] hover:bg-[#f0f7fb]" asChild><Link href="/request-service">
                     Emergency Maintenance Call <Wrench className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
+                  </Link></Button>
               </div>
             </div>
           </div>
@@ -118,11 +114,9 @@ export default function SparePartsPage() {
                     {currentBrand.introduction || "Authentic parts supplied with traceable manufacturing source and tested prior to deployment."}
                   </p>
                 </div>
-                <Link href={`/request-a-quote?custom_notes=${encodeURIComponent(`Parts inquiry for ${currentBrand.name}`)}`}>
-                  <Button className="shrink-0 bg-[#0a4052] text-xs font-bold text-white hover:bg-[#07303e]">
+                <Button className="shrink-0 bg-[#0a4052] text-xs font-bold text-white hover:bg-[#07303e]" asChild><Link href={`/request-a-quote?custom_notes=${encodeURIComponent(`Parts inquiry for ${currentBrand.name}`)}`}>
                     Inquire About Unlisted {currentBrand.name} Part
-                  </Button>
-                </Link>
+                  </Link></Button>
               </div>
             </div>
           ) : null}
@@ -136,11 +130,9 @@ export default function SparePartsPage() {
                 <Boxes className="mx-auto h-12 w-12 text-[#94a3b8]" />
                 <h4 className="mt-4 text-base font-bold text-[#0a4052]">No parts matching your search</h4>
                 <p className="mt-2 text-sm text-[#64748b]">We source unlisted and hard-to-find components directly from approved suppliers.</p>
-                <Link href="/request-a-quote?type=spare_part" className="mt-5 inline-block">
-                  <Button className="bg-[#f36b21] text-xs font-bold text-white hover:bg-[#d95316]">
+                <Button className="bg-[#f36b21] text-xs font-bold text-white hover:bg-[#d95316]" asChild><Link href="/request-a-quote?type=spare_part" className="mt-5 inline-block">
                     Submit Custom Part Sourcing Request
-                  </Button>
-                </Link>
+                  </Link></Button>
               </div>
             ) : (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -174,16 +166,14 @@ export default function SparePartsPage() {
                       </p>
 
                       <div className="mt-5 border-t border-[#f1f5f9] pt-4">
-                        <Link
+                        <Button className="w-full bg-[#f36b21] text-xs font-bold text-white hover:bg-[#d95316]" asChild><Link
                           href={`/request-a-quote?custom_notes=${encodeURIComponent(
                             `Spare Part Request: ${part.name} (Part Number: ${part.partNumber || "N/A"}) for ${currentBrand?.name || "Equipment"}`
                           )}`}
                           className="w-full"
                         >
-                          <Button className="w-full bg-[#f36b21] text-xs font-bold text-white hover:bg-[#d95316]">
                             Request Quote for this Part <ArrowUpRight className="ml-1.5 h-3.5 w-3.5" />
-                          </Button>
-                        </Link>
+                          </Link></Button>
                       </div>
                     </CardContent>
                   </Card>

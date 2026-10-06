@@ -391,11 +391,9 @@ export default function ItalrayProductExperience({ product }: { product: Product
               >
                 <Download className="h-3.5 w-3.5" /> Brochure
               </a>
-              <Link href={quoteHref}>
-                <Button size="sm" className="h-8 rounded-xl bg-[#c2410c] px-3.5 text-xs font-bold text-white hover:bg-[#9a3412]">
+              <Button size="sm" className="h-8 rounded-xl bg-[#c2410c] px-3.5 text-xs font-bold text-white hover:bg-[#9a3412]" asChild><Link href={quoteHref}>
                   Request Quote <ArrowUpRight className="ml-1 h-3.5 w-3.5" />
-                </Button>
-              </Link>
+                </Link></Button>
             </div>
           </div>
         </div>
@@ -422,16 +420,12 @@ export default function ItalrayProductExperience({ product }: { product: Product
                 </p>
 
                 <div className="mt-8 flex flex-wrap items-center gap-4">
-                  <Link href={quoteHref}>
-                    <Button size="lg" className="h-12 rounded-xl bg-[#c2410c] px-6 font-bold text-white shadow-md shadow-[#c2410c]/20 hover:bg-[#9a3412]">
+                  <Button size="lg" className="h-12 rounded-xl bg-[#c2410c] px-6 font-bold text-white shadow-md shadow-[#c2410c]/20 hover:bg-[#9a3412]" asChild><Link href={quoteHref}>
                       Request Hospital Quotation <ArrowUpRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-                  <a href={activeMeta.brochureUrl} target="_blank" rel="noreferrer">
-                    <Button size="lg" variant="outline" className="h-12 rounded-xl border-[#0a4052] font-bold text-[#0a4052] hover:bg-[#eaf4fa]">
+                    </Link></Button>
+                  <Button size="lg" variant="outline" className="h-12 rounded-xl border-[#0a4052] font-bold text-[#0a4052] hover:bg-[#eaf4fa]" asChild><a href={activeMeta.brochureUrl} target="_blank" rel="noreferrer">
                       <Download className="mr-2 h-4 w-4" /> Download PDF Specifications
-                    </Button>
-                  </a>
+                    </a></Button>
                 </div>
               </div>
 
@@ -1099,11 +1093,9 @@ export default function ItalrayProductExperience({ product }: { product: Product
                   </div>
 
                   <div className="mt-8">
-                    <Link href="/maintenance-contracts">
-                      <Button className="w-full h-12 rounded-xl bg-[#c2410c] text-sm font-bold text-white shadow-lg hover:bg-[#9a3412]">
+                    <Button className="w-full h-12 rounded-xl bg-[#c2410c] text-sm font-bold text-white shadow-lg hover:bg-[#9a3412]" asChild><Link href="/maintenance-contracts">
                         Explore Annual Maintenance Contracts (AMC)
-                      </Button>
-                    </Link>
+                      </Link></Button>
                   </div>
                 </div>
               </div>
@@ -1130,11 +1122,9 @@ export default function ItalrayProductExperience({ product }: { product: Product
                   </p>
 
                   <div className="mt-8 flex flex-wrap gap-4">
-                    <Link href={quoteHref}>
-                      <Button size="lg" className="h-12 rounded-xl bg-[#c2410c] px-6 text-sm font-bold text-white shadow-md hover:bg-[#9a3412]">
+                    <Button size="lg" className="h-12 rounded-xl bg-[#c2410c] px-6 text-sm font-bold text-white shadow-md hover:bg-[#9a3412]" asChild><Link href={quoteHref}>
                         Request Project Quotation <ArrowUpRight className="ml-2 h-4 w-4" />
-                      </Button>
-                    </Link>
+                      </Link></Button>
                     <a
                       href="https://wa.me/201281729000?text=Hello%20SPM,%20I%20would%20like%20to%20inquire%20about%20the%20Italray%20medical%20imaging%20systems."
                       target="_blank"

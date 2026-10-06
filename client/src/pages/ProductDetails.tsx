@@ -73,9 +73,7 @@ export default function ProductDetails() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-[#64748b]">The requested model or equipment record does not exist or has been updated.</p>
-              <Link href="/catalogue" className="mt-6 inline-block">
-                <Button className="bg-[#0f6fae] text-white">Return to Equipment Catalogue</Button>
-              </Link>
+              <Button className="bg-[#0f6fae] text-white" asChild><Link href="/catalogue" className="mt-6 inline-block">Return to Equipment Catalogue</Link></Button>
             </CardContent>
           </Card>
         </div>
@@ -208,23 +206,19 @@ export default function ProductDetails() {
 
               {/* Requirement 3: Request Quote CTA passed with product slug and equipment details */}
               <div className="mt-8 flex flex-wrap gap-4">
-                <Link
+                <Button className="h-12 w-full bg-[#f36b21] px-8 text-sm font-bold text-white shadow-md transition hover:bg-[#d95316] hover:shadow-lg active:scale-95 sm:w-auto" asChild><Link
                   href={`/request-a-quote?product=${encodeURIComponent(item.slug)}&equipment=${encodeURIComponent(data.name)}&brand=${encodeURIComponent(data.brand || data.manufacturer || "")}&model=${encodeURIComponent(data.modelNumber || "")}`}
                   className="w-full sm:w-auto"
                 >
-                  <Button className="h-12 w-full bg-[#f36b21] px-8 text-sm font-bold text-white shadow-md transition hover:bg-[#d95316] hover:shadow-lg active:scale-95 sm:w-auto">
                     <Mail className="mr-2 h-4 w-4" /> Request a Formal Quotation
-                  </Button>
-                </Link>
+                  </Link></Button>
 
-                <Link
+                <Button variant="outline" className="h-12 w-full border-[#0a4052] px-6 text-sm font-bold text-[#0a4052] hover:bg-[#f0f7fb] sm:w-auto" asChild><Link
                   href={`/request-service?equipment=${encodeURIComponent(data.name)}&manufacturer=${encodeURIComponent(data.manufacturer || data.brand || "")}&model=${encodeURIComponent(data.modelNumber || "")}`}
                   className="w-full sm:w-auto"
                 >
-                  <Button variant="outline" className="h-12 w-full border-[#0a4052] px-6 text-sm font-bold text-[#0a4052] hover:bg-[#f0f7fb] sm:w-auto">
                     <Wrench className="mr-2 h-4 w-4" /> Schedule Service / Installation
-                  </Button>
-                </Link>
+                  </Link></Button>
               </div>
 
               {/* Key metadata grid */}
@@ -350,11 +344,9 @@ export default function ProductDetails() {
                       </div>
                     </div>
                     {data.brochureUrl ? (
-                      <a href={data.brochureUrl} target="_blank" rel="noreferrer">
-                        <Button size="sm" variant="outline" className="h-8 text-xs font-bold text-[#0f6fae]">
+                      <Button size="sm" variant="outline" className="h-8 text-xs font-bold text-[#0f6fae]" asChild><a href={data.brochureUrl} target="_blank" rel="noreferrer">
                           <Download className="mr-1 h-3.5 w-3.5" /> Download
-                        </Button>
-                      </a>
+                        </a></Button>
                     ) : (
                       <Button
                         size="sm"
@@ -379,11 +371,9 @@ export default function ProductDetails() {
                       </div>
                     </div>
                     {data.datasheetUrl ? (
-                      <a href={data.datasheetUrl} target="_blank" rel="noreferrer">
-                        <Button size="sm" variant="outline" className="h-8 text-xs font-bold text-[#0f6fae]">
+                      <Button size="sm" variant="outline" className="h-8 text-xs font-bold text-[#0f6fae]" asChild><a href={data.datasheetUrl} target="_blank" rel="noreferrer">
                           <Download className="mr-1 h-3.5 w-3.5" /> Download
-                        </Button>
-                      </a>
+                        </a></Button>
                     ) : (
                       <Button
                         size="sm"
@@ -408,11 +398,9 @@ export default function ProductDetails() {
                       </div>
                     </div>
                     {data.regulatoryDocumentsPublic && data.regulatoryDocumentUrl ? (
-                      <a href={data.regulatoryDocumentUrl} target="_blank" rel="noreferrer">
-                        <Button size="sm" variant="outline" className="h-8 text-xs font-bold text-[#0f6fae]">
+                      <Button size="sm" variant="outline" className="h-8 text-xs font-bold text-[#0f6fae]" asChild><a href={data.regulatoryDocumentUrl} target="_blank" rel="noreferrer">
                           <Download className="mr-1 h-3.5 w-3.5" /> Download
-                        </Button>
-                      </a>
+                        </a></Button>
                     ) : (
                       <Button
                         size="sm"

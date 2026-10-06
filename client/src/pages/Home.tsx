@@ -247,25 +247,21 @@ export default function Home() {
 
               {/* Dual Action CTAs */}
               <div className="mt-8 flex flex-wrap items-center gap-4">
-                <Link href={content["hero.primary.url"] || fallback["hero.primary.url"]}>
-                  <Button
+                <Button
                     size="lg"
                     className="h-13 rounded-xl bg-[#c2410c] px-8 text-sm font-bold text-white shadow-xl shadow-[#c2410c]/25 transition-all hover:-translate-y-0.5 hover:bg-[#9a3412] hover:shadow-2xl active:scale-97"
-                  >
+                   asChild><Link href={content["hero.primary.url"] || fallback["hero.primary.url"]}>
                     {content["hero.primary.label"] || fallback["hero.primary.label"]}
                     <ArrowUpRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
-                <Link href={content["hero.secondary.url"] || fallback["hero.secondary.url"]}>
-                  <Button
+                  </Link></Button>
+                <Button
                     size="lg"
                     variant="outline"
                     className="h-13 rounded-xl border-2 border-white/70 bg-white/10 px-8 text-sm font-bold text-white backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:bg-white/20 active:scale-97"
-                  >
+                   asChild><Link href={content["hero.secondary.url"] || fallback["hero.secondary.url"]}>
                     {content["hero.secondary.label"] || fallback["hero.secondary.label"]}
                     <ArrowUpRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
+                  </Link></Button>
               </div>
 
               {/* Value Badges */}
@@ -388,11 +384,9 @@ export default function Home() {
                   Immediate dispatch across Egypt and the MENA region. Every replacement component is tested, serial-number verified, and backed by SPM engineering warranty.
                 </p>
               </div>
-              <Link href="/spare-parts">
-                <Button className="h-12 shrink-0 rounded-xl bg-[#0a4052] px-6 text-sm font-bold text-white shadow-md hover:bg-[#063545]">
+              <Button className="h-12 shrink-0 rounded-xl bg-[#0a4052] px-6 text-sm font-bold text-white shadow-md hover:bg-[#063545]" asChild><Link href="/spare-parts">
                   Browse Spare Parts <ArrowUpRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
+                </Link></Button>
             </div>
 
             {/* Manufacturer logo marquee — logos stay controlled from the CMS */}
@@ -510,16 +504,12 @@ export default function Home() {
                     SPM is growing. We seek ambitious biomedical engineers, field imaging technicians, and quality specialists dedicated to clinical uptime and patient safety.
                   </p>
                   <div className="mt-8 flex flex-wrap gap-4">
-                    <Link href="/careers">
-                      <Button size="lg" className="h-12 rounded-xl bg-[#c2410c] px-7 text-sm font-bold text-white shadow-lg hover:bg-[#9a3412]">
+                    <Button size="lg" className="h-12 rounded-xl bg-[#c2410c] px-7 text-sm font-bold text-white shadow-lg hover:bg-[#9a3412]" asChild><Link href="/careers">
                         Explore Open Roles <ArrowUpRight className="ml-2 h-4 w-4" />
-                      </Button>
-                    </Link>
-                    <Link href="/contact?subject=Careers">
-                      <Button size="lg" variant="outline" className="h-12 rounded-xl border-white/40 bg-transparent px-7 text-sm font-bold text-white hover:bg-white/10">
+                      </Link></Button>
+                    <Button size="lg" variant="outline" className="h-12 rounded-xl border-white/40 bg-transparent px-7 text-sm font-bold text-white hover:bg-white/10" asChild><Link href="/contact?subject=Careers">
                         Submit Your CV <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
-                    </Link>
+                      </Link></Button>
                   </div>
                 </div>
 
@@ -559,16 +549,12 @@ export default function Home() {
                 Every request journey is structured to gather exact equipment context, preserve confidentiality, and route directly to the designated department.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Link href="/request-service">
-                  <Button className="h-12 rounded-xl bg-[#0a4052] px-6 text-sm font-bold text-white shadow-md hover:bg-[#063545]">
+                <Button className="h-12 rounded-xl bg-[#0a4052] px-6 text-sm font-bold text-white shadow-md hover:bg-[#063545]" asChild><Link href="/request-service">
                     Start a Service Request <ArrowUpRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
-                <Link href="/maintenance-contracts">
-                  <Button variant="outline" className="h-12 rounded-xl border-[#0a4052] text-[#0a4052] hover:bg-[#0a4052]/5">
+                  </Link></Button>
+                <Button variant="outline" className="h-12 rounded-xl border-[#0a4052] text-[#0a4052] hover:bg-[#0a4052]/5" asChild><Link href="/maintenance-contracts">
                     Annual Contracts
-                  </Button>
-                </Link>
+                  </Link></Button>
               </div>
             </div>
 
@@ -604,16 +590,12 @@ export default function Home() {
               Choose the journey that matches your technical need. Attach equipment specs, photos or error descriptions along the way.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
-              <Link href="/request-a-quote">
-                <Button size="lg" className="h-13 rounded-xl bg-[#c2410c] px-8 text-sm font-bold text-white shadow-lg shadow-[#c2410c]/20 hover:bg-[#9a3412]">
+              <Button size="lg" className="h-13 rounded-xl bg-[#c2410c] px-8 text-sm font-bold text-white shadow-lg shadow-[#c2410c]/20 hover:bg-[#9a3412]" asChild><Link href="/request-a-quote">
                   Request a Quote <ArrowUpRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-              <Link href="/request-service">
-                <Button size="lg" variant="outline" className="h-13 rounded-xl border-2 border-[#0a4052] bg-white px-8 text-sm font-bold text-[#0a4052] hover:bg-[#eaf4fa]">
+                </Link></Button>
+              <Button size="lg" variant="outline" className="h-13 rounded-xl border-2 border-[#0a4052] bg-white px-8 text-sm font-bold text-[#0a4052] hover:bg-[#eaf4fa]" asChild><Link href="/request-service">
                   Request Service <ArrowUpRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
+                </Link></Button>
             </div>
           </div>
         </section>

@@ -473,9 +473,7 @@ export default function ProductManager() {
         <ShieldAlert className="mx-auto h-12 w-12 text-amber-500" />
         <h2 className="mt-4 text-xl font-bold">Catalogue management permission required</h2>
         <p className="mt-2 text-sm text-slate-500">The Owner has not granted this account access to manage equipment or parts.</p>
-        <Link href="/owner" className="mt-6 inline-block">
-          <Button variant="outline">Back to dashboard</Button>
-        </Link>
+        <Button variant="outline" asChild><Link href="/owner" className="mt-6 inline-block">Back to dashboard</Link></Button>
       </div>
     );
   }
@@ -492,16 +490,12 @@ export default function ProductManager() {
             <h1 className="text-lg font-bold text-[#0a4052]">Products, Parts & Navigation Workspace</h1>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/catalogue">
-              <Button size="sm" variant="outline" className="text-xs">
+            <Button size="sm" variant="outline" className="text-xs" asChild><Link href="/catalogue">
                 View Public Catalogue <ArrowUpRight className="ml-1 h-3.5 w-3.5" />
-              </Button>
-            </Link>
-            <Link href="/spare-parts">
-              <Button size="sm" variant="outline" className="text-xs">
+              </Link></Button>
+            <Button size="sm" variant="outline" className="text-xs" asChild><Link href="/spare-parts">
                 View Spare Parts Page <ArrowUpRight className="ml-1 h-3.5 w-3.5" />
-              </Button>
-            </Link>
+              </Link></Button>
           </div>
         </div>
       </header>

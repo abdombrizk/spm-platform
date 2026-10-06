@@ -294,7 +294,7 @@ export default function MarketingItalrayWorkspace() {
               <CardDescription className="mt-1 max-w-3xl text-white/75">Manage every visible section, upload media beside each URL, add multiple clinical images or videos, and publish a Ziehm-style experience without changing the template structure.</CardDescription>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Link href={`/store/products/${selectedHandle}`} target="_blank"><Button variant="outline" size="sm" className="gap-2 border-white/30 bg-white/10 text-white hover:bg-white/20"><ExternalLink className="h-4 w-4" /> View live</Button></Link>
+              <Button variant="outline" size="sm" className="gap-2 border-white/30 bg-white/10 text-white hover:bg-white/20" asChild><Link href={`/store/products/${selectedHandle}`} target="_blank"><ExternalLink className="h-4 w-4" /> View live</Link></Button>
               <Button onClick={save} disabled={saveMutation.isPending} className="gap-2 bg-[#d95316] text-white hover:bg-[#b8430e]">{saveMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Publish changes</Button>
             </div>
           </div>

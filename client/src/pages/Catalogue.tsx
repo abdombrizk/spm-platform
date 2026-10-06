@@ -213,16 +213,12 @@ export default function Catalogue() {
                 Explore SPM’s complete equipment portfolio, from mobile C-Arms and digital radiography to fluoroscopy, mammography and precision surgical technology.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-3">
-                <a href="#catalogue-grid">
-                  <Button size="lg" className="h-12 rounded-xl bg-[#c2410c] px-6 text-sm font-bold text-white shadow-xl shadow-[#c2410c]/20 hover:bg-[#9a3412]">
+                <Button size="lg" className="h-12 rounded-xl bg-[#c2410c] px-6 text-sm font-bold text-white shadow-xl shadow-[#c2410c]/20 hover:bg-[#9a3412]" asChild><a href="#catalogue-grid">
                     Browse all systems <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </a>
-                <Link href="/request-a-quote">
-                  <Button size="lg" variant="outline" className="h-12 rounded-xl border-white/40 bg-white/10 px-6 text-sm font-bold text-white hover:bg-white/20">
+                  </a></Button>
+                <Button size="lg" variant="outline" className="h-12 rounded-xl border-white/40 bg-white/10 px-6 text-sm font-bold text-white hover:bg-white/20" asChild><Link href="/request-a-quote">
                     Build a project quote <ArrowUpRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
+                  </Link></Button>
               </div>
               <div className="mt-10 grid max-w-xl grid-cols-2 gap-3 sm:grid-cols-4">
                 <div className="rounded-2xl border border-white/10 bg-white/10 p-3 backdrop-blur-sm">
@@ -413,11 +409,9 @@ export default function Catalogue() {
                       </div>
                     ) : null}
                     <div className="mt-auto pt-6">
-                      <Link href={item.href}>
-                        <Button className={`w-full rounded-xl text-sm font-bold text-white shadow-xs ${item.statusTone === "amber" ? "bg-[#c2410c] hover:bg-[#9a3412]" : "bg-[#0a4052] hover:bg-[#063545]"}`}>
+                      <Button className={`w-full rounded-xl text-sm font-bold text-white shadow-xs ${item.statusTone === "amber" ? "bg-[#c2410c] hover:bg-[#9a3412]" : "bg-[#0a4052] hover:bg-[#063545]"}`} asChild><Link href={item.href}>
                           {item.cta} <ArrowUpRight className="ml-2 h-4 w-4" />
-                        </Button>
-                      </Link>
+                        </Link></Button>
                     </div>
                   </CardContent>
                 </Card>

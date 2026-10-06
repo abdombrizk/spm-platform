@@ -18,7 +18,7 @@ export default function ServiceDetails() {
     return <SiteChrome><main className="mx-auto max-w-7xl space-y-8 px-5 py-16 lg:px-8"><Skeleton className="h-5 w-40" /><Skeleton className="h-14 w-2/3" /><div className="grid gap-8 lg:grid-cols-2"><Skeleton className="aspect-square rounded-3xl" /><Skeleton className="h-96 rounded-3xl" /></div></main></SiteChrome>;
   }
   if (query.error || !query.data) {
-    return <SiteChrome><main className="flex min-h-[60vh] items-center justify-center px-5 py-16"><Card className="w-full max-w-lg"><CardHeader><CardTitle>Service not found</CardTitle></CardHeader><CardContent><p className="text-sm text-[#617180]">We could not load this service. Browse the service catalogue or contact the SPM team.</p><Link href="/services"><Button className="mt-6">Back to services</Button></Link></CardContent></Card></main></SiteChrome>;
+    return <SiteChrome><main className="flex min-h-[60vh] items-center justify-center px-5 py-16"><Card className="w-full max-w-lg"><CardHeader><CardTitle>Service not found</CardTitle></CardHeader><CardContent><p className="text-sm text-[#617180]">We could not load this service. Browse the service catalogue or contact the SPM team.</p><Button className="mt-6" asChild><Link href="/services">Back to services</Link></Button></CardContent></Card></main></SiteChrome>;
   }
 
   const item = query.data;

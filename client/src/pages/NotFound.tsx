@@ -17,7 +17,7 @@ export default function NotFound() {
             <h1 className="mt-3 text-5xl font-extrabold text-[#0a4052]">404</h1>
             <h2 className="mt-2 text-xl font-bold text-[#17212b]">Page not found</h2>
             <p className="mt-4 leading-7 text-[#617180]">This page may have moved or the address may be incomplete. Try the main navigation or browse the equipment catalogue.</p>
-            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row"><Link href="/"><Button className="w-full bg-[#0a4052] text-white hover:bg-[#063545] sm:w-auto"><Home className="mr-2 h-4 w-4" aria-hidden="true" />Go home</Button></Link><Link href="/catalogue"><Button variant="outline" className="w-full border-[#0a4052] text-[#0a4052] sm:w-auto"><Search className="mr-2 h-4 w-4" aria-hidden="true" />Browse catalogue</Button></Link></div>
+            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row"><Button className="w-full bg-[#0a4052] text-white hover:bg-[#063545] sm:w-auto" asChild><Link href="/"><Home className="mr-2 h-4 w-4" aria-hidden="true" />Go home</Link></Button><Button variant="outline" className="w-full border-[#0a4052] text-[#0a4052] sm:w-auto" asChild><Link href="/catalogue"><Search className="mr-2 h-4 w-4" aria-hidden="true" />Browse catalogue</Link></Button></div>
           </CardContent>
         </Card>
       </main>
