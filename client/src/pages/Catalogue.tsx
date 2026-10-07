@@ -26,6 +26,7 @@ import SiteChrome from "@/components/SiteChrome";
 import SEOHead from "@/components/SEOHead";
 import { trpc } from "@/lib/trpc";
 import type { Product as ShopifyProduct } from "@shared/commerce/types";
+import { ITALRAY_CATALOG_REGISTRY } from "@shared/commerce/italrayMeta";
 
 const availabilityLabels: Record<string, string> = {
   available: "Available for quotation",
@@ -87,15 +88,16 @@ function toCmsItem(item: CmsProduct): CatalogueItem {
 
 function toShopifyItem(product: ShopifyProduct): CatalogueItem {
   const isQuoteOnly = product.tags.includes("Quote Only");
+  const brandedMeta = product.vendor === "Italray" ? ITALRAY_CATALOG_REGISTRY[product.handle] : undefined;
   return {
     id: `shopify-${product.id}`,
     kind: "shopify",
     href: `/store/products/${product.handle}`,
-    title: product.title,
+    title: brandedMeta?.title || product.title,
     brand: product.vendor || "SPM Storefront",
-    category: product.productType || "Medical Equipment",
+    category: brandedMeta?.badge.split("•")[0]?.trim() || product.productType || "Medical Equipment",
     model: product.handle,
-    description: product.description || "Configured medical imaging equipment supported by SPM engineering and manufacturer documentation.",
+    description: brandedMeta?.leadParagraph || product.description || "Configured medical imaging equipment supported by SPM engineering and manufacturer documentation.",
     image: product.images[0]?.url,
     status: isQuoteOnly ? "Request a project quote" : product.variants[0]?.availableForSale ? "Ready for online checkout" : "Contact SPM team",
     statusTone: isQuoteOnly ? "amber" : product.variants[0]?.availableForSale ? "green" : "slate",
