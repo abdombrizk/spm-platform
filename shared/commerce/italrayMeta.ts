@@ -23,6 +23,9 @@ export type ItalrayProductMeta = {
     category: string;
     image: string;
     description: string;
+    mediaType?: "image" | "video";
+    textOverlay?: string;
+    alt?: string;
   }>;
   upgrades: {
     hardware: Array<{
@@ -175,11 +178,11 @@ export const ITALRAY_CATALOG_REGISTRY: Record<string, ItalrayProductMeta> = {
       "Modern radiology departments face increasing demands for cost efficiency, high patient throughput, and clinical flexibility without compromising image quality. The Italray Clinodigit OMEGA is a revolutionary multifunctional digital radiography and radio-fluoroscopy system built around an innovative tilting U-arm geometry and a single high-resolution dynamic flat-panel detector.",
     secondaryParagraph:
       "Representing the pinnacle of Italray's engineering heritage, Clinodigit OMEGA performs all general radiography studies (chest, spine, extremities, pelvis) and all radio-fluoroscopy examinations (gastrointestinal, myelography, arthrography, interventional) on a single compact system. Backed by SPM's certified engineering service throughout Egypt, it transforms departmental productivity while reducing room preparation costs.",
-    brochureUrl: "/manus-storage/CLINODIGITOMEGA_eng_01_print_ae4c9fc5.pdf",
+    brochureUrl: "/manus-storage/CLINODIGIT-OMEGA-official_fca26e74.pdf",
     brochureTitle: "Italray Clinodigit OMEGA Official Brochure",
     readingMinutes: 5,
-    heroImage: "https://cdn.shopify.com/s/files/1/1002/9672/0673/files/CynPHMVwZLyWxJZE.jpg?v=1790775792",
-    descriptionImage: "https://cdn.shopify.com/s/files/1/1002/9672/0673/files/luCkupRtQevzQFoC.jpg?v=1790775850",
+    heroImage: "/manus-storage/clinodigit-omega-hero_dc3ed0c5.jpg",
+    descriptionImage: "/manus-storage/clinodigit-omega-hero_dc3ed0c5.jpg",
     highlights: [
       "Dynamic 43×43 cm Flat-Panel Detector for both radiography and fluoroscopy",
       "Fully motorized U-arm with variable SID from 100 cm up to 180 cm",
@@ -239,29 +242,31 @@ export const ITALRAY_CATALOG_REGISTRY: Record<string, ItalrayProductMeta> = {
     ],
     clinicalGallery: [
       {
-        title: "Full Thoracic & Chest Radiography at 180 cm SID",
-        category: "General Radiography",
-        image: "https://cdn.shopify.com/s/files/1/1002/9672/0673/files/CynPHMVwZLyWxJZE.jpg?v=1790775792",
-        description: "Zero magnification artifact with optimal focal distance and anti-scatter grid.",
+        title: "Clinodigit OMEGA System Overview",
+        category: "Product Video",
+        image: "/manus-storage/clinodigit-omega-system_de00fd72.mp4",
+        description: "Official Clinodigit OMEGA system overview supplied by Italray.",
+        mediaType: "video",
+        textOverlay: "One dynamic detector. Radiography + fluoroscopy.",
+        alt: "Clinodigit OMEGA system overview video",
       },
       {
-        title: "Upper GI & Barium Swallow Dynamic Fluoroscopy",
-        category: "Radio-Fluoroscopy",
-        image: "https://cdn.shopify.com/s/files/1/1002/9672/0673/files/wejcrXXYEfSGIMQj.jpg?v=1790775811",
-        description: "High frame rate dynamic tracking of swallowing mechanisms at low radiation dose.",
+        title: "Clinodigit OMEGA Product View",
+        category: "System Overview",
+        image: "/manus-storage/clinodigit-omega-hero_dc3ed0c5.jpg",
+        description: "Official Clinodigit OMEGA product image selected as the Hero visual.",
+        textOverlay: "Multifunctional DR + DRF",
+        alt: "Italray Clinodigit OMEGA digital radiography and fluoroscopy system",
       },
-      {
-        title: "Weight-Bearing Spine & Lower Limb Stitching",
-        category: "Orthopedic Imaging",
-        image: "https://cdn.shopify.com/s/files/1/1002/9672/0673/files/luCkupRtQevzQFoC.jpg?v=1790775850",
-        description: "Automated multi-exposure acquisition with seamless software image fusion.",
-      },
-      {
-        title: "Stretcher & Wheelchair Trauma Exams",
-        category: "Emergency Medicine",
-        image: "https://cdn.shopify.com/s/files/1/1002/9672/0673/files/YAxKxvwVnZrleBJR.jpg?v=1790775779",
-        description: "Patient remains on their stretcher while the U-arm glides into alignment.",
-      },
+      { title: "Thorax PA", category: "General Radiography", image: "/manus-storage/thorax_PA_redacted_873e12bf.jpg", description: "Anonymized PA thorax radiograph for general radiography workflow illustration.", alt: "Anonymized PA thorax radiograph" },
+      { title: "Thorax Lateral", category: "General Radiography", image: "/manus-storage/thorax_LAT_redacted_b9c45a90.jpg", description: "Anonymized lateral thorax radiograph for general radiography workflow illustration.", alt: "Anonymized lateral thorax radiograph" },
+      { title: "Full-Spine Stitching AP", category: "Orthopedic Imaging", image: "/manus-storage/stitching_spineAP_redacted_877b67a8.jpg", description: "Anonymized full-spine stitching study for long-length imaging workflow illustration.", alt: "Anonymized full-spine stitching radiograph" },
+      { title: "Pelvis AP", category: "General Radiography", image: "/manus-storage/pevis_AP_redacted_379380a5.jpg", description: "Anonymized AP pelvis radiograph representing a general radiography workflow.", alt: "Anonymized AP pelvis radiograph" },
+      { title: "Knee AP", category: "Orthopedics", image: "/manus-storage/knee_AP_redacted_03bdbde3.jpg", description: "Anonymized AP knee projection representing orthopedic imaging.", alt: "Anonymized AP knee radiograph" },
+      { title: "Knee Lateral", category: "Orthopedics", image: "/manus-storage/knee_LAT_redacted_cd2d4d32.jpg", description: "Anonymized lateral knee projection representing orthopedic imaging.", alt: "Anonymized lateral knee radiograph" },
+      { title: "Knee Rosenberg", category: "Orthopedics", image: "/manus-storage/knee_ROSEMBERG_redacted_ef5d0152.jpg", description: "Anonymized bilateral knee Rosenberg projection for weight-bearing workflow illustration.", alt: "Anonymized bilateral knee Rosenberg radiograph" },
+      { title: "Skull PA", category: "General Radiography", image: "/manus-storage/skull_PA_redacted_6a87efa1.jpg", description: "Anonymized skull PA study for general radiography workflow illustration.", alt: "Anonymized skull PA radiograph" },
+      { title: "Skull Lateral", category: "General Radiography", image: "/manus-storage/skull_LAT_redacted_4b25c302.jpg", description: "Anonymized skull lateral study for general radiography workflow illustration.", alt: "Anonymized skull lateral radiograph" },
     ],
     upgrades: {
       hardware: [

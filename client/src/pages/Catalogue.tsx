@@ -56,6 +56,7 @@ type CatalogueItem = {
   statusTone: "green" | "amber" | "slate";
   specs: string[];
   badge: string;
+  updated: boolean;
   cta: string;
 };
 
@@ -82,6 +83,7 @@ function toCmsItem(item: CmsProduct): CatalogueItem {
     statusTone: status === "available" ? "green" : status === "discontinued" ? "slate" : "amber",
     specs: [specs.generatorPower, specs.detectorType, specs.tubeVoltage].filter(Boolean).slice(0, 3),
     badge: data.requestQuote ? "Project quotation" : "SPM catalogue",
+    updated: false,
     cta: "View technical details",
   };
 }
@@ -102,7 +104,8 @@ function toShopifyItem(product: ShopifyProduct): CatalogueItem {
     status: isQuoteOnly ? "Request a project quote" : product.variants[0]?.availableForSale ? "Ready for online checkout" : "Contact SPM team",
     statusTone: isQuoteOnly ? "amber" : product.variants[0]?.availableForSale ? "green" : "slate",
     specs: product.tags.filter(tag => tag !== "Quote Only").slice(0, 3),
-    badge: isQuoteOnly ? "Configured system" : "Shopify storefront",
+    badge: brandedMeta?.brochureUrl?.startsWith("/manus-storage/") ? "Updated documentation" : isQuoteOnly ? "Configured system" : "Shopify storefront",
+    updated: Boolean(brandedMeta?.brochureUrl?.startsWith("/manus-storage/")),
     cta: isQuoteOnly ? "Request a quote" : "View store details",
   };
 }
@@ -121,6 +124,7 @@ export default function Catalogue() {
   const [selectedBrand, setSelectedBrand] = useState(initialBrandParam.toLowerCase());
   const [searchTerm, setSearchTerm] = useState(initialSearchParam);
   const [selectedSort, setSelectedSort] = useState(initialSortParam);
+  const [compareIds, setCompareIds] = useState<string[]>([]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -187,6 +191,11 @@ export default function Catalogue() {
 
   const hasActiveFilters = selectedCategory !== "all" || selectedBrand !== "all" || searchTerm.trim() !== "";
   const isLoading = query.isLoading || storeQuery.isLoading;
+  const compareItems = products.filter(item => compareIds.includes(item.id));
+  const toggleCompare = (id: string) => {
+    setCompareIds(current => current.includes(id) ? current.filter(itemId => itemId !== id) : current.length < 2 ? [...current, id] : current);
+  };
+  const clearCompare = () => setCompareIds([]);
 
   return (
     <SiteChrome>
@@ -372,6 +381,27 @@ export default function Catalogue() {
             </div>
             <p className="text-sm font-semibold text-[#64748b]">Showing <span className="text-[#0a4052]">{products.length}</span> of {allItems.length} systems</p>
           </div>
+          <div className="mb-8 rounded-3xl border border-[#bcdde2] bg-[#eaf4fa] p-5 sm:p-6">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[.18em] text-[#0f6fae]"><Layers className="h-4 w-4" /> Quick comparison</div>
+                <p className="mt-2 text-sm font-semibold text-[#0a4052]">Select up to two systems to compare their commercial and clinical overview.</p>
+                <p className="mt-1 text-xs text-[#617180]">{compareItems.length === 0 ? "Choose Compare on any two cards below." : `${compareItems.length} of 2 systems selected.`}</p>
+              </div>
+              {compareItems.length > 0 ? <Button type="button" variant="outline" onClick={clearCompare} className="rounded-xl border-[#9ecbd3] bg-white text-xs font-bold text-[#0a4052] hover:bg-white/70"><X className="mr-1.5 h-4 w-4" /> Clear selection</Button> : null}
+            </div>
+            {compareItems.length === 2 ? (
+              <div className="mt-5 grid gap-3 border-t border-[#c7e2e6] pt-5 md:grid-cols-2">
+                {compareItems.map(item => (
+                  <div key={item.id} className="rounded-2xl border border-white bg-white p-4 shadow-sm">
+                    <div className="flex items-start justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[.16em] text-[#0f6fae]">{item.brand}</p><h3 className="mt-1 text-base font-extrabold text-[#0a4052]">{item.title}</h3></div><Badge className="bg-[#0a4052] text-[10px] text-white">{item.category}</Badge></div>
+                    <div className="mt-4 grid gap-2 text-xs text-[#617180] sm:grid-cols-2"><p><span className="font-bold text-[#0a4052]">Model:</span> {item.model || "Configured on request"}</p><p><span className="font-bold text-[#0a4052]">Commercial:</span> {item.status}</p></div>
+                    {item.specs.length > 0 ? <div className="mt-3 flex flex-wrap gap-2">{item.specs.map(spec => <span key={spec} className="rounded-lg bg-[#f1f5f9] px-2.5 py-1.5 text-[11px] font-semibold text-[#64748b]">{spec}</span>)}</div> : null}
+                  </div>
+                ))}
+              </div>
+            ) : null}
+          </div>
 
           {isLoading ? (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -399,6 +429,7 @@ export default function Catalogue() {
                     <div className="absolute left-4 top-4 flex flex-wrap gap-2">
                       <Badge className="rounded-full bg-[#0a4052] text-[10px] font-bold text-white shadow-sm">{item.category}</Badge>
                       {item.kind === "shopify" ? <Badge className="rounded-full bg-white/90 text-[10px] font-bold text-[#c2410c] shadow-sm">Storefront</Badge> : null}
+                      {item.updated ? <Badge className="rounded-full bg-[#dff7ef]/95 text-[10px] font-bold text-[#047857] shadow-sm"><CheckCircle2 className="mr-1 h-3 w-3" /> Updated documentation</Badge> : null}
                     </div>
                     <span className={`absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold shadow-sm backdrop-blur-sm ${item.statusTone === "green" ? "bg-[#ecfdf5]/95 text-[#047857]" : item.statusTone === "amber" ? "bg-[#fff7ed]/95 text-[#c2410c]" : "bg-white/90 text-[#64748b]"}`}>
                       {item.statusTone === "green" ? <CheckCircle2 className="h-3.5 w-3.5" /> : <BadgeCheck className="h-3.5 w-3.5" />}
@@ -417,6 +448,15 @@ export default function Catalogue() {
                       </div>
                     </div>
                     {item.model ? <p className="mt-2 text-xs font-semibold text-[#94a3b8]">Model / reference: {item.model}</p> : null}
+                    <button
+                      type="button"
+                      aria-pressed={compareIds.includes(item.id)}
+                      disabled={!compareIds.includes(item.id) && compareIds.length >= 2}
+                      onClick={() => toggleCompare(item.id)}
+                      className={`mt-3 inline-flex w-fit items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[11px] font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6fae] ${compareIds.includes(item.id) ? "border-[#0a4052] bg-[#0a4052] text-white" : "border-[#cfe1e5] bg-white text-[#0a4052] hover:border-[#0f6fae] hover:bg-[#eaf4fa]"} disabled:cursor-not-allowed disabled:opacity-40`}
+                    >
+                      <Layers className="h-3.5 w-3.5" /> {compareIds.includes(item.id) ? "Selected for compare" : "Compare system"}
+                    </button>
                     <p className="mt-4 line-clamp-3 text-sm leading-6 text-[#617180]">{item.description}</p>
                     {item.specs.length > 0 ? (
                       <div className="mt-5 flex flex-wrap gap-2 border-t border-[#f1f5f9] pt-4">
