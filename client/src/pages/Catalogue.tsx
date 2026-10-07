@@ -98,7 +98,7 @@ function toShopifyItem(product: ShopifyProduct): CatalogueItem {
     category: brandedMeta?.badge.split("•")[0]?.trim() || product.productType || "Medical Equipment",
     model: product.handle,
     description: brandedMeta?.leadParagraph || product.description || "Configured medical imaging equipment supported by SPM engineering and manufacturer documentation.",
-    image: product.images[0]?.url,
+    image: brandedMeta?.heroImage || product.images[0]?.url,
     status: isQuoteOnly ? "Request a project quote" : product.variants[0]?.availableForSale ? "Ready for online checkout" : "Contact SPM team",
     statusTone: isQuoteOnly ? "amber" : product.variants[0]?.availableForSale ? "green" : "slate",
     specs: product.tags.filter(tag => tag !== "Quote Only").slice(0, 3),
@@ -251,15 +251,21 @@ export default function Catalogue() {
               <div className="relative overflow-hidden rounded-[2rem] border border-white/20 bg-white/10 p-3 shadow-2xl backdrop-blur-sm">
                 <div className="relative aspect-[4/3] overflow-hidden rounded-[1.4rem] bg-[#dcecf0]">
                   <img
-                    src="/manus-storage/spm-equipment-carm_d9a563ca.jpg"
-                    alt="SPM medical imaging equipment portfolio"
-                    className="h-full w-full object-cover"
+                    src="/manus-storage/x-frame-dr-hero_791f595c.jpg"
+                    alt="Italray X-FRAME DR digital radiography system in a modern clinical room"
+                    loading="eager"
+                    decoding="async"
+                    className="h-full w-full object-contain bg-[#eef5f7] transition duration-700 hover:scale-[1.03]"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/75 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/80 via-transparent to-transparent" />
+                  <div className="absolute left-5 right-5 top-5 flex items-center justify-between gap-3">
+                    <div className="rounded-full border border-white/25 bg-[#061f2b]/65 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[.16em] text-[#b9f1e7] backdrop-blur-sm">Strategic partnership</div>
+                    <img src="/manus-storage/italray-logo_57cfff13.png" alt="Italray" loading="lazy" decoding="async" className="h-7 w-auto rounded bg-white/90 px-2 py-1 object-contain" />
+                  </div>
                   <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-4">
                     <div>
-                      <p className="text-[11px] font-bold uppercase tracking-[.18em] text-[#b9f1e7]">Clinical equipment portfolio</p>
-                      <p className="mt-1 text-xl font-bold text-white">Systems, service and lifecycle support.</p>
+                      <p className="text-[11px] font-bold uppercase tracking-[.18em] text-[#b9f1e7]">Italray digital radiography</p>
+                      <p className="mt-1 text-xl font-bold text-white">Italian systems. SPM engineering.</p>
                     </div>
                     <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/15 text-white sm:flex">
                       <Stethoscope className="h-6 w-6" />
@@ -274,6 +280,13 @@ export default function Catalogue() {
         {/* Search and filters */}
         <section className="relative z-10 mx-auto -mt-6 max-w-[1280px] px-5 lg:px-8">
           <div className="rounded-3xl border border-[#dce7eb] bg-white p-4 shadow-xl shadow-[#0a4052]/10 sm:p-5">
+            <div className="mb-4 flex flex-col gap-2 border-b border-[#eef2f4] pb-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[.18em] text-[#0f6fae]">Equipment finder</p>
+                <h2 className="mt-1 text-lg font-extrabold tracking-[-.02em] text-[#0a4052]">Find the right system for your clinical workflow</h2>
+              </div>
+              <p className="max-w-md text-xs leading-5 text-[#71808d] sm:text-right">Search by manufacturer, imaging modality or capability, then open the technical page for documentation and quotation support.</p>
+            </div>
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
               <div className="relative min-w-0 flex-1">
                 <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#94a3b8]" />
@@ -369,15 +382,15 @@ export default function Catalogue() {
           ) : products.length > 0 ? (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {products.map(item => (
-                <Card key={item.id} className="group flex h-full flex-col overflow-hidden rounded-3xl border border-[#dce7eb] bg-white shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:border-[#0a4052] hover:shadow-2xl">
-                  <Link href={item.href} className="relative block aspect-[16/10] overflow-hidden bg-[#eef7fa]">
-                    {item.image ? (
-                      <img
+                  <Card key={item.id} className="group flex h-full flex-col overflow-hidden rounded-3xl border border-[#dce7eb] bg-white shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:border-[#0a4052] hover:shadow-2xl">
+                    <Link href={item.href} className="relative block aspect-[16/10] overflow-hidden bg-[#eef7fa]">
+                      {item.image ? (
+                        <img
                         src={item.image}
                         alt={item.title}
                         loading="lazy"
                         decoding="async"
-                        className="h-full w-full object-contain p-4 transition duration-700 group-hover:scale-105"
+                        className="h-full w-full object-contain bg-[#f6fafb] p-5 transition duration-700 group-hover:scale-105"
                       />
                     ) : (
                       <div className="flex h-full items-center justify-center text-[#94a3b8]"><PackageSearch className="h-14 w-14" /></div>
