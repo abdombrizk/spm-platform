@@ -252,7 +252,7 @@ export default function ItalrayProductExperience({ product }: { product: Product
               />
 
               {/* Main Image Stage */}
-              <div className="relative z-10 flex min-h-[380px] items-center justify-center rounded-3xl border border-[#e2e8f0]/80 bg-white/70 p-6 shadow-xl backdrop-blur-sm sm:min-h-[520px] sm:p-12">
+              <div className="relative z-10 flex min-h-[380px] items-center justify-center rounded-3xl border border-[#dbe9ee] bg-white p-6 shadow-[0_24px_80px_rgba(10,64,82,0.10)] sm:min-h-[520px] sm:p-12">
                 <img
                   src={activeMeta.heroImage}
                   alt={activeMeta.title}

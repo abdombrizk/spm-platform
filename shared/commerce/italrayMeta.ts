@@ -68,8 +68,8 @@ export const ITALRAY_CATALOG_REGISTRY: Record<string, ItalrayProductMeta> = {
     brochureUrl: "/manus-storage/CARMEXRKFP-S_b473b80e.pdf",
     brochureTitle: "Carmex RK FP-S Official Technical Brochure",
     readingMinutes: 3,
-    heroImage: "/manus-storage/IMG_40606_945b8f0a.jpg",
-    descriptionImage: "/manus-storage/IMG_40624_18e2ba1c.jpg",
+    heroImage: "/manus-storage/carmex-rkfps-hero_a5f16085.jpg",
+    descriptionImage: "/manus-storage/carmex-rkfps-detail_ff617396.jpg",
     highlights: [
       "All-in-one mobile C-Arm with a compact footprint",
       "Flat-panel detector with 21×21 cm or 30×30 cm formats, 200 µm pixel size",
@@ -108,8 +108,8 @@ export const ITALRAY_CATALOG_REGISTRY: Record<string, ItalrayProductMeta> = {
       { title: "Pelvis AP", category: "General Radiography", image: "/manus-storage/pevis_AP_redacted_3c7ee11a.jpg", description: "An anonymized AP pelvis radiograph representing a general radiography workflow." },
       { title: "Knee Lateral", category: "Orthopedics", image: "/manus-storage/knee_LAT_redacted_bba9789e.jpg", description: "An anonymized lateral knee projection representing orthopedic imaging." },
       { title: "Knee AP", category: "Orthopedics", image: "/manus-storage/knee_AP_redacted_75965479.jpg", description: "An anonymized AP knee projection representing orthopedic imaging." },
-      { title: "C-Arm Product View", category: "System Overview", image: "/manus-storage/IMG_40606_945b8f0a.jpg", description: "Carmex RK FP-S product view from the supplied image set." },
-      { title: "Flat-Panel Detector Detail", category: "System Detail", image: "/manus-storage/IMG_40729_40391798.jpg", description: "Close-up product detail of the flat-panel detector assembly." },
+      { title: "C-Arm Product View", category: "System Overview", image: "/manus-storage/carmex-rkfps-hero_a5f16085.jpg", description: "Carmex RK FP-S product view from the supplied image set." },
+      { title: "Flat-Panel Detector Detail", category: "System Detail", image: "/manus-storage/carmex-rkfps-detector_58c3e6b5.jpg", description: "Close-up product detail of the flat-panel detector assembly." },
     ],
     upgrades: {
       hardware: [
