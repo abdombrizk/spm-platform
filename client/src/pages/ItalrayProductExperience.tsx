@@ -103,6 +103,7 @@ export default function ItalrayProductExperience({ product }: { product: Product
   const [selectedGalleryItem, setSelectedGalleryItem] = useState<(typeof activeMeta.clinicalGallery)[0] | null>(null);
   const [activeClinicalIndex, setActiveClinicalIndex] = useState(0);
   const [activeUpgradeTab, setActiveUpgradeTab] = useState<"hardware" | "software" | "packages">("hardware");
+  const [carmexVariant, setCarmexVariant] = useState<"rotating" | "fixed">("rotating");
   const [expandedSpecCategories, setExpandedSpecCategories] = useState<Record<string, boolean>>({
     [activeMeta.specifications[0]?.category || ""]: true,
     [activeMeta.specifications[1]?.category || ""]: true,
@@ -145,6 +146,20 @@ export default function ItalrayProductExperience({ product }: { product: Product
   const quoteHref = `/request-a-quote?equipment=${encodeURIComponent(activeMeta.title)}&brand=Italray&model=${encodeURIComponent(activeMeta.handle)}`;
   const serviceHref = `/request-service?equipment=${encodeURIComponent(activeMeta.title)}&brand=Italray&model=${encodeURIComponent(activeMeta.handle)}`;
   const activeClinicalItem = activeMeta.clinicalGallery[activeClinicalIndex] || activeMeta.clinicalGallery[0];
+  const isCarmex = activeMeta.handle === "italray-carmex-fp21-fp30";
+  const carmexQuickSpecs = carmexVariant === "rotating"
+    ? [
+        { label: "Generator", value: "5 kW" },
+        { label: "Tube capacity", value: "300 KHU" },
+        { label: "Fluoroscopy", value: "Up to 15 fps" },
+        { label: "Pixel size", value: "200 µm" },
+      ]
+    : [
+        { label: "Generator", value: "4 kW" },
+        { label: "Tube capacity", value: "79.8 KHU" },
+        { label: "Detector format", value: "21×21 cm" },
+        { label: "Workflow", value: "Fixed anode" },
+      ];
 
   const moveClinicalSlide = (direction: -1 | 1) => {
     setActiveClinicalIndex((current) => {
@@ -253,7 +268,8 @@ export default function ItalrayProductExperience({ product }: { product: Product
               />
 
               {/* Main Image Stage */}
-              <div className={`relative z-10 flex min-h-[380px] items-center justify-center rounded-3xl border border-[#dbe9ee] ${heroStageBackground} p-6 shadow-[0_24px_80px_rgba(10,64,82,0.10)] sm:min-h-[520px] sm:p-12`}>
+              <div className={`relative z-10 flex min-h-[380px] items-center justify-center rounded-3xl border p-6 shadow-[0_24px_80px_rgba(10,64,82,0.10)] sm:min-h-[520px] sm:p-12 ${isCarmex ? "border-[#183f4e] bg-[radial-gradient(circle_at_50%_0%,#174e62_0%,#092936_56%,#061b24_100%)]" : `${heroStageBackground} border-[#dbe9ee]`}`}>
+                {isCarmex ? <div className="pointer-events-none absolute inset-0 opacity-40" aria-hidden="true"><div className="absolute inset-0 bg-[linear-gradient(rgba(139,224,213,.07)_1px,transparent_1px),linear-gradient(90deg,rgba(139,224,213,.07)_1px,transparent_1px)] bg-[size:42px_42px] [mask-image:linear-gradient(to_bottom,black,transparent_75%)]" /><div className="absolute -right-28 -top-28 h-72 w-72 rounded-full bg-[#c2410c]/20 blur-3xl" /></div> : null}
                 <img
                   src={activeMeta.heroImage}
                   alt={activeMeta.title}
@@ -263,8 +279,9 @@ export default function ItalrayProductExperience({ product }: { product: Product
                     objectPosition: heroPosition,
                     transform: heroScale !== 1 ? `scale(${heroScale})` : undefined,
                   }}
-                  className="pdp-product-image max-h-[460px] w-auto max-w-full object-contain drop-shadow-2xl transition-transform duration-500 hover:scale-105"
+                  className={`pdp-product-image relative z-10 max-h-[460px] w-auto max-w-full object-contain drop-shadow-2xl transition-transform duration-500 hover:scale-105 ${isCarmex ? "rounded-2xl shadow-[0_28px_55px_rgba(0,0,0,.35)]" : ""}`}
                 />
+                {isCarmex ? <div className="absolute left-5 top-5 z-20 rounded-full border border-[#8be0d5]/35 bg-[#061b24]/75 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[.18em] text-[#b9f1e7] backdrop-blur sm:left-8 sm:top-8">RK FP-S / Mobile C-Arm</div> : null}
 
                 {/* Left Floating Feature Badge */}
                 <div className="absolute bottom-6 left-6 hidden rounded-2xl border border-white/80 bg-white/95 p-4 shadow-lg backdrop-blur md:block">
@@ -306,6 +323,24 @@ export default function ItalrayProductExperience({ product }: { product: Product
                 </span>
               ))}
             </div>
+            {isCarmex ? (
+              <section aria-label="CARMEX RK FP-S configuration overview" className="mx-auto mt-10 max-w-5xl overflow-hidden rounded-[2rem] border border-[#1d5365] bg-[#061b24] text-white shadow-[0_24px_80px_rgba(6,27,36,.22)]">
+                <div className="flex flex-col gap-5 border-b border-white/10 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[.2em] text-[#8be0d5]">CARMEX command deck</p>
+                    <h2 className="mt-1 text-lg font-extrabold sm:text-xl">Choose the published generator configuration</h2>
+                  </div>
+                  <div className="grid grid-cols-2 rounded-xl border border-white/10 bg-white/5 p-1 text-xs font-bold">
+                    <button type="button" onClick={() => setCarmexVariant("rotating")} className={`rounded-lg px-3 py-2 transition ${carmexVariant === "rotating" ? "bg-[#8be0d5] text-[#061b24]" : "text-white/65 hover:text-white"}`}>Rotating Anode</button>
+                    <button type="button" onClick={() => setCarmexVariant("fixed")} className={`rounded-lg px-3 py-2 transition ${carmexVariant === "fixed" ? "bg-[#c2410c] text-white" : "text-white/65 hover:text-white"}`}>Fixed Anode</button>
+                  </div>
+                </div>
+                <div className="grid gap-px bg-white/10 sm:grid-cols-4">
+                  {carmexQuickSpecs.map((spec) => <div key={spec.label} className="bg-[#061b24] px-5 py-5 sm:px-6"><p className="text-[10px] font-bold uppercase tracking-[.16em] text-white/45">{spec.label}</p><p className="mt-2 text-xl font-extrabold tracking-tight text-white">{spec.value}</p></div>)}
+                </div>
+                <div className="flex flex-col gap-3 border-t border-white/10 px-5 py-4 text-xs text-white/60 sm:flex-row sm:items-center sm:justify-between sm:px-8"><span className="inline-flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-[#8be0d5]" /> Final configuration is confirmed during the hospital quotation process.</span><Link href={quoteHref} className="inline-flex items-center gap-1 font-extrabold text-[#8be0d5] hover:text-white">Configure for your site <ArrowUpRight className="h-3.5 w-3.5" /></Link></div>
+              </section>
+            ) : null}
           </div>
 
           {/* ========================================================= */}
