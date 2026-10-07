@@ -96,6 +96,7 @@ export default function ItalrayProductExperience({ product }: { product: Product
   const heroPosition = overrideQuery.data?.heroObjectPosition || "center center";
   const heroScale = (overrideQuery.data?.heroScalePercent ?? 100) / 100;
   const descriptionPosition = overrideQuery.data?.descriptionObjectPosition || "center center";
+  const heroStageBackground = activeMeta.handle === "italray-x-frame-dr-systems" ? "bg-[#eef5f7]" : "bg-white";
 
   const [activeSection, setActiveSection] = useState("section-description");
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -252,7 +253,7 @@ export default function ItalrayProductExperience({ product }: { product: Product
               />
 
               {/* Main Image Stage */}
-              <div className="relative z-10 flex min-h-[380px] items-center justify-center rounded-3xl border border-[#dbe9ee] bg-white p-6 shadow-[0_24px_80px_rgba(10,64,82,0.10)] sm:min-h-[520px] sm:p-12">
+              <div className={`relative z-10 flex min-h-[380px] items-center justify-center rounded-3xl border border-[#dbe9ee] ${heroStageBackground} p-6 shadow-[0_24px_80px_rgba(10,64,82,0.10)] sm:min-h-[520px] sm:p-12`}>
                 <img
                   src={activeMeta.heroImage}
                   alt={activeMeta.title}
