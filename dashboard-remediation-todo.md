@@ -20,3 +20,4 @@ The public product preview and build/test suite are available for verification. 
 - [x] Added interactive Rotating Anode / Fixed Anode configuration switch with verified published figures.
 - [x] Added premium command-deck quick specs and quotation handoff.
 - [x] Verified desktop/mobile screenshots, product assets, brochure response, and public route.
+- [x] Updated CARMEX RK FP-S Hero with operating room visual and adapted neutral stage.

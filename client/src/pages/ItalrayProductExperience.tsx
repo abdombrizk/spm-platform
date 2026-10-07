@@ -96,7 +96,8 @@ export default function ItalrayProductExperience({ product }: { product: Product
   const heroPosition = overrideQuery.data?.heroObjectPosition || "center center";
   const heroScale = (overrideQuery.data?.heroScalePercent ?? 100) / 100;
   const descriptionPosition = overrideQuery.data?.descriptionObjectPosition || "center center";
-  const heroStageBackground = activeMeta.handle === "italray-x-frame-dr-systems" ? "bg-[#eef5f7]" : "bg-white";
+  const heroStageBackground = activeMeta.handle === "italray-x-frame-dr-systems" ? "bg-[#eef5f7]" : activeMeta.handle === "italray-carmex-fp21-fp30" ? "bg-[#f2f7fa]" : "bg-white";
+  const useDarkHeroStage = activeMeta.handle === "italray-carmex-fp21-fp30" && activeMeta.heroImage.includes("carmex-rkfps-hero_a5f16085");
 
   const [activeSection, setActiveSection] = useState("section-description");
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -268,8 +269,8 @@ export default function ItalrayProductExperience({ product }: { product: Product
               />
 
               {/* Main Image Stage */}
-              <div className={`relative z-10 flex min-h-[380px] items-center justify-center rounded-3xl border p-6 shadow-[0_24px_80px_rgba(10,64,82,0.10)] sm:min-h-[520px] sm:p-12 ${isCarmex ? "border-[#183f4e] bg-[radial-gradient(circle_at_50%_0%,#174e62_0%,#092936_56%,#061b24_100%)]" : `${heroStageBackground} border-[#dbe9ee]`}`}>
-                {isCarmex ? <div className="pointer-events-none absolute inset-0 opacity-40" aria-hidden="true"><div className="absolute inset-0 bg-[linear-gradient(rgba(139,224,213,.07)_1px,transparent_1px),linear-gradient(90deg,rgba(139,224,213,.07)_1px,transparent_1px)] bg-[size:42px_42px] [mask-image:linear-gradient(to_bottom,black,transparent_75%)]" /><div className="absolute -right-28 -top-28 h-72 w-72 rounded-full bg-[#c2410c]/20 blur-3xl" /></div> : null}
+              <div className={`relative z-10 flex min-h-[380px] items-center justify-center rounded-3xl border p-6 shadow-[0_24px_80px_rgba(10,64,82,0.10)] sm:min-h-[520px] sm:p-12 ${useDarkHeroStage ? "border-[#183f4e] bg-[radial-gradient(circle_at_50%_0%,#174e62_0%,#092936_56%,#061b24_100%)]" : `${heroStageBackground} border-[#dbe9ee]`}`}>
+                {useDarkHeroStage ? <div className="pointer-events-none absolute inset-0 opacity-40" aria-hidden="true"><div className="absolute inset-0 bg-[linear-gradient(rgba(139,224,213,.07)_1px,transparent_1px),linear-gradient(90deg,rgba(139,224,213,.07)_1px,transparent_1px)] bg-[size:42px_42px] [mask-image:linear-gradient(to_bottom,black,transparent_75%)]" /><div className="absolute -right-28 -top-28 h-72 w-72 rounded-full bg-[#c2410c]/20 blur-3xl" /></div> : null}
                 <img
                   src={activeMeta.heroImage}
                   alt={activeMeta.title}
