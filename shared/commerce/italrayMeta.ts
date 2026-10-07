@@ -71,7 +71,7 @@ export const ITALRAY_CATALOG_REGISTRY: Record<string, ItalrayProductMeta> = {
     brochureUrl: "/manus-storage/CARMEXRKFP-S_b473b80e.pdf",
     brochureTitle: "Carmex RK FP-S Official Technical Brochure",
     readingMinutes: 3,
-    heroImage: "/manus-storage/carmex-rkfps-operating-room-hero_aa00194d.jpg",
+    heroImage: "/manus-storage/carmex-rkfps-hero_a5f16085.jpg",
     descriptionImage: "/manus-storage/carmex-rkfps-detail_ff617396.jpg",
     highlights: [
       "All-in-one mobile C-Arm with a compact footprint",

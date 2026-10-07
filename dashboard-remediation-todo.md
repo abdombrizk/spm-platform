@@ -20,10 +20,11 @@ The public product preview and build/test suite are available for verification. 
 - [x] Added interactive Rotating Anode / Fixed Anode configuration switch with verified published figures.
 - [x] Added premium command-deck quick specs and quotation handoff.
 - [x] Verified desktop/mobile screenshots, product assets, brochure response, and public route.
-- [x] Updated CARMEX RK FP-S Hero with operating room visual and adapted neutral stage.
+- [x] Added the supplied operating-room visual to the homepage Hero while preserving the original CARMEX RK FP-S product Hero and dark technical stage.
 - [x] Added complete 30-image CARMEX RK FP-S gallery: 29 supplied photos (RK-FP and RK-FPS) + operating-room hero, with dedicated titles, clinical descriptions, overlay text, and smooth carousel/lightbox navigation.
 - [x] Optimized all 29 supplied photos (progressive JPEG, max 1800px, 3.23 MiB total) and published to managed storage.
 - [x] Synchronized both live database presentation override and static catalog fallback registry.
 - [x] Added visual count indicators (total 30 views, slide n / 30) with motion and reduced-motion support.
 - [x] Updated test suite (server/carmex.rkfps.test.ts) to validate all 30 titled items without raw patient filenames.
 - [x] Passed TypeScript check, full test suite (32/32 tests), production build, and DOM/visual verification.
+- [x] Restored the original CARMEX RK FP-S product Hero and moved the supplied operating-room visual to the homepage Hero as intended.
