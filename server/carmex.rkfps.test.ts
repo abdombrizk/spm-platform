@@ -21,10 +21,18 @@ describe("Carmex RK FP-S product content", () => {
     ]));
   });
 
-  it("does not reference raw patient-image filenames in the public gallery", () => {
+  it("publishes the comprehensive 30-item product gallery without raw patient image names", () => {
+    expect(product.clinicalGallery.length).toBe(30);
+    expect(product.clinicalGallery[0]).toMatchObject({
+      title: "Operating Room Context",
+      image: "/manus-storage/carmex-rkfps-operating-room-hero_aa00194d.jpg",
+    });
     for (const item of product.clinicalGallery) {
+      expect(item.title.trim().length).toBeGreaterThan(0);
+      expect(item.description?.trim().length).toBeGreaterThan(0);
+      expect(item.image.startsWith("/manus-storage/")).toBe(true);
       expect(item.image).not.toMatch(/pevis_AP\.png|knee_(AP|LAT)\.png/i);
     }
-    expect(product.clinicalGallery.filter(item => item.image.includes("redacted")).length).toBe(3);
+    expect(product.clinicalGallery.filter(item => item.image.includes("carmex-gallery-")).length).toBe(29);
   });
 });

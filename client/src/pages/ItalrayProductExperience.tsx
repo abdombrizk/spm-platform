@@ -554,8 +554,8 @@ export default function ItalrayProductExperience({ product }: { product: Product
                 </p>
               </div>
 
-              <span className="inline-flex items-center gap-2 text-xs font-bold text-[#64748b]">
-                <Maximize2 className="h-4 w-4 text-[#0f6fae]" /> Click any case to enlarge
+                <span className="inline-flex items-center gap-2 text-xs font-bold text-[#64748b]">
+                  <Maximize2 className="h-4 w-4 text-[#0f6fae]" /> {activeMeta.clinicalGallery.length} product views · Click to enlarge
               </span>
             </div>
 
@@ -576,7 +576,7 @@ export default function ItalrayProductExperience({ product }: { product: Product
                   </h3>
                 </div>
                 <span className="inline-flex items-center gap-2 text-xs font-bold text-white/55">
-                  <Maximize2 className="h-4 w-4" /> Click an image to enlarge
+                  <Maximize2 className="h-4 w-4" /> {activeClinicalIndex + 1} / {activeMeta.clinicalGallery.length} · Click to enlarge
                 </span>
               </div>
 
