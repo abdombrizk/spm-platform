@@ -205,12 +205,14 @@ export default function Catalogue() {
       <main className="min-h-screen bg-[#f7fafc]">
         {/* Italray partnership hero */}
         <section className="relative isolate overflow-hidden bg-[#061f2b] text-white">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_10%,rgba(96,193,187,.3),transparent_28%),linear-gradient(115deg,#061f2b_0%,#0a4052_52%,#0f6fae_100%)]" aria-hidden="true" />
+          <div className="absolute inset-0 bg-cover bg-center opacity-45" style={{ backgroundImage: "url('/manus-storage/x-frame-dr-hero_791f595c.jpg')" }} aria-hidden="true" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,31,43,.98)_0%,rgba(6,31,43,.88)_38%,rgba(6,31,43,.48)_72%,rgba(6,31,43,.36)_100%)]" aria-hidden="true" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_10%,rgba(96,193,187,.24),transparent_28%),linear-gradient(115deg,rgba(6,31,43,.35)_0%,rgba(10,64,82,.12)_52%,rgba(15,111,174,.18)_100%)]" aria-hidden="true" />
           <div className="absolute -right-24 -top-32 h-80 w-80 rounded-full border border-white/10 sm:h-[30rem] sm:w-[30rem]" aria-hidden="true" />
           <div className="absolute -right-8 top-10 h-56 w-56 rounded-full border border-white/10 sm:h-80 sm:w-80" aria-hidden="true" />
 
-          <div className="relative mx-auto grid max-w-[1280px] gap-10 px-5 py-12 sm:py-16 lg:grid-cols-[.95fr_1.05fr] lg:items-center lg:gap-14 lg:px-8 lg:py-20">
-            <div className="max-w-2xl">
+          <div className="relative mx-auto flex max-w-[1280px] px-5 py-12 sm:py-16 lg:min-h-[560px] lg:items-center lg:px-8 lg:py-20">
+            <div className="max-w-2xl lg:max-w-[760px]">
               <div className="mb-6 flex flex-wrap items-center gap-4">
                 <div className="flex h-20 w-[190px] items-center justify-center rounded-2xl bg-white px-5 shadow-xl shadow-black/10">
                   <img src="/manus-storage/italray-logo_57cfff13.png" alt="Italray official logo" className="max-h-12 w-auto max-w-full object-contain" />
@@ -241,34 +243,6 @@ export default function Catalogue() {
               </div>
             </div>
 
-            <div className="relative mx-auto w-full max-w-[600px] lg:ml-auto">
-              <div className="absolute -inset-5 rounded-[2rem] border border-[#8be0d5]/20 bg-[#8be0d5]/10 blur-2xl" aria-hidden="true" />
-              <div className="relative overflow-hidden rounded-[2rem] border border-white/25 bg-white/10 p-3 shadow-2xl backdrop-blur-sm">
-                <div className="relative aspect-[16/10] overflow-hidden rounded-[1.4rem] bg-[#dcecf0]">
-                  <img
-                    src="/manus-storage/x-frame-dr-hero_791f595c.jpg"
-                    alt="Italray X-FRAME DR digital radiography system in a modern clinical room"
-                    loading="eager"
-                    decoding="async"
-                    className="h-full w-full object-cover transition duration-700 hover:scale-[1.03]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/85 via-[#061f2b]/5 to-transparent" />
-                  <div className="absolute left-5 right-5 top-5 flex items-center justify-between gap-3">
-                    <div className="rounded-full border border-white/25 bg-[#061f2b]/65 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[.16em] text-[#b9f1e7] backdrop-blur-sm">Italian medical imaging</div>
-                    <div className="rounded-xl bg-white px-3 py-2 shadow-lg"><img src="/manus-storage/italray-logo_57cfff13.png" alt="Italray" loading="lazy" decoding="async" className="h-7 w-auto object-contain" /></div>
-                  </div>
-                  <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-4">
-                    <div>
-                      <p className="text-[11px] font-bold uppercase tracking-[.18em] text-[#b9f1e7]">X-FRAME DR platform</p>
-                      <p className="mt-1 text-xl font-bold text-white sm:text-2xl">Precision imaging. Local accountability.</p>
-                    </div>
-                    <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/15 text-white sm:flex">
-                      <Stethoscope className="h-6 w-6" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </section>
 
