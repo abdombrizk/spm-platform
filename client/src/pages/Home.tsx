@@ -49,7 +49,7 @@ const solutions = [
     title: "10 Core Service Pillars for Mission-Critical Systems",
     text: "From preventive & corrective maintenance to complete system commissioning, calibration, and tube/detector refurbishment.",
     href: "/services",
-    image: "/manus-storage/spm-service-engineer_96348b80.jpg",
+    image: "/manus-storage/spm-carmex-maintenance-card-optimized_fde07293.jpg",
     cta: "Explore Service Pillars",
     badge: "24/48h Response",
   },
