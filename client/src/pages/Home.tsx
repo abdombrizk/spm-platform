@@ -49,7 +49,7 @@ const solutions = [
     title: "10 Core Service Pillars for Mission-Critical Systems",
     text: "From preventive & corrective maintenance to complete system commissioning, calibration, and tube/detector refurbishment.",
     href: "/services",
-    image: "/manus-storage/spm-carmex-maintenance-card-optimized_fde07293.jpg",
+    image: "/manus-storage/clinodigit-omega-hero_dc3ed0c5.jpg",
     cta: "Explore Service Pillars",
     badge: "24/48h Response",
   },
@@ -78,6 +78,10 @@ const solutions = [
 const brandLogoOverrides: Record<string, string> = {
   italray: "/manus-storage/italray-logo_57cfff13.png",
   hermann: "/manus-storage/hermann-logo_7f4be603.png",
+  "ge-healthcare": "/manus-storage/ge-healthcare_3e6edf7f.png",
+  "siemens-healthineers": "/manus-storage/siemens-healthineers_d3ea3a9a.png",
+  "ziehm-imaging": "/manus-storage/ziehm-imaging_a271bcb6.png",
+  "philips-healthcare": "/manus-storage/philips-healthcare_8bdab1dd.png",
 };
 
 const strategicPartners = [
@@ -458,7 +462,7 @@ export default function Home() {
                         alt={`${brand.name} logo`}
                         loading="lazy"
                         decoding="async"
-                        className="max-h-12 max-w-full object-contain grayscale transition duration-300 group-hover:grayscale-0"
+                        className="max-h-12 max-w-full object-contain transition duration-300 group-hover:scale-105"
                       />
                     ) : (
                       <span className="text-lg font-bold tracking-tight text-[#64748b] transition-colors group-hover:text-[#0a4052] sm:text-xl">

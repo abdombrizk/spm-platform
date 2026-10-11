@@ -64,11 +64,13 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
       >
         <div className="mx-auto flex h-[80px] max-w-[1280px] items-center justify-between gap-6 px-5 lg:px-8">
           <Link href="/" className="flex shrink-0 items-center gap-3" onClick={() => setOpen(false)}>
-            <img
-              src={logo}
-              alt="SPM Medical Imaging Technology"
-              className={`spm-header-logo h-14 w-auto max-w-[208px] object-contain transition-transform hover:scale-105 sm:h-16 ${isDarkNav ? "" : "mix-blend-multiply"}`}
-            />
+            <span className={`flex items-center rounded-xl px-2 py-1.5 transition-colors ${isDarkNav ? "bg-white/10" : "bg-[#e8f0f3]"}`}>
+              <img
+                src={logo}
+                alt="SPM Medical Imaging Technology"
+                className={`spm-header-logo h-14 w-auto max-w-[208px] object-contain transition-transform hover:scale-105 sm:h-16 ${isDarkNav ? "" : "mix-blend-multiply"}`}
+              />
+            </span>
             <span className="sr-only">SPM - Systems for Projects & Maintenance</span>
           </Link>
 
