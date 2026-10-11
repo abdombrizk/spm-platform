@@ -46,6 +46,7 @@ const solutions = [
     title: "10 Core Service Pillars for Mission-Critical Systems",
     text: "From preventive & corrective maintenance to complete system commissioning, calibration, and tube/detector refurbishment.",
     href: "/services",
+    serviceEquipment: "C-Arm and X-ray systems",
     image: "/manus-storage/spm-carmex-maintenance-card-optimized_fde07293.jpg",
     cta: "Explore Service Pillars",
     badge: "24/48h Response",
@@ -56,6 +57,7 @@ const solutions = [
     title: "Medical Imaging Equipment",
     text: "Explore C-Arm systems, digital radiography, fluoroscopy, and surgical technology with full technical specs and ISO documents.",
     href: "/catalogue",
+    serviceEquipment: "Italray medical imaging systems",
     image: "/manus-storage/clinodigit-omega-hero_dc3ed0c5.jpg",
     cta: "Browse Imaging Systems",
     badge: "Italray Exclusive Agent",
@@ -66,6 +68,7 @@ const solutions = [
     title: "Verified OEM Spare Parts & Fast Dispatch",
     text: "Direct access to tested original components for GE, Siemens, Philips, Ziehm, Genoray, and leading multi-vendor platforms.",
     href: "/spare-parts",
+    serviceEquipment: "OEM imaging systems and spare parts",
     image: "/manus-storage/spm-parts-lab_656efe60.jpg",
     cta: "Request a Part Number",
     badge: "Engineering Warranty",
@@ -335,6 +338,28 @@ export default function Home() {
                 );
               })}
             </div>
+            <div className="mt-6 grid gap-3 md:grid-cols-2" aria-label="Quality and regulatory evidence">
+              <div className="flex items-center gap-4 rounded-2xl border border-[#cfe8df] bg-[#f3fbf8] px-5 py-4 transition hover:-translate-y-0.5 hover:shadow-md">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-[#047857] shadow-xs">
+                  <BadgeCheck className="h-6 w-6" aria-hidden="true" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-extrabold uppercase tracking-[.16em] text-[#047857]">Quality badge</p>
+                  <p className="mt-1 text-sm font-bold text-[#0a4052]">ISO 9001-aligned quality framework</p>
+                  <p className="mt-0.5 text-xs text-[#64748b]">Documented review and traceable technical records.</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 rounded-2xl border border-[#cfe2ef] bg-[#f2f8fc] px-5 py-4 transition hover:-translate-y-0.5 hover:shadow-md">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-[#0f6fae] shadow-xs">
+                  <ShieldCheck className="h-6 w-6" aria-hidden="true" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-extrabold uppercase tracking-[.16em] text-[#0f6fae]">Radiation compliance</p>
+                  <p className="mt-1 text-sm font-bold text-[#0a4052]">Radiation safety & licensing dossier</p>
+                  <p className="mt-0.5 text-xs text-[#64748b]">Regulatory documentation coordinated for each project.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -396,12 +421,12 @@ export default function Home() {
 
           <div className="mt-12 grid gap-8 lg:grid-cols-3">
             {solutions.map(item => (
-              <Link
+              <article
                 key={item.title}
-                href={item.href}
-                className="group flex flex-col justify-between overflow-hidden rounded-3xl border border-[#dce7eb] bg-white shadow-xs transition-all duration-300 hover:-translate-y-2 hover:border-[#0a4052] hover:shadow-2xl"
+                className="group overflow-hidden rounded-3xl border border-[#dce7eb] bg-white shadow-xs transition-all duration-300 hover:-translate-y-2 hover:border-[#0a4052] hover:shadow-2xl"
               >
-                <div>
+                <Link href={item.href} className="flex flex-col justify-between">
+                  <div>
                   <div className="relative h-60 overflow-hidden bg-[#061f2b]">
                     <img
                       src={item.image}
@@ -416,21 +441,32 @@ export default function Home() {
                       <item.icon className="h-6 w-6" />
                     </div>
                   </div>
-                  <div className="p-7">
+                    <div className="p-7">
                     <p className="text-xs font-bold uppercase tracking-[.18em] text-[#0f6fae]">{item.eyebrow}</p>
                     <h3 className="mt-3 text-2xl font-bold leading-snug text-[#0a4052] transition-colors group-hover:text-[#0f6fae]">
                       {item.title}
                     </h3>
                     <p className="mt-3 text-sm leading-relaxed text-[#617180]">{item.text}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="border-t border-[#f1f5f9] px-7 py-4">
-                  <div className="inline-flex items-center text-sm font-bold text-[#c2410c] transition-transform group-hover:translate-x-1.5">
-                    {item.cta}
-                    <ArrowUpRight className="ml-2 h-4 w-4" />
+                  <div className="border-t border-[#f1f5f9] px-7 py-4">
+                    <div className="inline-flex items-center text-sm font-bold text-[#c2410c] transition-transform group-hover:translate-x-1.5">
+                      {item.cta}
+                      <ArrowUpRight className="ml-2 h-4 w-4" />
+                    </div>
                   </div>
+                </Link>
+                <div className="border-t border-[#dce7eb] bg-[#f8fafc] px-7 py-3">
+                  <Link
+                    href={`/request-service?equipment=${encodeURIComponent(item.serviceEquipment)}`}
+                    className="inline-flex items-center gap-2 text-xs font-bold text-[#0a4052] transition-colors hover:text-[#0f6fae] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6fae] focus-visible:ring-offset-2"
+                  >
+                    <Wrench className="h-3.5 w-3.5 text-[#0f6fae]" />
+                    Request service for this equipment
+                    <ArrowUpRight className="h-3.5 w-3.5" />
+                  </Link>
                 </div>
-              </Link>
+              </article>
             ))}
           </div>
         </section>
