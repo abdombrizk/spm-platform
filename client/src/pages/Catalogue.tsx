@@ -205,7 +205,7 @@ export default function Catalogue() {
       <main className="min-h-screen bg-[#f7fafc]">
         {/* Italray partnership hero */}
         <section className="relative isolate overflow-hidden bg-[#061f2b] text-white">
-          <div className="absolute inset-0 bg-cover bg-center opacity-45" style={{ backgroundImage: "url('/manus-storage/x-frame-dr-hero_791f595c.jpg')" }} aria-hidden="true" />
+          <div className="absolute inset-0 bg-cover bg-center opacity-45" style={{ backgroundImage: "url('/manus-storage/italray-spm-partnership-hero_fe8e7422.jpg')" }} aria-hidden="true" />
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,31,43,.98)_0%,rgba(6,31,43,.88)_38%,rgba(6,31,43,.48)_72%,rgba(6,31,43,.36)_100%)]" aria-hidden="true" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_10%,rgba(96,193,187,.24),transparent_28%),linear-gradient(115deg,rgba(6,31,43,.35)_0%,rgba(10,64,82,.12)_52%,rgba(15,111,174,.18)_100%)]" aria-hidden="true" />
           <div className="absolute -right-24 -top-32 h-80 w-80 rounded-full border border-white/10 sm:h-[30rem] sm:w-[30rem]" aria-hidden="true" />
