@@ -162,13 +162,18 @@ export default function ItalrayProductExperience({ product }: { product: Product
         { label: "Workflow", value: "Fixed anode" },
       ];
 
-  const moveClinicalSlide = (direction: -1 | 1) => {
-    setActiveClinicalIndex((current) => {
-      const next = current + direction;
-      if (next < 0) return activeMeta.clinicalGallery.length - 1;
-      if (next >= activeMeta.clinicalGallery.length) return 0;
-      return next;
-    });
+  const selectClinicalSlide = (index: number, openLightbox = false) => {
+    const item = activeMeta.clinicalGallery[index];
+    if (!item) return;
+    setActiveClinicalIndex(index);
+    if (openLightbox) setSelectedGalleryItem(item);
+  };
+
+  const moveClinicalSlide = (direction: -1 | 1, openLightbox = false) => {
+    const length = activeMeta.clinicalGallery.length;
+    if (!length) return;
+    const next = (activeClinicalIndex + direction + length) % length;
+    selectClinicalSlide(next, openLightbox);
   };
 
   // Related products query
@@ -604,10 +609,7 @@ export default function ItalrayProductExperience({ product }: { product: Product
                             type="button"
                             aria-label={`View ${item.title}`}
                             aria-current={isActive ? "true" : undefined}
-                            onClick={() => {
-                              setActiveClinicalIndex(idx);
-                              setSelectedGalleryItem(item);
-                            }}
+                            onClick={() => selectClinicalSlide(idx, true)}
                             className={`group relative min-w-0 overflow-hidden rounded-xl border text-left transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5ed8db] ${
                               isActive
                                 ? "w-[min(68vw,620px)] border-[#5ed8db]/70 bg-black shadow-[0_0_0_1px_rgba(94,216,219,.18),0_18px_55px_rgba(0,0,0,.4)] sm:w-[min(52vw,620px)]"
@@ -681,7 +683,7 @@ export default function ItalrayProductExperience({ product }: { product: Product
                       type="button"
                       aria-label={`Go to clinical image ${idx + 1}`}
                       aria-current={idx === activeClinicalIndex ? "true" : undefined}
-                      onClick={() => setActiveClinicalIndex(idx)}
+                      onClick={() => selectClinicalSlide(idx)}
                       className={`h-1.5 rounded-full transition-all duration-300 ${
                         idx === activeClinicalIndex ? "w-8 bg-[#5ed8db]" : "w-1.5 bg-white/30 hover:bg-white/60"
                       }`}
@@ -723,12 +725,31 @@ export default function ItalrayProductExperience({ product }: { product: Product
                   <X className="h-5 w-5" />
                 </button>
 
-                <div className="aspect-16/10 w-full overflow-hidden rounded-2xl bg-black/60">
+                <div className="relative aspect-16/10 w-full overflow-hidden rounded-2xl bg-black/60">
                   {(selectedGalleryItem as typeof selectedGalleryItem & { mediaType?: string }).mediaType === "video" ? (
                     <video src={selectedGalleryItem.image} aria-label={selectedGalleryItem.title} controls autoPlay playsInline className="h-full w-full object-contain" />
                   ) : (
                     <img src={selectedGalleryItem.image} alt={(selectedGalleryItem as typeof selectedGalleryItem & { alt?: string }).alt || selectedGalleryItem.title} className="h-full w-full object-contain" />
                   )}
+                  <button
+                    type="button"
+                    aria-label="Previous additional image"
+                    onClick={() => moveClinicalSlide(-1, true)}
+                    className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white shadow-lg backdrop-blur transition hover:border-[#5ed8db] hover:bg-[#5ed8db] hover:text-[#0b252d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5ed8db]"
+                  >
+                    <ArrowLeft className="h-5 w-5" />
+                  </button>
+                  <span aria-live="polite" className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-black/65 px-3 py-1 text-[11px] font-bold text-white backdrop-blur">
+                    {activeClinicalIndex + 1} / {activeMeta.clinicalGallery.length}
+                  </span>
+                  <button
+                    type="button"
+                    aria-label="Next additional image"
+                    onClick={() => moveClinicalSlide(1, true)}
+                    className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white shadow-lg backdrop-blur transition hover:border-[#5ed8db] hover:bg-[#5ed8db] hover:text-[#0b252d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5ed8db]"
+                  >
+                    <ArrowRight className="h-5 w-5" />
+                  </button>
                 </div>
 
                 <div className="mt-5">
