@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import SiteSearchDialog from "@/components/SiteSearchDialog";
 import { ChevronDown, ChevronRight, Menu, X, ArrowUpRight, Facebook, Linkedin, Stethoscope, MessageCircle, Wrench, LogIn } from "lucide-react";
 import { Link, useLocation } from "wouter";
@@ -11,14 +11,13 @@ const italrayLogo = "/manus-storage/italray-logo_57cfff13.png";
 const hermannLogo = "/manus-storage/hermann-logo_7f4be603.png";
 const genorayLogo = "/manus-storage/genoray_c6662250.png";
 
-export default function SiteChrome({ children, transparentHeader = false }: { children: React.ReactNode; transparentHeader?: boolean }) {
+export default function SiteChrome({ children }: { children: React.ReactNode; transparentHeader?: boolean }) {
   const [open, setOpen] = useState(false);
   const [activeMega, setActiveMega] = useState(false);
   const [activeProductTab, setActiveProductTab] = useState<"italray" | "hermann" | "parts">("italray");
   const [activeCompany, setActiveCompany] = useState(false);
   const [activeServices, setActiveServices] = useState(false);
   const [activeNews, setActiveNews] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [location] = useLocation();
 
   const brandsQuery = trpc.menu.productBrands.useQuery();
@@ -39,15 +38,8 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
     ...(sparePartsQuery.data ?? []).map(part => ({ id: `part-${part.id}`, title: part.name, meta: part.partNumber || "Spare part", href: "/spare-parts" })),
   ];
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 16);
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const isDarkNav = transparentHeader && !isScrolled;
+  // Keep the global navigation on a consistent white surface so the SPM mark and partner logos remain clear on every page.
+  const isDarkNav = false;
   const navIdle = isDarkNav ? "text-white/90 hover:text-white" : "text-[#334155] hover:text-[#0f6fae]";
   const navActive = isDarkNav ? "text-white font-bold" : "text-[#0f6fae] font-bold";
 
