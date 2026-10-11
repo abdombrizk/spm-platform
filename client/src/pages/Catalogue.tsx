@@ -3,7 +3,6 @@ import {
   ArrowRight,
   ArrowUpRight,
   BadgeCheck,
-  Building2,
   CheckCircle2,
   Filter,
   Layers,
@@ -11,7 +10,6 @@ import {
   PackageSearch,
   Search,
   ShieldCheck,
-  Sparkles,
   Stethoscope,
   Truck,
   X,
@@ -205,76 +203,64 @@ export default function Catalogue() {
         url="/catalogue"
       />
       <main className="min-h-screen bg-[#f7fafc]">
-        {/* Visual catalogue hero */}
+        {/* Italray partnership hero */}
         <section className="relative isolate overflow-hidden bg-[#061f2b] text-white">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_10%,rgba(96,193,187,.28),transparent_28%),linear-gradient(115deg,#061f2b_0%,#0a4052_52%,#0f6fae_100%)]" aria-hidden="true" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_10%,rgba(96,193,187,.3),transparent_28%),linear-gradient(115deg,#061f2b_0%,#0a4052_52%,#0f6fae_100%)]" aria-hidden="true" />
           <div className="absolute -right-24 -top-32 h-80 w-80 rounded-full border border-white/10 sm:h-[30rem] sm:w-[30rem]" aria-hidden="true" />
           <div className="absolute -right-8 top-10 h-56 w-56 rounded-full border border-white/10 sm:h-80 sm:w-80" aria-hidden="true" />
 
-          <div className="relative mx-auto grid max-w-[1280px] gap-10 px-5 py-16 sm:py-20 lg:grid-cols-[1.05fr_.95fr] lg:items-center lg:gap-16 lg:px-8 lg:py-24">
+          <div className="relative mx-auto grid max-w-[1280px] gap-10 px-5 py-12 sm:py-16 lg:grid-cols-[.95fr_1.05fr] lg:items-center lg:gap-14 lg:px-8 lg:py-20">
             <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#8be0d5]/35 bg-white/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[.18em] text-[#b9f1e7] backdrop-blur-sm">
-                <Sparkles className="h-3.5 w-3.5 text-[#8be0d5]" />
-                SPM Systems Catalogue
+              <div className="mb-6 flex flex-wrap items-center gap-4">
+                <div className="flex h-20 w-[190px] items-center justify-center rounded-2xl bg-white px-5 shadow-xl shadow-black/10">
+                  <img src="/manus-storage/italray-logo_57cfff13.png" alt="Italray official logo" className="max-h-12 w-auto max-w-full object-contain" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-[.2em] text-[#b9f1e7]">Strategic partnership</p>
+                  <p className="mt-1 text-sm font-semibold text-white/85">Exclusive agent in Egypt</p>
+                </div>
               </div>
-              <h1 className="mt-6 max-w-3xl text-4xl font-extrabold leading-[1.02] tracking-[-.045em] text-white sm:text-5xl lg:text-[68px]">
-                The right imaging system for the next clinical decision.
+              <h1 className="max-w-3xl text-4xl font-extrabold leading-[1.02] tracking-[-.045em] text-white sm:text-5xl lg:text-[62px]">
+                Italray imaging systems, engineered for confidence.
               </h1>
-              <p className="mt-6 max-w-xl text-base leading-8 text-white/80 sm:text-lg">
-                Explore SPM’s complete equipment portfolio, from mobile C-Arms and digital radiography to fluoroscopy, mammography and precision surgical technology.
+              <p className="mt-5 max-w-xl text-base leading-7 text-white/80 sm:text-lg">
+                Explore Italian C-Arms, digital radiography and surgical imaging systems backed by SPM engineering, documentation and lifecycle support.
               </p>
-              <div className="mt-8 flex flex-wrap items-center gap-3">
+              <div className="mt-7 flex flex-wrap items-center gap-3">
                 <Button size="lg" className="h-12 rounded-xl bg-[#c2410c] px-6 text-sm font-bold text-white shadow-xl shadow-[#c2410c]/20 hover:bg-[#9a3412]" asChild><a href="#catalogue-grid">
-                    Browse all systems <ArrowRight className="ml-2 h-4 w-4" />
+                    Explore Italray systems <ArrowRight className="ml-2 h-4 w-4" />
                   </a></Button>
-                <Button size="lg" variant="outline" className="h-12 rounded-xl border-white/40 bg-white/10 px-6 text-sm font-bold text-white hover:bg-white/20" asChild><Link href="/request-a-quote">
-                    Build a project quote <ArrowUpRight className="ml-2 h-4 w-4" />
+                <Button size="lg" variant="outline" className="h-12 rounded-xl border-white/40 bg-white/10 px-6 text-sm font-bold text-white hover:bg-white/20" asChild><Link href="/request-a-quote?brand=italray">
+                    Request a project quote <ArrowUpRight className="ml-2 h-4 w-4" />
                   </Link></Button>
               </div>
-              <div className="mt-10 grid max-w-xl grid-cols-2 gap-3 sm:grid-cols-4">
-                <div className="rounded-2xl border border-white/10 bg-white/10 p-3 backdrop-blur-sm">
-                  <Building2 className="h-5 w-5 text-[#8be0d5]" />
-                  <p className="mt-2 text-xl font-extrabold">{allItems.length || "—"}</p>
-                  <p className="text-[11px] text-white/60">Published systems</p>
-                </div>
-                <div className="rounded-2xl border border-white/10 bg-white/10 p-3 backdrop-blur-sm">
-                  <Activity className="h-5 w-5 text-[#8be0d5]" />
-                  <p className="mt-2 text-xl font-extrabold">{availableBrands.length || "—"}</p>
-                  <p className="text-[11px] text-white/60">Manufacturers</p>
-                </div>
-                <div className="rounded-2xl border border-white/10 bg-white/10 p-3 backdrop-blur-sm">
-                  <ShieldCheck className="h-5 w-5 text-[#8be0d5]" />
-                  <p className="mt-2 text-xl font-extrabold">Docs</p>
-                  <p className="text-xs text-white/70">Document-led sourcing</p>
-                </div>
-                <div className="rounded-2xl border border-white/10 bg-white/10 p-3 backdrop-blur-sm">
-                  <Truck className="h-5 w-5 text-[#8be0d5]" />
-                  <p className="mt-2 text-xl font-extrabold">MENA</p>
-                  <p className="text-[11px] text-white/60">Delivery coordination</p>
-                </div>
+              <div className="mt-8 flex flex-wrap gap-2 text-xs font-semibold text-white/75">
+                <span className="rounded-full border border-white/15 bg-white/10 px-3 py-2">C-Arms</span>
+                <span className="rounded-full border border-white/15 bg-white/10 px-3 py-2">Digital radiography</span>
+                <span className="rounded-full border border-white/15 bg-white/10 px-3 py-2">SPM lifecycle care</span>
               </div>
             </div>
 
-            <div className="relative mx-auto w-full max-w-[520px] lg:ml-auto">
+            <div className="relative mx-auto w-full max-w-[600px] lg:ml-auto">
               <div className="absolute -inset-5 rounded-[2rem] border border-[#8be0d5]/20 bg-[#8be0d5]/10 blur-2xl" aria-hidden="true" />
-              <div className="relative overflow-hidden rounded-[2rem] border border-white/20 bg-white/10 p-3 shadow-2xl backdrop-blur-sm">
-                <div className="relative aspect-[4/3] overflow-hidden rounded-[1.4rem] bg-[#dcecf0]">
+              <div className="relative overflow-hidden rounded-[2rem] border border-white/25 bg-white/10 p-3 shadow-2xl backdrop-blur-sm">
+                <div className="relative aspect-[16/10] overflow-hidden rounded-[1.4rem] bg-[#dcecf0]">
                   <img
                     src="/manus-storage/x-frame-dr-hero_791f595c.jpg"
                     alt="Italray X-FRAME DR digital radiography system in a modern clinical room"
                     loading="eager"
                     decoding="async"
-                    className="h-full w-full object-contain bg-[#eef5f7] transition duration-700 hover:scale-[1.03]"
+                    className="h-full w-full object-cover transition duration-700 hover:scale-[1.03]"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/80 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/85 via-[#061f2b]/5 to-transparent" />
                   <div className="absolute left-5 right-5 top-5 flex items-center justify-between gap-3">
-                    <div className="rounded-full border border-white/25 bg-[#061f2b]/65 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[.16em] text-[#b9f1e7] backdrop-blur-sm">Strategic partnership</div>
-                    <img src="/manus-storage/italray-logo_57cfff13.png" alt="Italray" loading="lazy" decoding="async" className="h-7 w-auto rounded bg-white/90 px-2 py-1 object-contain" />
+                    <div className="rounded-full border border-white/25 bg-[#061f2b]/65 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[.16em] text-[#b9f1e7] backdrop-blur-sm">Italian medical imaging</div>
+                    <div className="rounded-xl bg-white px-3 py-2 shadow-lg"><img src="/manus-storage/italray-logo_57cfff13.png" alt="Italray" loading="lazy" decoding="async" className="h-7 w-auto object-contain" /></div>
                   </div>
                   <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-4">
                     <div>
-                      <p className="text-[11px] font-bold uppercase tracking-[.18em] text-[#b9f1e7]">Italray digital radiography</p>
-                      <p className="mt-1 text-xl font-bold text-white">Italian systems. SPM engineering.</p>
+                      <p className="text-[11px] font-bold uppercase tracking-[.18em] text-[#b9f1e7]">X-FRAME DR platform</p>
+                      <p className="mt-1 text-xl font-bold text-white sm:text-2xl">Precision imaging. Local accountability.</p>
                     </div>
                     <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/15 text-white sm:flex">
                       <Stethoscope className="h-6 w-6" />
@@ -287,16 +273,16 @@ export default function Catalogue() {
         </section>
 
         {/* Search and filters */}
-        <section className="relative z-10 mx-auto -mt-6 max-w-[1280px] px-5 lg:px-8">
-          <div className="rounded-3xl border border-[#dce7eb] bg-white p-4 shadow-xl shadow-[#0a4052]/10 sm:p-5">
-            <div className="mb-4 flex flex-col gap-2 border-b border-[#eef2f4] pb-4 sm:flex-row sm:items-end sm:justify-between">
+        <section className="relative z-10 mx-auto -mt-5 max-w-[1120px] px-5 lg:px-8">
+          <div className="rounded-2xl border border-[#dce7eb] bg-white p-3 shadow-lg shadow-[#0a4052]/10 sm:p-4">
+            <div className="mb-3 flex flex-col gap-1.5 border-b border-[#eef2f4] pb-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-[11px] font-bold uppercase tracking-[.18em] text-[#0f6fae]">Equipment finder</p>
-                <h2 className="mt-1 text-lg font-extrabold tracking-[-.02em] text-[#0a4052]">Find the right system for your clinical workflow</h2>
+                <p className="text-[10px] font-bold uppercase tracking-[.18em] text-[#0f6fae]">Equipment finder</p>
+                <h2 className="mt-0.5 text-base font-extrabold tracking-[-.02em] text-[#0a4052]">Find the right system</h2>
               </div>
-              <p className="max-w-md text-xs leading-5 text-[#71808d] sm:text-right">Search by manufacturer, imaging modality or capability, then open the technical page for documentation and quotation support.</p>
+              <p className="max-w-sm text-[11px] leading-4 text-[#71808d] sm:text-right">Search by manufacturer, modality or capability.</p>
             </div>
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
               <div className="relative min-w-0 flex-1">
                 <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#94a3b8]" />
                 <input
@@ -305,12 +291,12 @@ export default function Catalogue() {
                   placeholder="Search by system name, model, manufacturer or capability..."
                   value={searchTerm}
                   onChange={event => setSearchTerm(event.target.value)}
-                  className="h-12 w-full rounded-xl border border-[#dce7eb] bg-[#fafcfd] pl-10 pr-4 text-sm text-[#1e293b] placeholder-[#94a3b8] focus:border-[#0a4052] focus:outline-hidden focus:ring-2 focus:ring-[#0a4052]/10"
+                  className="h-10 w-full rounded-lg border border-[#dce7eb] bg-[#fafcfd] pl-10 pr-4 text-sm text-[#1e293b] placeholder-[#94a3b8] focus:border-[#0a4052] focus:outline-hidden focus:ring-2 focus:ring-[#0a4052]/10"
                 />
               </div>
-              <div className="grid gap-3 sm:grid-cols-2 lg:w-[440px]">
+              <div className="grid gap-2 sm:grid-cols-3 lg:w-[450px]">
                 <Select value={selectedBrand} onValueChange={setSelectedBrand}>
-                  <SelectTrigger className="h-12 rounded-xl border-[#dce7eb] bg-[#fafcfd] text-sm">
+                  <SelectTrigger className="h-10 rounded-lg border-[#dce7eb] bg-[#fafcfd] text-xs">
                     <SelectValue placeholder="All manufacturers" />
                   </SelectTrigger>
                   <SelectContent>
@@ -321,7 +307,7 @@ export default function Catalogue() {
                   </SelectContent>
                 </Select>
                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger className="h-12 rounded-xl border-[#dce7eb] bg-[#fafcfd] text-sm">
+                  <SelectTrigger className="h-10 rounded-lg border-[#dce7eb] bg-[#fafcfd] text-xs">
                     <SelectValue placeholder="All clinical categories" />
                   </SelectTrigger>
                   <SelectContent>
@@ -332,7 +318,7 @@ export default function Catalogue() {
                   </SelectContent>
                 </Select>
                 <Select value={selectedSort} onValueChange={setSelectedSort}>
-                  <SelectTrigger className="h-12 rounded-xl border-[#dce7eb] bg-[#fafcfd] text-sm" aria-label="Sort catalogue">
+                  <SelectTrigger className="h-10 rounded-lg border-[#dce7eb] bg-[#fafcfd] text-xs" aria-label="Sort catalogue">
                     <SelectValue placeholder="Sort systems" />
                   </SelectTrigger>
                   <SelectContent>
@@ -343,18 +329,18 @@ export default function Catalogue() {
                 </Select>
               </div>
               {hasActiveFilters || selectedSort !== "relevance" ? (
-                <Button variant="outline" onClick={resetFilters} className="h-12 rounded-xl border-[#dce7eb] px-4 text-xs font-bold text-[#64748b] hover:bg-[#eaf4fa] hover:text-[#0a4052]">
+                <Button variant="outline" onClick={resetFilters} className="h-10 rounded-lg border-[#dce7eb] px-3 text-xs font-bold text-[#64748b] hover:bg-[#eaf4fa] hover:text-[#0a4052]">
                   <X className="mr-1.5 h-4 w-4" /> Clear
                 </Button>
               ) : (
-                <div className="flex h-12 items-center justify-center gap-2 rounded-xl bg-[#eaf4fa] px-4 text-xs font-bold text-[#0a4052]">
+                <div className="flex h-10 items-center justify-center gap-2 rounded-lg bg-[#eaf4fa] px-3 text-xs font-bold text-[#0a4052]">
                   <Filter className="h-4 w-4" /> {products.length} systems shown
                 </div>
               )}
             </div>
 
             {availableCategories.length > 0 ? (
-              <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+              <div className="mt-3 flex gap-2 overflow-x-auto pb-0.5">
                 <button type="button" onClick={() => setSelectedCategory("all")} className={`shrink-0 rounded-full px-3.5 py-2 text-xs font-bold transition ${selectedCategory === "all" ? "bg-[#0a4052] text-white" : "bg-[#f1f5f9] text-[#64748b] hover:bg-[#eaf4fa] hover:text-[#0a4052]"}`}>
                   All systems
                 </button>
