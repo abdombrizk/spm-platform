@@ -12,7 +12,6 @@ import {
   Layers,
   MapPin,
   ShieldCheck,
-  Users,
   Wrench,
   Sparkles,
   PhoneCall,
@@ -38,8 +37,6 @@ const fallback: Record<string, string> = {
   "panel.eyebrow": "FIELD READINESS",
   "panel.title": "24–48h Cairo Response",
   "panel.description": "Dedicated biomedical engineers covering 24 of 27 Egyptian governorates with remote diagnostics within 4 hours.",
-  "careers.image": "/manus-storage/spm-service-engineer_96348b80.jpg",
-  "careers.visible": "true",
 };
 
 const solutions = [
@@ -100,7 +97,7 @@ const strategicPartners = [
   },
 ];
 
-function AnimatedCounter({ targetValue, duration = 1200 }: { targetValue: number; duration?: number }) {
+function AnimatedCounter({ targetValue, duration = 1200, formatNumber = true }: { targetValue: number; duration?: number; formatNumber?: boolean }) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
   const [hasStarted, setHasStarted] = useState(false);
@@ -138,7 +135,7 @@ function AnimatedCounter({ targetValue, duration = 1200 }: { targetValue: number
     return () => clearInterval(timer);
   }, [hasStarted, targetValue, duration]);
 
-  return <span ref={ref}>{count.toLocaleString()}</span>;
+  return <span ref={ref}>{formatNumber ? count.toLocaleString() : count}</span>;
 }
 
 export default function Home() {
@@ -159,7 +156,6 @@ export default function Home() {
 
   const hospitals = stats.get("hospitals_reached");
   const projects = stats.get("upa_projects");
-  const experience = stats.get("years_experience");
   const spareParts = stats.get("spare_parts_ready");
 
   const statItems = [
@@ -184,9 +180,9 @@ export default function Home() {
       border: "hover:border-[#0f6fae]",
     },
     {
-      num: parseInt(experience?.value ?? "7", 10) || 7,
-      prefix: "+",
-      label: experience?.label || "Years of Experience",
+      num: 2019,
+      prefix: "Since ",
+      label: "SPM engineering commitment",
       sub: "Medical imaging technology leadership",
       icon: Clock,
       accent: "text-[#2b8c88]",
@@ -231,7 +227,6 @@ export default function Home() {
     return !isNaN(eventTime) && eventTime <= Date.now();
   });
 
-  const showCareers = content["careers.visible"] !== "false" && content["careers.visible"] !== "";
   const heroImage = content["hero.image"]?.includes("spm-hero-medical-engineer")
     ? fallback["hero.image"]
     : content["hero.image"] || fallback["hero.image"];
@@ -331,7 +326,7 @@ export default function Home() {
                     <div>
                       <div className="flex items-baseline gap-1 text-3xl font-black tracking-tight text-[#0a4052]">
                         <span>{stat.prefix}</span>
-                        <AnimatedCounter targetValue={stat.num} />
+                        <AnimatedCounter targetValue={stat.num} formatNumber={stat.prefix !== "Since "} />
                       </div>
                       <p className="mt-0.5 text-sm font-bold text-[#1e293b]">{stat.label}</p>
                       <p className="text-xs text-[#64748b]">{stat.sub}</p>
@@ -550,63 +545,7 @@ export default function Home() {
           </section>
         ) : null}
 
-        {/* Section 6: Careers Section */}
-        {showCareers ? (
-          <section className="relative overflow-hidden bg-[#061f2b] py-20 text-white lg:py-24" aria-label="Careers Section">
-            <div className="absolute inset-0 -z-10 opacity-25">
-              <img
-                src={content["careers.image"] || fallback["careers.image"]}
-                alt="SPM engineering team in field operation"
-                className="h-full w-full object-cover object-center"
-              />
-            </div>
-            <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#061f2b] via-[#061f2b]/95 to-[#061f2b]/80" />
-
-            <div className="mx-auto max-w-[1280px] px-5 lg:px-8">
-              <div className="grid gap-10 lg:grid-cols-[1.2fr_.8fr] lg:items-center">
-                <div>
-                  <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-[#8be0d5]">
-                    <Users className="h-3.5 w-3.5" /> Join Our Technical Team
-                  </div>
-                  <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
-                    Build your career at the forefront of medical imaging technology.
-                  </h2>
-                  <p className="mt-5 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg">
-                    SPM is growing. We seek ambitious biomedical engineers, field imaging technicians, and quality specialists dedicated to clinical uptime and patient safety.
-                  </p>
-                  <div className="mt-8 flex flex-wrap gap-4">
-                    <Button size="lg" className="h-12 rounded-xl bg-[#c2410c] px-7 text-sm font-bold text-white shadow-lg hover:bg-[#9a3412]" asChild><Link href="/careers">
-                        Explore Open Roles <ArrowUpRight className="ml-2 h-4 w-4" />
-                      </Link></Button>
-                    <Button size="lg" variant="outline" className="h-12 rounded-xl border-white/40 bg-transparent px-7 text-sm font-bold text-white hover:bg-white/10" asChild><Link href="/contact?subject=Careers">
-                        Submit Your CV <ArrowRight className="ml-2 h-4 w-4" />
-                      </Link></Button>
-                  </div>
-                </div>
-
-                <div className="rounded-3xl border border-white/15 bg-white/5 p-6 backdrop-blur-md sm:p-8">
-                  <p className="text-xs font-bold uppercase tracking-widest text-[#8be0d5]">Engineering Excellence at SPM</p>
-                  <ul className="mt-5 space-y-4 text-sm text-white/90">
-                    <li className="flex items-start gap-3">
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#8be0d5]" />
-                      <span>Direct training on advanced C-Arm, Digital Radiography and Fluoroscopy.</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#8be0d5]" />
-                      <span>Documented QMS practices and traceable technical records.</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#8be0d5]" />
-                      <span>High-impact projects across top-tier public, university and private healthcare institutions.</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </section>
-        ) : null}
-
-        {/* Section 7: Operating Rhythm & Trust */}
+        {/* Section 6: Operating Rhythm & Trust */}
         <section className="bg-[#eaf4fa] py-20 lg:py-24">
           <div className="mx-auto grid max-w-[1280px] gap-10 px-5 lg:grid-cols-[.9fr_1.1fr] lg:items-center lg:px-8">
             <div>
