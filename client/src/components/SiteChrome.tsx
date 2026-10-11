@@ -7,6 +7,9 @@ import { trpc } from "@/lib/trpc";
 import { italrayCategoryLinks } from "@/lib/italrayCategories";
 
 const logo = "/manus-storage/spm-logo-cropped_7b519adc.webp";
+const italrayLogo = "/manus-storage/italray-logo_57cfff13.png";
+const hermannLogo = "/manus-storage/hermann-logo_7f4be603.png";
+const genorayLogo = "/manus-storage/genoray_c6662250.png";
 
 export default function SiteChrome({ children, transparentHeader = false }: { children: React.ReactNode; transparentHeader?: boolean }) {
   const [open, setOpen] = useState(false);
@@ -159,7 +162,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
-                        <span className={`flex h-9 w-9 items-center justify-center rounded-lg text-xs font-black ${activeProductTab === "italray" ? "bg-white/15 text-white" : "bg-[#eaf4fa] text-[#0a4052]"}`}>IR</span>
+                        <span className={`flex h-10 w-14 items-center justify-center rounded-lg px-1 ${activeProductTab === "italray" ? "bg-white" : "bg-[#eaf4fa]"}`}><img src={italrayLogo} alt="Italray logo" className="max-h-7 max-w-12 object-contain" /></span>
                         <div>
                           <p className="text-sm font-bold">Italray</p>
                           <p className={`text-xs ${activeProductTab === "italray" ? "text-white/80" : "text-[#64748b]"}`}>Exclusive Agent in Egypt</p>
@@ -178,7 +181,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
-                        <span className={`flex h-9 w-9 items-center justify-center rounded-lg text-xs font-black ${activeProductTab === "hermann" ? "bg-white/15 text-white" : "bg-[#fef2f2] text-[#c92518]"}`}>HM</span>
+                        <span className={`flex h-10 w-14 items-center justify-center rounded-lg px-1 ${activeProductTab === "hermann" ? "bg-white" : "bg-[#fef2f2]"}`}><img src={hermannLogo} alt="Hermann Medizintechnik logo" className="max-h-7 max-w-12 object-contain" /></span>
                         <div>
                           <p className="text-sm font-bold">Hermann</p>
                           <p className={`text-xs ${activeProductTab === "hermann" ? "text-white/80" : "text-[#64748b]"}`}>Authorized Partner</p>
@@ -197,7 +200,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
-                          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#eaf4fa] text-[#0a4052]"><Wrench className="h-4 w-4" aria-hidden="true" /></span>
+                          <span className={`flex h-10 w-14 items-center justify-center rounded-lg px-1 ${activeProductTab === "parts" ? "bg-white" : "bg-[#eaf4fa]"}`}><img src={genorayLogo} alt="Genoray logo" className="max-h-7 max-w-12 object-contain" /></span>
                         <div>
                           <p className="text-sm font-bold">Spare Parts</p>
                           <p className={`text-xs ${activeProductTab === "parts" ? "text-white/80" : "text-[#64748b]"}`}>Genuine parts & support</p>
@@ -325,7 +328,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                 <Link href="/services" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] transition hover:bg-[#eaf4fa] hover:text-[#0a4052]">
                   All Services (10 Pillars)
                 </Link>
-                <Link href="/request-service" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] transition hover:bg-[#eaf4fa] hover:text-[#0a4052]">
+                <Link href="/request-service" onClick={() => setActiveServices(false)} className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] transition hover:bg-[#eaf4fa] hover:text-[#0a4052]">
                   Request Service Visit
                 </Link>
                 <Link href="/maintenance-contracts" className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-[#334155] transition hover:bg-[#eaf4fa] hover:text-[#0a4052]">
