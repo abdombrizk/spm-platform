@@ -49,7 +49,7 @@ const solutions = [
     title: "10 Core Service Pillars for Mission-Critical Systems",
     text: "From preventive & corrective maintenance to complete system commissioning, calibration, and tube/detector refurbishment.",
     href: "/services",
-    image: "/manus-storage/clinodigit-omega-hero_dc3ed0c5.jpg",
+    image: "/manus-storage/spm-carmex-maintenance-card-optimized_fde07293.jpg",
     cta: "Explore Service Pillars",
     badge: "24/48h Response",
   },
@@ -59,7 +59,7 @@ const solutions = [
     title: "Medical Imaging Equipment",
     text: "Explore C-Arm systems, digital radiography, fluoroscopy, and surgical technology with full technical specs and ISO documents.",
     href: "/catalogue",
-    image: "https://cdn.shopify.com/s/files/1/1002/9672/0673/files/MsiwLyhyWlEjDsPK.jpg?v=1790773853",
+    image: "/manus-storage/clinodigit-omega-hero_dc3ed0c5.jpg",
     cta: "Browse Imaging Systems",
     badge: "Italray Exclusive Agent",
   },
@@ -67,7 +67,7 @@ const solutions = [
     icon: Layers,
     eyebrow: "Global Sourcing",
     title: "Verified OEM Spare Parts & Fast Dispatch",
-    text: "Direct access to tested original components for GE, Siemens, Philips, Ziehm, and leading multi-vendor platforms.",
+    text: "Direct access to tested original components for GE, Siemens, Philips, Ziehm, Genoray, and leading multi-vendor platforms.",
     href: "/spare-parts",
     image: "/manus-storage/spm-parts-lab_656efe60.jpg",
     cta: "Request a Part Number",
@@ -82,6 +82,7 @@ const brandLogoOverrides: Record<string, string> = {
   "siemens-healthineers": "/manus-storage/siemens-healthineers_d3ea3a9a.png",
   "ziehm-imaging": "/manus-storage/ziehm-imaging_a271bcb6.png",
   "philips-healthcare": "/manus-storage/philips-healthcare_8bdab1dd.png",
+  genoray: "/manus-storage/genoray_c6662250.png",
 };
 
 const strategicPartners = [
@@ -205,8 +206,22 @@ export default function Home() {
   ];
 
   const partBrands = brandsQuery.data ?? [];
-  const marqueeBrands = partBrands.length
-    ? Array.from({ length: Math.max(2, Math.ceil(8 / partBrands.length)) }, () => partBrands).flat()
+  const marqueeSource = [
+    ...partBrands,
+    {
+      id: 999,
+      slug: "genoray",
+      name: "Genoray",
+      introduction: "Genoray medical imaging technology partner.",
+      logoUrl: brandLogoOverrides.genoray,
+      heroImageUrl: null,
+      authorizedAgentLabel: "Medical imaging technology partner",
+      isVisible: true,
+      displayOrder: 5,
+    },
+  ];
+  const marqueeBrands = marqueeSource.length
+    ? Array.from({ length: Math.max(2, Math.ceil(10 / marqueeSource.length)) }, () => marqueeSource).flat()
     : [];
 
   const eventsData = eventsPageQuery.data?.data as { items?: Array<{ title: string; date: string; location: string; image?: string; isPast?: boolean }> } | undefined;
@@ -451,7 +466,7 @@ export default function Home() {
                 {[...marqueeBrands, ...marqueeBrands].map((brand, index) => (
                   <Link
                     key={`${brand.id}-${index}`}
-                    href={`/spare-parts?brand=${encodeURIComponent(brand.slug)}`}
+                    href={brand.slug === "genoray" ? "/spare-parts" : `/spare-parts?brand=${encodeURIComponent(brand.slug)}`}
                     aria-hidden={index >= marqueeBrands.length ? true : undefined}
                     tabIndex={index >= marqueeBrands.length ? -1 : undefined}
                     className="group flex h-24 w-44 shrink-0 items-center justify-center rounded-2xl border border-[#e2e8f0] bg-white px-5 text-center shadow-xs transition hover:border-[#0a4052] hover:shadow-md"
