@@ -38,3 +38,9 @@ The public product preview and build/test suite are available for verification. 
 - [x] Fixed the published-product public schema so reviewed catalog records are visible without exposing administrative workflow restrictions.
 - [x] Added regression coverage in `server/hermann.products.test.ts`; 20 Hermann CMS entries are confirmed through the public API.
 - [x] Passed TypeScript check, 37/37 non-Shopify tests, production build, managed-storage checks, and browser verification of the Hermann catalog route.
+
+## About page updates
+
+- [x] Replaced the About page Hero visual with a dedicated operating-room mobile C-Arm X-ray system visual (`/manus-storage/spm-about-xray-carm-hero_d720db48.jpg`).
+- [x] Updated the introductory copy and statistics to highlight SPM's establishment in 2019 (`2019 Established`) across both the React component fallback and the live published CMS page.
+- [x] Verified full suite (37/37 tests), TypeScript, production build, and live browser rendering.

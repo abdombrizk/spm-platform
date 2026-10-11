@@ -32,7 +32,7 @@ const fallback = {
   eyebrow: "ABOUT SPM",
   title: "Medical imaging technology, engineered for continuity.",
   intro:
-    "With more than seven years of experience, SPM is a premium medical imaging technology partner dedicated to the engineered lifecycle management of critical hospital systems.",
+    "Established in 2019, SPM is a premium medical imaging technology partner dedicated to the engineered lifecycle management of critical hospital systems.",
   whoWeAre:
     "SPM is a leading provider of medical imaging solutions in Egypt, specializing in the supply and maintenance of advanced systems. We deliver trusted, end-to-end solutions combining innovative equipment, certified multi-vendor technical service, global spare parts sourcing, and comprehensive maintenance support.",
   mission:
@@ -42,7 +42,7 @@ const fallback = {
   geography:
     "We support customers across Egypt and selected MENA markets, with service operations spanning 24 of Egypt's 27 governorates—from Alexandria to Aswan.",
   address: "16 Ahmed Hassan El Zyaat Street, 7th District, Nasr City, Cairo, Egypt",
-  heroImage: "/manus-storage/spm-service-engineer_96348b80.jpg",
+  heroImage: "/manus-storage/spm-about-xray-carm-hero_d720db48.jpg",
   profileDocument: "",
   careersVisible: "true",
 };
@@ -62,7 +62,7 @@ const fallbackData: AboutData = {
   stats: [
     { value: "450+", label: "Hospitals Reached", description: "Healthcare partners and centers" },
     { value: "66", label: "UPA Projects", description: "Public-sector project experience" },
-    { value: "7+", label: "Years of Experience", description: "Medical imaging expertise" },
+    { value: "2019", label: "Established", description: "SPM medical imaging technology partner" },
     { value: "24/27", label: "Governorates Covered", description: "Nationwide Egyptian service reach" },
   ],
   missionBullets: [
@@ -147,7 +147,7 @@ export default function AboutPage() {
               </div>
             </div>
             <div className="relative min-h-[390px] overflow-hidden rounded-[30px] bg-[#0a4052] shadow-2xl shadow-[#0a4052]/20 lg:min-h-[520px]">
-              <img src={heroImage} alt="SPM field engineer maintaining a medical imaging system" loading="eager" decoding="async" className="absolute inset-0 h-full w-full object-cover object-[58%_center] transition duration-700 hover:scale-[1.02]" />
+              <img src={heroImage} alt="Mobile C-Arm X-ray imaging system in a modern operating room" loading="eager" decoding="async" className="absolute inset-0 h-full w-full object-cover object-[62%_center] transition duration-700 hover:scale-[1.02]" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#061f2b]/45 via-[#061f2b]/10 to-transparent" />
               <div className="absolute right-5 top-5 sm:right-7 sm:top-7">
                 <div className="rounded-2xl border border-white/20 bg-[#061f2b]/80 p-3 shadow-xl backdrop-blur-md">
