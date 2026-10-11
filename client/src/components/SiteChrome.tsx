@@ -9,7 +9,6 @@ import { italrayCategoryLinks } from "@/lib/italrayCategories";
 const logo = "/manus-storage/spm-logo-cropped_7b519adc.webp";
 const italrayLogo = "/manus-storage/italray-logo_57cfff13.png";
 const hermannLogo = "/manus-storage/hermann-logo_7f4be603.png";
-const genorayLogo = "/manus-storage/genoray_c6662250.png";
 
 export default function SiteChrome({ children }: { children: React.ReactNode; transparentHeader?: boolean }) {
   const [open, setOpen] = useState(false);
@@ -192,7 +191,7 @@ export default function SiteChrome({ children }: { children: React.ReactNode; tr
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
-                          <span className={`flex h-10 w-14 items-center justify-center rounded-lg px-1 ${activeProductTab === "parts" ? "bg-white" : "bg-[#eaf4fa]"}`}><img src={genorayLogo} alt="Genoray logo" className="max-h-7 max-w-12 object-contain" /></span>
+                          <span className={`flex h-10 w-14 items-center justify-center rounded-lg px-1 ${activeProductTab === "parts" ? "bg-white" : "bg-[#eaf4fa]"}`}><img src={logo} alt="SPM logo" className="max-h-8 max-w-12 object-contain" /></span>
                         <div>
                           <p className="text-sm font-bold">Spare Parts</p>
                           <p className={`text-xs ${activeProductTab === "parts" ? "text-white/80" : "text-[#64748b]"}`}>Genuine parts & support</p>
