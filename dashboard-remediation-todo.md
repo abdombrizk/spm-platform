@@ -28,3 +28,13 @@ The public product preview and build/test suite are available for verification. 
 - [x] Updated test suite (server/carmex.rkfps.test.ts) to validate all 30 titled items without raw patient filenames.
 - [x] Passed TypeScript check, full test suite (32/32 tests), production build, and DOM/visual verification.
 - [x] Restored the original CARMEX RK FP-S product Hero and moved the supplied operating-room visual to the homepage Hero as intended.
+
+## Hermann catalog ingestion
+
+- [x] Reviewed the complete 310-page Hermann 2026/2027 catalog and documented its 8 chapters, approximately 4,020 identifiable code references, and the recommended family → variant → quote structure.
+- [x] Added 13 Hermann endoscopy / operating-room systems with managed product images, quote-first status, technical summaries, and the official catalog PDF.
+- [x] Added 7 family-level Hermann entries covering General Surgery, Laparoscopy, Arthroscopy, Urology, Hysteroscopy, Electrosurgery, and Containers & Instrument Trays instead of flooding the site with thousands of variant cards.
+- [x] Added a Hermann-specific catalog Hero, partner logo, chapter imagery, and direct `brand=hermann` filtering.
+- [x] Fixed the published-product public schema so reviewed catalog records are visible without exposing administrative workflow restrictions.
+- [x] Added regression coverage in `server/hermann.products.test.ts`; 20 Hermann CMS entries are confirmed through the public API.
+- [x] Passed TypeScript check, 37/37 non-Shopify tests, production build, managed-storage checks, and browser verification of the Hermann catalog route.

@@ -149,6 +149,7 @@ export default function Catalogue() {
   const cmsItems = useMemo(() => (query.data ?? []).map(item => toCmsItem(item as CmsProduct)), [query.data]);
   const shopifyItems = useMemo(() => (storeQuery.data ?? []).map(toShopifyItem), [storeQuery.data]);
   const allItems = useMemo(() => [...cmsItems, ...shopifyItems], [cmsItems, shopifyItems]);
+  const isHermann = selectedBrand === "hermann";
 
   const availableBrands = useMemo(() => {
     const brands = new Map<string, string>();
@@ -205,7 +206,7 @@ export default function Catalogue() {
       <main className="min-h-screen bg-[#f7fafc]">
         {/* Italray partnership hero */}
         <section className="relative isolate overflow-hidden bg-[#061f2b] text-white">
-          <div className="absolute inset-0 bg-cover bg-center opacity-45" style={{ backgroundImage: "url('/manus-storage/italray-spm-partnership-hero_fe8e7422.jpg')" }} aria-hidden="true" />
+          <div className="absolute inset-0 bg-cover bg-center opacity-45" style={{ backgroundImage: `url('${isHermann ? "/manus-storage/hermann-family-page-116_e79c21e8.jpg" : "/manus-storage/italray-spm-partnership-hero_fe8e7422.jpg"}')` }} aria-hidden="true" />
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,31,43,.98)_0%,rgba(6,31,43,.88)_38%,rgba(6,31,43,.48)_72%,rgba(6,31,43,.36)_100%)]" aria-hidden="true" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_10%,rgba(96,193,187,.24),transparent_28%),linear-gradient(115deg,rgba(6,31,43,.35)_0%,rgba(10,64,82,.12)_52%,rgba(15,111,174,.18)_100%)]" aria-hidden="true" />
           <div className="absolute -right-24 -top-32 h-80 w-80 rounded-full border border-white/10 sm:h-[30rem] sm:w-[30rem]" aria-hidden="true" />
@@ -215,31 +216,29 @@ export default function Catalogue() {
             <div className="max-w-2xl lg:max-w-[760px]">
               <div className="mb-6 flex flex-wrap items-center gap-4">
                 <div className="flex h-20 w-[190px] items-center justify-center rounded-2xl bg-white px-5 shadow-xl shadow-black/10">
-                  <img src="/manus-storage/italray-logo_57cfff13.png" alt="Italray official logo" className="max-h-12 w-auto max-w-full object-contain" />
+                  <img src={isHermann ? "/manus-storage/hermann-logo_204aa669.png" : "/manus-storage/italray-logo_57cfff13.png"} alt={isHermann ? "Hermann official logo" : "Italray official logo"} className="max-h-12 w-auto max-w-full object-contain" />
                 </div>
                 <div>
                   <p className="text-[11px] font-bold uppercase tracking-[.2em] text-[#b9f1e7]">Strategic partnership</p>
-                  <p className="mt-1 text-sm font-semibold text-white/85">Exclusive agent in Egypt</p>
+                  <p className="mt-1 text-sm font-semibold text-white/85">{isHermann ? "Authorized distribution partner in Egypt" : "Exclusive agent in Egypt"}</p>
                 </div>
               </div>
               <h1 className="max-w-3xl text-4xl font-extrabold leading-[1.02] tracking-[-.045em] text-white sm:text-5xl lg:text-[62px]">
-                Italray imaging systems, engineered for confidence.
+                {isHermann ? "Hermann surgical systems, ready for the operating room." : "Italray imaging systems, engineered for confidence."}
               </h1>
               <p className="mt-5 max-w-xl text-base leading-7 text-white/80 sm:text-lg">
-                Explore Italian C-Arms, digital radiography and surgical imaging systems backed by SPM engineering, documentation and lifecycle support.
+                {isHermann ? "Explore Hermann endoscopy, electrosurgery and fluid-management systems backed by SPM documentation, quotation review and lifecycle support." : "Explore Italian C-Arms, digital radiography and surgical imaging systems backed by SPM engineering, documentation and lifecycle support."}
               </p>
               <div className="mt-7 flex flex-wrap items-center gap-3">
                 <Button size="lg" className="h-12 rounded-xl bg-[#c2410c] px-6 text-sm font-bold text-white shadow-xl shadow-[#c2410c]/20 hover:bg-[#9a3412]" asChild><a href="#catalogue-grid">
-                    Explore Italray systems <ArrowRight className="ml-2 h-4 w-4" />
+                    {isHermann ? "Explore Hermann systems" : "Explore Italray systems"} <ArrowRight className="ml-2 h-4 w-4" />
                   </a></Button>
-                <Button size="lg" variant="outline" className="h-12 rounded-xl border-white/40 bg-white/10 px-6 text-sm font-bold text-white hover:bg-white/20" asChild><Link href="/request-a-quote?brand=italray">
+                <Button size="lg" variant="outline" className="h-12 rounded-xl border-white/40 bg-white/10 px-6 text-sm font-bold text-white hover:bg-white/20" asChild><Link href={`/request-a-quote?brand=${isHermann ? "hermann" : "italray"}`}>
                     Request a project quote <ArrowUpRight className="ml-2 h-4 w-4" />
                   </Link></Button>
               </div>
               <div className="mt-8 flex flex-wrap gap-2 text-xs font-semibold text-white/75">
-                <span className="rounded-full border border-white/15 bg-white/10 px-3 py-2">C-Arms</span>
-                <span className="rounded-full border border-white/15 bg-white/10 px-3 py-2">Digital radiography</span>
-                <span className="rounded-full border border-white/15 bg-white/10 px-3 py-2">SPM lifecycle care</span>
+                {isHermann ? <><span className="rounded-full border border-white/15 bg-white/10 px-3 py-2">Endoscopy</span><span className="rounded-full border border-white/15 bg-white/10 px-3 py-2">Electrosurgery</span><span className="rounded-full border border-white/15 bg-white/10 px-3 py-2">OR fluid management</span></> : <><span className="rounded-full border border-white/15 bg-white/10 px-3 py-2">C-Arms</span><span className="rounded-full border border-white/15 bg-white/10 px-3 py-2">Digital radiography</span><span className="rounded-full border border-white/15 bg-white/10 px-3 py-2">SPM lifecycle care</span></>}
               </div>
             </div>
 

@@ -101,7 +101,7 @@ const publicProductDataSchema = productDataSchema.pick({
   brochureUrl: true, datasheetUrl: true, userManualUrl: true, videoUrl: true,
   availabilityStatus: true, requestQuote: true, ceStatus: true, seoTitle: true, seoDescription: true,
   commerceMode: true, shopifyProductId: true, shopifyHandle: true,
-});
+}).passthrough();
 const publicServiceDataSchema = serviceDataSchema.pick({
   name: true, code: true, shortDescription: true, fullDescription: true, coveredProductIds: true,
   coveredEquipmentManual: true, supportedBrands: true, serviceScope: true, includedActivities: true,
