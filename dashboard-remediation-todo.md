@@ -91,3 +91,9 @@ The public product preview and build/test suite are available for verification. 
 - [x] Replaced the About Hero with the exact homepage Hero visual (`/manus-storage/spm-hero-exact-half-split_1a839b26.webp`) and aligned its accessible alt text.
 - [x] Replaced the About statistics card “Governorates Covered” with “48h Maximum Response” and synchronized the live CMS content.
 - [x] Added `server/about.presentation.test.ts` to cover both static fallback and public CMS values; final suite passes 42/42 non-Shopify tests.
+
+## Catalogue search simplification
+
+- [x] Removed the large Equipment Finder heading, explanatory copy, manufacturer/category/sort controls, clear control, result badge, and category chips from the Catalogue page.
+- [x] Kept a single compact, accessible search bar below the Hero with URL-backed search behavior intact for catalogue navigation.
+- [x] Verified the rendered DOM has one search input and no legacy filter controls; final suite passes 43/43 non-Shopify tests with a successful production build.
