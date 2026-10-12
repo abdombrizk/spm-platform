@@ -21,7 +21,7 @@ describe("homepage service shortcuts and trust badges", () => {
 
   it("uses the supplied split-composition operating-room Hero", () => {
     expect(homeSource).toContain("/manus-storage/spm-hero-exact-half-split_1a839b26.webp");
-    expect(homeSource).toContain("Hermann Medizintechnik endoscopy tower and Italray mobile C-Arm in a modern operating room");
+    expect(homeSource).toContain("Italray C-Arm and surgical imaging equipment in a modern operating room");
   });
 
   it("keeps the Hermann visual showcase connected to the supplied gallery", () => {

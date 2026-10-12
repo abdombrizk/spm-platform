@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  ArrowRight,
   ArrowUpRight,
   BadgeCheck,
   Boxes,
@@ -24,8 +23,6 @@ import { Button } from "@/components/ui/button";
 import SiteChrome from "@/components/SiteChrome";
 import SEOHead from "@/components/SEOHead";
 import { trpc } from "@/lib/trpc";
-
-const HERMANN_HERO_IMAGE = "/spm-hero-hermann-composite.jpg?v=balanced-split";
 
 const fallback: Record<string, string> = {
   "brand.name": "SPM",
@@ -324,7 +321,7 @@ export default function Home() {
     return !isNaN(eventTime) && eventTime <= Date.now();
   });
 
-  const heroImage = HERMANN_HERO_IMAGE;
+  const heroImage = content["hero.image"] || fallback["hero.image"];
 
   return (
     <SiteChrome transparentHeader={false}>
@@ -338,7 +335,7 @@ export default function Home() {
         <section className="relative isolate min-h-[640px] overflow-hidden border-b border-[#0a4052] bg-[#061f2b] text-white sm:min-h-[720px] lg:min-h-[760px]">
           <img
             src={heroImage}
-            alt="Hermann Medizintechnik endoscopy tower and Italray mobile C-Arm in a modern operating room"
+            alt="Italray C-Arm and surgical imaging equipment in a modern operating room"
             loading="eager"
             fetchPriority="high"
             decoding="async"
@@ -346,43 +343,30 @@ export default function Home() {
           />
           {/* Multi-stage calibrated gradient overlay */}
           <div
-            className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,31,43,.86)_0%,rgba(6,31,43,.72)_38%,rgba(6,31,43,.18)_72%,rgba(6,31,43,.34)_100%)]"
+            className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,31,43,.82)_0%,rgba(6,31,43,.66)_35%,rgba(6,31,43,.12)_73%,rgba(6,31,43,.28)_100%)]"
             aria-hidden="true"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/65 via-transparent to-[#061f2b]/20" aria-hidden="true" />
 
           <div className="relative mx-auto flex min-h-[640px] max-w-[1280px] items-center px-5 py-24 sm:min-h-[720px] lg:min-h-[760px] lg:px-8">
-            <div className="max-w-2xl text-left lg:max-w-[290px]">
+            <div className="max-w-2xl text-left lg:max-w-[560px]">
               {/* Category Pill */}
-              <div className="mb-5 flex flex-wrap items-center gap-3">
-                <div className="inline-flex max-w-[280px] items-center gap-2 rounded-full border border-[#60c1bb]/40 bg-[#061f2b]/60 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[.12em] text-[#8be0d5] shadow-lg backdrop-blur-md">
+              <div className="mb-6 flex flex-wrap items-center gap-3">
+                <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-[#60c1bb]/40 bg-[#061f2b]/60 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[.16em] text-[#8be0d5] shadow-lg backdrop-blur-md">
                   <span className="h-2 w-2 rounded-full bg-[#60c1bb] animate-pulse" />
                   {content["hero.eyebrow"] || fallback["hero.eyebrow"]}
                 </div>
-                <Link
-                  href="/catalogue?brand=hermann"
-                  className="inline-flex h-10 items-center gap-2 rounded-full border border-[#c74755]/55 bg-white/95 py-1 pl-2 pr-3 text-[10px] font-extrabold uppercase tracking-[.14em] text-[#861f2d] shadow-lg shadow-[#061f2b]/20 transition hover:-translate-y-0.5 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#061f2b]"
-                >
-                  <span className="flex h-7 items-center justify-center rounded-md bg-[#fef2f2] px-2 text-[11px] font-black tracking-[-.04em] text-[#a52432]">HERMANN</span>
-                  Surgical &amp; Endoscopic Portfolio
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
               </div>
 
               {/* Dominant Headline */}
-              <h1 className="max-w-2xl text-4xl font-extrabold leading-[1.05] tracking-[-.04em] text-white sm:text-5xl lg:max-w-[275px] lg:text-[54px]">
+              <h1 className="max-w-2xl text-4xl font-extrabold leading-[1.03] tracking-[-.045em] text-white sm:text-5xl lg:max-w-[560px] lg:text-[64px]">
                 {content["hero.title"] || fallback["hero.title"]}
               </h1>
 
               {/* Supporting Copy */}
-              <p className="mt-6 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg lg:max-w-[275px]">
+              <p className="mt-6 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg">
                 {content["hero.description"] || fallback["hero.description"]}
               </p>
-
-              <Link href="/catalogue?brand=hermann" className="mt-5 inline-flex max-w-[280px] items-center gap-2 border-l-2 border-[#c74755] pl-3 text-sm font-semibold text-white/90 transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#061f2b]">
-                Hermann Medizintechnik surgical and endoscopic systems, supported by SPM.
-                <ArrowRight className="h-4 w-4 text-[#ee7b86]" />
-              </Link>
 
               {/* Dual Action CTAs */}
               <div className="mt-8 flex flex-wrap items-center gap-4">

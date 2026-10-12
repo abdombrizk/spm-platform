@@ -76,6 +76,6 @@ The public product preview and build/test suite are available for verification. 
 ## Homepage Hero visual refresh
 
 - [x] Selected and uploaded the split-composition operating room visual showing both the endoscopic surgical tower and Italray C-Arm system (`/manus-storage/spm-hero-exact-half-split_1a839b26.webp`).
-- [x] Tuned the gradient overlay to maintain high contrast for the value proposition, dual CTAs, and trust badges on the left while keeping the surgical equipment crystal clear on the right.
+- [x] Restored the exact user-supplied image after the composite revision, removed the crowded Hermann badge/link from the Hero, widened the editorial text column, and tuned the gradient for a cleaner premium composition.
 - [x] Synchronized both fallback markup and live published CMS content; added regression assertion in `server/homepage.service-shortcuts.test.ts`.
 - [x] Verified DOM loading, screenshot render, TypeScript, 40/40 tests, and production build.
