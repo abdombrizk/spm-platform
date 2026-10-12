@@ -8,7 +8,7 @@ interface SEOProps {
   type?: string;
 }
 
-const DEFAULT_TITLE = "SPM | Medical Imaging Technology, Service and Spare Parts";
+const DEFAULT_TITLE = "SPM | Medical Imaging and Surgical Technology, Service and Spare Parts";
 const DEFAULT_DESCRIPTION =
   "SPM supports medical imaging equipment with sourcing, service, maintenance and spare-parts request journeys for healthcare and technical teams.";
 const DEFAULT_IMAGE = "/manus-storage/spm-italray-product-hero_c7063612.jpg";
@@ -67,7 +67,7 @@ export default function SEOHead({
     setMetaTag("property", "og:image", resolvedImage);
     setMetaTag("property", "og:url", resolvedUrl);
     setMetaTag("property", "og:type", type);
-    setMetaTag("property", "og:site_name", "SPM Medical Imaging Technology");
+    setMetaTag("property", "og:site_name", "SPM Medical Imaging and Surgical Technology");
 
     // Twitter Card
     setMetaTag("name", "twitter:card", "summary_large_image");

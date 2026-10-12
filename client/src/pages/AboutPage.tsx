@@ -30,15 +30,15 @@ const partnerLogos: Record<string, string> = {
 
 const fallback = {
   eyebrow: "ABOUT SPM",
-  title: "Medical imaging technology, engineered for continuity.",
+  title: "Medical Imaging and Surgical Technology, engineered for continuity.",
   intro:
-    "Established in 2019, SPM is a premium medical imaging technology partner dedicated to the engineered lifecycle management of critical hospital systems.",
+    "Established in 2019, SPM is a premium medical imaging and surgical technology partner dedicated to the engineered lifecycle management of critical hospital systems.",
   whoWeAre:
     "SPM is a leading provider of medical imaging solutions in Egypt, specializing in the supply and maintenance of advanced systems. We deliver trusted, end-to-end solutions combining innovative equipment, certified multi-vendor technical service, global spare parts sourcing, and comprehensive maintenance support.",
   mission:
     "Our mission is to empower healthcare facilities with advanced medical imaging systems and expert maintenance services, ensuring continuous performance, operational efficiency, and uncompromised patient care. Through integrity, collaboration, and a passion for excellence, we create lasting value for our customers and support the evolving needs of the healthcare sector.",
   vision:
-    "We aspire to lead the medical imaging sector by delivering advanced solutions and setting new standards in reliability, innovation, and service excellence. We aim to be a trusted partner for healthcare providers while expanding our contribution to the future of medical imaging technologies.",
+    "We aspire to lead the medical imaging sector by delivering advanced solutions and setting new standards in reliability, innovation, and service excellence. We aim to be a trusted partner for healthcare providers while expanding our contribution to the future of medical imaging and surgical technologies.",
   geography:
     "We support customers across Egypt and selected MENA markets, with service operations spanning 24 of Egypt's 27 governorates—from Alexandria to Aswan.",
   address: "16 Ahmed Hassan El Zyaat Street, 7th District, Nasr City, Cairo, Egypt",
@@ -62,7 +62,7 @@ const fallbackData: AboutData = {
   stats: [
     { value: "450+", label: "Hospitals Reached", description: "Healthcare partners and centers" },
     { value: "66", label: "UPA Projects", description: "Public-sector project experience" },
-    { value: "2019", label: "Established", description: "SPM medical imaging technology partner" },
+    { value: "2019", label: "Established", description: "SPM medical imaging and surgical technology partner" },
     { value: "24/27", label: "Governorates Covered", description: "Nationwide Egyptian service reach" },
   ],
   missionBullets: [
@@ -126,7 +126,7 @@ export default function AboutPage() {
   return (
     <SiteChrome>
       <SEOHead
-        title="About SPM | Medical Imaging Technology & Lifecycle Support"
+        title="About SPM | Medical Imaging and Surgical Technology & Lifecycle Support"
         description="Learn how SPM combines medical imaging equipment, certified technical service, genuine parts and lifecycle support across Egypt and selected MENA markets."
         url="/about"
       />

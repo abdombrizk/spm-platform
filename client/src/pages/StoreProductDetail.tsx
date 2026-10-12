@@ -64,7 +64,7 @@ function ProductView({ product }: { product: Product }) {
     <div className="mx-auto max-w-[1280px] px-5 py-8 lg:px-8">
       <SEOHead
         title={product.title}
-        description={product.description || `Explore ${product.title} - certified medical imaging technology distributed and supported by SPM in Egypt.`}
+        description={product.description || `Explore ${product.title} - certified medical imaging and surgical technology distributed and supported by SPM in Egypt.`}
         image={currentImage?.url}
         url={`/store/products/${product.handle}`}
       />

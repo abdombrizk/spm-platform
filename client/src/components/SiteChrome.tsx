@@ -60,7 +60,7 @@ export default function SiteChrome({ children }: { children: React.ReactNode; tr
           <Link href="/" className="flex shrink-0 items-center gap-3" onClick={() => setOpen(false)}>
             <img
               src={logo}
-              alt="SPM Medical Imaging Technology"
+              alt="SPM Medical Imaging and Surgical Technology"
               className={`spm-header-logo h-14 w-auto max-w-[208px] object-contain transition-transform hover:scale-105 sm:h-16 ${isDarkNav ? "" : "mix-blend-multiply"}`}
             />
             <span className="sr-only">SPM - Systems for Projects & Maintenance</span>
@@ -458,7 +458,7 @@ export default function SiteChrome({ children }: { children: React.ReactNode; tr
                 <img src={logo} alt="SPM" className="h-10 w-auto object-contain" />
               </div>
               <p className="mt-4 text-xs leading-relaxed text-[#94a3b8]">
-                Systems for Projects & Maintenance (SPM). Medical imaging technology, genuine spare parts, and dedicated field engineering support across Egypt and the MENA region.
+                Systems for Projects & Maintenance (SPM). Medical Imaging and Surgical Technology, genuine spare parts, and dedicated field engineering support across Egypt and the MENA region.
               </p>
               <div className="mt-4 border-t border-white/10 pt-3 text-xs text-[#64748b]">
                 <p>Documented quality and technical review workflow</p>

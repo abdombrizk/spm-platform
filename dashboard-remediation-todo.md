@@ -44,3 +44,9 @@ The public product preview and build/test suite are available for verification. 
 - [x] Replaced the About page Hero visual with a dedicated operating-room mobile C-Arm X-ray system visual (`/manus-storage/spm-about-xray-carm-hero_d720db48.jpg`).
 - [x] Updated the introductory copy and statistics to highlight SPM's establishment in 2019 (`2019 Established`) across both the React component fallback and the live published CMS page.
 - [x] Verified full suite (37/37 tests), TypeScript, production build, and live browser rendering.
+
+## Global brand language update
+
+- [x] Replaced public website and SEO occurrences of “Medical Imaging Technology” with “Medical Imaging and Surgical Technology”, preserving the appropriate uppercase/title/lowercase treatment.
+- [x] Published the same wording in Home content (`hero.eyebrow`, `highlight.1.title`) and the About CMS page.
+- [x] Confirmed the legacy phrase is absent from `client`, `shared`, and `server` source files.

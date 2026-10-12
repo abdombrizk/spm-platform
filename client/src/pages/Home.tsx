@@ -26,7 +26,7 @@ import { trpc } from "@/lib/trpc";
 const fallback: Record<string, string> = {
   "brand.name": "SPM",
   "brand.eyebrow": "SYSTEMS FOR PROJECTS & MAINTENANCE",
-  "hero.eyebrow": "MEDICAL IMAGING TECHNOLOGY & LIFECYCLE MANAGEMENT",
+  "hero.eyebrow": "MEDICAL IMAGING AND SURGICAL TECHNOLOGY & LIFECYCLE MANAGEMENT",
   "hero.title": "Keep critical imaging systems moving.",
   "hero.description": "SPM helps hospitals, clinics, biomedical engineers and healthcare teams source equipment, access certified multi-vendor service, and resolve imaging needs with precision.",
   "hero.primary.label": "Request a Quote",
@@ -186,7 +186,7 @@ export default function Home() {
       num: 2019,
       prefix: "Since ",
       label: "SPM engineering commitment",
-      sub: "Medical imaging technology leadership",
+      sub: "Medical Imaging and Surgical Technology leadership",
       icon: Clock,
       accent: "text-[#2b8c88]",
       bg: "bg-[#e8f6f5]",
@@ -211,10 +211,10 @@ export default function Home() {
       id: 999,
       slug: "genoray",
       name: "Genoray",
-      introduction: "Genoray medical imaging technology partner.",
+      introduction: "Genoray medical imaging and surgical technology partner.",
       logoUrl: brandLogoOverrides.genoray,
       heroImageUrl: null,
-      authorizedAgentLabel: "Medical imaging technology partner",
+      authorizedAgentLabel: "Medical Imaging and Surgical Technology partner",
       isVisible: true,
       displayOrder: 5,
     },
@@ -237,7 +237,7 @@ export default function Home() {
   return (
     <SiteChrome transparentHeader={false}>
       <SEOHead
-        title="Medical Imaging Technology, Service and Spare Parts"
+        title="Medical Imaging and Surgical Technology, Service and Spare Parts"
         description="SPM supports medical imaging equipment with sourcing, service, maintenance and spare-parts request journeys for healthcare and technical teams across Egypt."
         url="/"
       />
