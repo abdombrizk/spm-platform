@@ -141,10 +141,22 @@ const strategicPartners = [
   },
   {
     name: "Hermann Medizintechnik",
-    status: "Authorized Agent in Egypt",
-    text: "SPM represents Hermann Medizintechnik in Egypt through an authorized partner relationship supporting specialized medical technology needs.",
+    status: "Hermann portfolio on SPM",
+    text: "SPM presents Hermann Medizintechnik’s surgical, endoscopic and instrument portfolio with quote-first planning, documentation review and lifecycle support.",
     logo: brandLogoOverrides.hermann,
   },
+];
+
+const hermannCategoryChips = [
+  "Laparoscopy",
+  "Endoscopic Units",
+  "Electrosurgery",
+  "Arthroscopy",
+  "Urology & Hysteroscopy",
+  "Titanium Implants",
+  "Plastic Surgery",
+  "General Surgery",
+  "Tungsten Carbide Instruments",
 ];
 
 const hermannFallbackHighlights = [
@@ -578,7 +590,7 @@ export default function Home() {
                   <div className="flex h-14 w-36 items-center justify-center rounded-2xl bg-white px-4 shadow-lg">
                     <img src={brandLogoOverrides.hermann} alt="Hermann Medizintechnik official logo" loading="lazy" decoding="async" className="max-h-9 max-w-full object-contain" />
                   </div>
-                  <span className="rounded-full border border-white/30 bg-[#061f2b]/70 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[.16em] text-[#8be0d5] backdrop-blur-sm">Authorized Partner</span>
+                  <span className="rounded-full border border-white/30 bg-[#061f2b]/70 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[.16em] text-[#8be0d5] backdrop-blur-sm">Hermann portfolio</span>
                 </div>
                 <button
                   type="button"
@@ -626,11 +638,14 @@ export default function Home() {
                   Endoscopy, electrosurgery and surgical instrumentation in one trusted portfolio.
                 </h2>
                 <p className="mt-5 max-w-2xl text-base leading-8 text-[#617180]">
-                  SPM is an authorized Hermann partner in Egypt, bringing documented German medical technology to operating rooms through equipment selection, quotation review, installation coordination, training and lifecycle support.
+                  SPM presents Hermann Medizintechnik’s German surgical and endoscopic portfolio for Egyptian healthcare teams, with equipment selection, quotation review, installation coordination, training and lifecycle support.
                 </p>
+                <div className="mt-6 flex flex-wrap gap-2" aria-label="Hermann official product categories">
+                  {hermannCategoryChips.map(category => <span key={category} className="rounded-full border border-[#cfe4e8] bg-white px-3 py-1.5 text-[11px] font-bold text-[#0a4052]">{category}</span>)}
+                </div>
                 <div className="mt-7 grid gap-3 sm:grid-cols-3">
-                  <div className="rounded-2xl border border-[#dce7eb] bg-white p-4"><p className="text-2xl font-extrabold text-[#0a4052]">{hermannSystemCount}</p><p className="mt-1 text-xs font-bold text-[#617180]">Published systems</p></div>
-                  <div className="rounded-2xl border border-[#dce7eb] bg-white p-4"><p className="text-2xl font-extrabold text-[#0a4052]">{hermannFamilyCount}</p><p className="mt-1 text-xs font-bold text-[#617180]">Instrument families</p></div>
+                  <div className="rounded-2xl border border-[#dce7eb] bg-white p-4"><p className="text-2xl font-extrabold text-[#0a4052]">{hermannSystemCount}</p><p className="mt-1 text-xs font-bold text-[#0a4052]">SPM catalogue entries</p></div>
+                  <div className="rounded-2xl border border-[#dce7eb] bg-white p-4"><p className="text-2xl font-extrabold text-[#0a4052]">{hermannFamilyCount}</p><p className="mt-1 text-xs font-bold text-[#0a4052]">Curated instrument families</p></div>
                   <a href="/manus-storage/hermann-catalog_444df261.pdf" target="_blank" rel="noreferrer" className="rounded-2xl border border-[#dce7eb] bg-white p-4 transition hover:border-[#0a4052] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6fae] focus-visible:ring-offset-2"><p className="text-2xl font-extrabold text-[#0a4052]">PDF</p><p className="mt-1 text-xs font-bold text-[#617180]">Open official catalog</p></a>
                 </div>
                 <div className="mt-8 flex flex-wrap gap-3">

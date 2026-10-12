@@ -65,3 +65,10 @@ The public product preview and build/test suite are available for verification. 
 - [x] Researched the public Hermann Medizintechnik website, official sitemap, certificates, privacy/customer-area pages, German jobs pages and linked official PDFs.
 - [x] Saved the Arabic report and page-by-page evidence notes under `hermann-official-research/` and packaged them in `hermann-official-research-package.zip`.
 - [x] Flagged material claims requiring confirmation before publication: ISO edition/date discrepancy, employee-count discrepancy, OEM/private-label wording, manufacturing-location wording, certificate QR/DQS verification, and agency/exclusivity claims.
+
+## Hermann presentation and claim-safety pass
+
+- [x] Reworked Home and Catalogue Hermann presentation with a stronger engineering Hero, nine source-aligned portfolio categories, clearer SPM catalogue counts, an official-source note, quote-first CTAs, and managed-storage imagery.
+- [x] Replaced unsupported Hermann agency/authorized-partner wording across Home, Catalogue, About, navigation and Footer with accurate portfolio/support language; synchronized the live About CMS partner text and product-brand label.
+- [x] Corrected product detail metadata from “Manufacturing Origin” to “Manufacturer / Supplier” and made the documentation notice conditional on quotation review.
+- [x] Verified Home gallery assets, all nine category chips, live Hermann catalogue count, product detail rendering, 39/39 non-Shopify tests, TypeScript, production build, and `git diff --check`.

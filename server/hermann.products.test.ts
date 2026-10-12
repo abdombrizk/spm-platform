@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { appRouter } from "./routers";
+
+const publicHermannSources = [
+  "client/src/pages/Home.tsx",
+  "client/src/pages/Catalogue.tsx",
+  "client/src/pages/AboutPage.tsx",
+  "client/src/components/SiteChrome.tsx",
+].map(file => readFileSync(resolve(process.cwd(), file), "utf8")).join("\n");
 
 describe("Hermann endoscopy product catalog", () => {
   const caller = appRouter.createCaller({
@@ -47,5 +56,12 @@ describe("Hermann endoscopy product catalog", () => {
     expect(data.requestQuote).toBe(true);
     expect(data.availabilityStatus).toBe("on_request");
     expect(data.ceStatus).toBe("under_review");
+  });
+
+  it("uses source-safe Hermann language in public portfolio surfaces", () => {
+    expect(publicHermannSources).toContain("Hermann portfolio");
+    expect(publicHermannSources).toContain("Hermann official product categories");
+    expect(publicHermannSources).not.toContain("SPM is an authorized Hermann partner");
+    expect(publicHermannSources).not.toContain("Authorized agent distribution in Egypt for Hermann");
   });
 });

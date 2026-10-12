@@ -231,8 +231,8 @@ export default function ProductDetails() {
                 ) : null}
                 {data.supplier || data.manufacturer ? (
                   <div className="rounded-2xl border border-[#dce7eb] bg-white p-4">
-                    <p className="text-xs font-bold uppercase tracking-wider text-[#94a3b8]">Manufacturing Origin</p>
-                    <p className="mt-1 text-sm font-bold text-[#0a4052]">{data.supplier || data.manufacturer}</p>
+                    <p className="text-xs font-bold uppercase tracking-wider text-[#94a3b8]">Manufacturer / Supplier</p>
+                    <p className="mt-1 text-sm font-bold text-[#0a4052]">{[data.manufacturer, data.supplier].filter(Boolean).join(" · ")}</p>
                   </div>
                 ) : null}
               </div>
@@ -241,7 +241,7 @@ export default function ProductDetails() {
               <div className="mt-6 flex items-start gap-3 rounded-2xl border border-[#bcdde2] bg-[#f0f7fb] p-4 text-xs leading-relaxed text-[#0a4052]">
                 <ShieldCheck className="h-5 w-5 shrink-0 text-[#0f6fae]" />
                 <p>
-                  <strong>Documentation & Regulatory Notice:</strong> Commercial delivery includes full compliance documentation, warranty certificates, and authorized technical commissioning by certified biomedical engineers.
+                  <strong>Documentation & Regulatory Notice:</strong> Current documentation, availability, warranty scope and commissioning requirements are confirmed during quotation review and may vary by product and market.
                 </p>
               </div>
             </div>

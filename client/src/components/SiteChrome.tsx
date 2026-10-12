@@ -175,7 +175,7 @@ export default function SiteChrome({ children }: { children: React.ReactNode; tr
                         <span className={`flex h-10 w-14 items-center justify-center rounded-lg px-1 ${activeProductTab === "hermann" ? "bg-white" : "bg-[#fef2f2]"}`}><img src={hermannLogo} alt="Hermann Medizintechnik logo" className="max-h-7 max-w-12 object-contain" /></span>
                         <div>
                           <p className="text-sm font-bold">Hermann</p>
-                          <p className={`text-xs ${activeProductTab === "hermann" ? "text-white/80" : "text-[#64748b]"}`}>Authorized Partner</p>
+                          <p className={`text-xs ${activeProductTab === "hermann" ? "text-white/80" : "text-[#64748b]"}`}>Hermann portfolio</p>
                         </div>
                       </div>
                       <ChevronRight className={`h-4 w-4 transition-transform ${activeProductTab === "hermann" ? "translate-x-1" : ""}`} />
@@ -252,7 +252,7 @@ export default function SiteChrome({ children }: { children: React.ReactNode; tr
                           ) : (
                             <div className="rounded-xl border border-[#e2e8f0] bg-[#fafcfd] p-4 text-center">
                               <p className="text-xs font-semibold text-[#0a4052]">Surgical & Precision Technology</p>
-                              <p className="mt-1 text-xs text-[#64748b]">Authorized agent distribution in Egypt for Hermann specialty instrumentation.</p>
+                              <p className="mt-1 text-xs text-[#64748b]">SPM presents Hermann specialty instrumentation through a quote-first catalogue and technical review.</p>
                               <Link href="/request-a-quote?brand=hermann" className="mt-3 inline-flex text-xs font-bold text-[#0a4052] hover:underline">
                                 Request Hermann Quote <ArrowUpRight className="ml-1 h-3 w-3" />
                               </Link>
@@ -462,7 +462,7 @@ export default function SiteChrome({ children }: { children: React.ReactNode; tr
               </p>
               <div className="mt-4 border-t border-white/10 pt-3 text-xs text-[#64748b]">
                 <p>Documented quality and technical review workflow</p>
-                <p>Exclusive Agent in Egypt for Italray & Authorized Hermann Distribution</p>
+                <p>Italray Exclusive Agent in Egypt · Hermann portfolio support</p>
               </div>
             </div>
 

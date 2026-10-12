@@ -89,7 +89,7 @@ const fallbackData: AboutData = {
   ],
   partners: [
     { name: "Italray", status: "Exclusive Agent in Egypt", text: "Original imaging systems backed by manufacturer standards, technical support and genuine spare parts." },
-    { name: "Hermann Medizintechnik", status: "Authorized Agent in Egypt", text: "Specialized medical technology support through an approved partner relationship." },
+    { name: "Hermann Medizintechnik", status: "Hermann portfolio on SPM", text: "SPM presents Hermann’s surgical, endoscopic and instrument portfolio with technical review, quotation support and lifecycle coordination." },
   ],
   quality: [
     { title: "Industrial Control Authority", text: "Maintenance and service documentation is organized for responsible technical review." },
@@ -151,7 +151,7 @@ export default function AboutPage() {
               <div className="absolute inset-0 bg-gradient-to-r from-[#061f2b]/45 via-[#061f2b]/10 to-transparent" />
               <div className="absolute right-5 top-5 sm:right-7 sm:top-7">
                 <div className="rounded-2xl border border-white/20 bg-[#061f2b]/80 p-3 shadow-xl backdrop-blur-md">
-                  <p className="text-[9px] font-extrabold uppercase tracking-[.18em] text-[#8be0d5]">Official imaging partners</p>
+                  <p className="text-[9px] font-extrabold uppercase tracking-[.18em] text-[#8be0d5]">Technology portfolios</p>
                   <div className="mt-2 flex items-center gap-2">
                     <div className="flex h-9 w-[92px] items-center justify-center rounded-lg bg-white px-2"><img src={partnerLogos.italray} alt="Italray official partner logo" loading="lazy" decoding="async" className="max-h-6 w-auto max-w-full object-contain" /></div>
                     <span className="text-sm font-bold text-white/50" aria-hidden="true">+</span>

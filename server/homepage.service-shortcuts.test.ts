@@ -26,6 +26,10 @@ describe("homepage service shortcuts and trust badges", () => {
     expect(homeSource).toContain('role="tablist" aria-label="Hermann gallery images"');
     expect(homeSource).toContain("setHermannSlide(current => (current + 1) % hermannGallerySlides.length)");
     expect(homeSource).toContain("/manus-storage/hermann-catalog_444df261.pdf");
+    expect(homeSource).toContain('aria-label="Hermann official product categories"');
+    expect(homeSource).toContain("Tungsten Carbide Instruments");
+    expect(homeSource).toContain("SPM presents Hermann Medizintechnik");
+    expect(homeSource).not.toContain("SPM is an authorized Hermann partner");
   });
 
   it("reads the equipment query parameter into the service request equipment model", () => {
