@@ -50,3 +50,10 @@ The public product preview and build/test suite are available for verification. 
 - [x] Replaced public website and SEO occurrences of “Medical Imaging Technology” with “Medical Imaging and Surgical Technology”, preserving the appropriate uppercase/title/lowercase treatment.
 - [x] Published the same wording in Home content (`hero.eyebrow`, `highlight.1.title`) and the About CMS page.
 - [x] Confirmed the legacy phrase is absent from `client`, `shared`, and `server` source files.
+
+## Hermann Home showcase and Spare Parts relocation
+
+- [x] Removed the standalone Spare Parts manufacturer marquee section from Home so the homepage has one clear partner-focused narrative.
+- [x] Added a large Hermann Medizintechnik showcase to Home with partner logo, surgical/laparoscopy visual, portfolio explanation, published-system and family counts, quote/catalogue CTAs, and four live-linked featured Hermann products.
+- [x] Moved the verified manufacturer logo marquee into Spare Parts with GE, Siemens, Ziehm, Philips and Genoray managed-storage logos, while preserving the existing brand tabs, search and quote workflows.
+- [x] Verified Home and Spare Parts browser rendering, TypeScript, 37/37 non-Shopify tests, production build, and `git diff --check`.

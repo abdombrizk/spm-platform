@@ -100,6 +100,37 @@ const strategicPartners = [
   },
 ];
 
+const hermannFallbackHighlights = [
+  {
+    slug: "hermann-h4k-icg-uhd-camera",
+    name: "H4K-ICG UHD Camera 4K / ICG",
+    category: "Endoscopy Camera",
+    description: "4K UHD / ICG endoscopic camera platform for precise tissue visualization and advanced fluorescence imaging.",
+    mainImage: "/manus-storage/hermann-endoscopy-page-8_1cd4fc90.jpg",
+  },
+  {
+    slug: "hermann-hled-icg-light-source",
+    name: "HLED-ICG LED High-Intensity Light Source",
+    category: "Endoscopy Light Source",
+    description: "High-intensity LED and ICG illumination with daylight-quality output for fluorescence-guided imaging.",
+    mainImage: "/manus-storage/hermann-endoscopy-page-14_6e7bc3dc.jpg",
+  },
+  {
+    slug: "hermann-hss4500-universal-fluid-pump",
+    name: "HSS4500 Universal Fluid Pump",
+    category: "Fluid Management System",
+    description: "Universal fluid management for arthroscopy, urology and hysteroscopy with clear display and multiple working modes.",
+    mainImage: "/manus-storage/hermann-endoscopy-page-23_506147ba.jpg",
+  },
+  {
+    slug: "hermann-laparoscopy-instrument-families",
+    name: "Hermann Laparoscopy Instrument Families",
+    category: "Laparoscopy Instruments",
+    description: "Configurable laparoscopic instrument families with detachable shafts, graspers, biopsy forceps, trocars and accessories.",
+    mainImage: "/manus-storage/hermann-family-page-116_e79c21e8.jpg",
+  },
+];
+
 function AnimatedCounter({ targetValue, duration = 1200, formatNumber = true }: { targetValue: number; duration?: number; formatNumber?: boolean }) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
@@ -144,7 +175,7 @@ function AnimatedCounter({ targetValue, duration = 1200, formatNumber = true }: 
 export default function Home() {
   const query = trpc.homepage.published.useQuery();
   const statsQuery = trpc.cms.publishedStats.useQuery();
-  const brandsQuery = trpc.parts.brands.useQuery();
+  const productsQuery = trpc.products.published.useQuery();
   const eventsPageQuery = trpc.cms.publishedBySlug.useQuery({ slug: "events" });
 
   const rawStats = statsQuery.data ?? [];
@@ -204,24 +235,15 @@ export default function Home() {
     },
   ];
 
-  const partBrands = brandsQuery.data ?? [];
-  const marqueeSource = [
-    ...partBrands,
-    {
-      id: 999,
-      slug: "genoray",
-      name: "Genoray",
-      introduction: "Genoray medical imaging and surgical technology partner.",
-      logoUrl: brandLogoOverrides.genoray,
-      heroImageUrl: null,
-      authorizedAgentLabel: "Medical Imaging and Surgical Technology partner",
-      isVisible: true,
-      displayOrder: 5,
-    },
-  ];
-  const marqueeBrands = marqueeSource.length
-    ? Array.from({ length: Math.max(2, Math.ceil(10 / marqueeSource.length)) }, () => marqueeSource).flat()
-    : [];
+  const hermannProducts = (productsQuery.data ?? [])
+    .map(item => ({ ...item, product: item.data as Record<string, any> }))
+    .filter(item => String(item.product.brand ?? "").toLowerCase() === "hermann");
+  const hermannHighlights = hermannFallbackHighlights.map(fallbackItem => {
+    const liveItem = hermannProducts.find(item => item.slug === fallbackItem.slug);
+    return liveItem ? { ...fallbackItem, ...liveItem.product } : fallbackItem;
+  });
+  const hermannSystemCount = hermannProducts.length || 20;
+  const hermannFamilyCount = hermannProducts.filter(item => String(item.product.name ?? "").toLowerCase().includes("families")).length || 7;
 
   const eventsData = eventsPageQuery.data?.data as { items?: Array<{ title: string; date: string; location: string; image?: string; isPast?: boolean }> } | undefined;
   const pastEvents = (eventsData?.items ?? []).filter(ev => {
@@ -471,53 +493,66 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Section 4: Spare Parts Hub */}
-        <section className="border-y border-[#dce7eb] bg-white py-20" aria-label="Spare Parts Hub">
+        {/* Section 4: Hermann Surgical Technology */}
+        <section className="border-y border-[#dce7eb] bg-[#f7fafc] py-20 lg:py-24" aria-label="Hermann surgical technology">
           <div className="mx-auto max-w-[1280px] px-5 lg:px-8">
-            <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
-              <div>
-                <div className="inline-flex items-center gap-2 rounded-full border border-[#bcdde2] bg-[#eaf4fa] px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#0a4052]">
-                  <Boxes className="h-3.5 w-3.5 text-[#0f6fae]" /> Genuine OEM Components
+            <div className="grid gap-10 lg:grid-cols-[.82fr_1.18fr] lg:items-center">
+              <div className="relative min-h-[360px] overflow-hidden rounded-[32px] bg-[#0a4052] shadow-2xl shadow-[#0a4052]/20">
+                <img
+                  src="/manus-storage/hermann-family-page-116_e79c21e8.jpg"
+                  alt="Hermann laparoscopic surgical instrument systems"
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-0 h-full w-full object-cover object-center transition duration-700 hover:scale-[1.03]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/95 via-[#061f2b]/25 to-transparent" aria-hidden="true" />
+                <div className="absolute left-6 right-6 top-6 flex items-center justify-between gap-4">
+                  <div className="flex h-14 w-36 items-center justify-center rounded-2xl bg-white px-4 shadow-lg">
+                    <img src={brandLogoOverrides.hermann} alt="Hermann Medizintechnik official logo" loading="lazy" decoding="async" className="max-h-9 max-w-full object-contain" />
+                  </div>
+                  <span className="rounded-full border border-white/30 bg-[#061f2b]/70 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[.16em] text-[#8be0d5] backdrop-blur-sm">Authorized Partner</span>
                 </div>
-                <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-[#0a4052] sm:text-4xl">
-                  We secure verified spare parts for clinical imaging systems
-                </h2>
-                <p className="mt-3 max-w-2xl text-base text-[#617180]">
-                  Immediate dispatch across Egypt and the MENA region. Every replacement component is tested, serial-number verified, and backed by SPM engineering warranty.
-                </p>
+                <div className="absolute bottom-6 left-6 right-6 text-white">
+                  <p className="text-xs font-bold uppercase tracking-[.2em] text-[#8be0d5]">Hermann Medizintechnik</p>
+                  <p className="mt-2 max-w-md text-2xl font-bold leading-tight">Surgical systems designed for confident operating-room performance.</p>
+                </div>
               </div>
-              <Button className="h-12 shrink-0 rounded-xl bg-[#0a4052] px-6 text-sm font-bold text-white shadow-md hover:bg-[#063545]" asChild><Link href="/spare-parts">
-                  Browse Spare Parts <ArrowUpRight className="ml-2 h-4 w-4" />
-                </Link></Button>
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full border border-[#bcdde2] bg-white px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#0a4052]">
+                  <BadgeCheck className="h-3.5 w-3.5 text-[#0f6fae]" /> Hermann portfolio
+                </div>
+                <h2 className="mt-4 max-w-2xl text-3xl font-extrabold leading-tight tracking-[-.03em] text-[#0a4052] sm:text-4xl lg:text-5xl">
+                  Endoscopy, electrosurgery and surgical instrumentation in one trusted portfolio.
+                </h2>
+                <p className="mt-5 max-w-2xl text-base leading-8 text-[#617180]">
+                  SPM is an authorized Hermann partner in Egypt, bringing documented German medical technology to operating rooms through equipment selection, quotation review, installation coordination, training and lifecycle support.
+                </p>
+                <div className="mt-7 grid gap-3 sm:grid-cols-3">
+                  <div className="rounded-2xl border border-[#dce7eb] bg-white p-4"><p className="text-2xl font-extrabold text-[#0a4052]">{hermannSystemCount}</p><p className="mt-1 text-xs font-bold text-[#617180]">Published systems</p></div>
+                  <div className="rounded-2xl border border-[#dce7eb] bg-white p-4"><p className="text-2xl font-extrabold text-[#0a4052]">{hermannFamilyCount}</p><p className="mt-1 text-xs font-bold text-[#617180]">Instrument families</p></div>
+                  <div className="rounded-2xl border border-[#dce7eb] bg-white p-4"><p className="text-2xl font-extrabold text-[#0a4052]">PDF</p><p className="mt-1 text-xs font-bold text-[#617180]">Official catalog evidence</p></div>
+                </div>
+                <div className="mt-8 flex flex-wrap gap-3">
+                  <Button className="h-12 rounded-xl bg-[#0a4052] px-6 text-sm font-bold text-white shadow-md hover:bg-[#063545]" asChild><Link href="/catalogue?brand=hermann">Explore Hermann Portfolio <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button>
+                  <Button variant="outline" className="h-12 rounded-xl border-[#0a4052] px-6 text-sm font-bold text-[#0a4052] hover:bg-white" asChild><Link href="/request-a-quote?brand=hermann">Request Hermann Quote <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button>
+                </div>
+              </div>
             </div>
 
-            {/* Manufacturer logo marquee — logos stay controlled from the CMS */}
-            <div className="brand-marquee mt-12 overflow-hidden rounded-3xl border border-[#dce7eb] bg-[#fafcfd] py-5" aria-label="Verified spare part manufacturers">
-              <div className="brand-marquee-track flex w-max items-center gap-4 px-4">
-                {[...marqueeBrands, ...marqueeBrands].map((brand, index) => (
-                  <Link
-                    key={`${brand.id}-${index}`}
-                    href={brand.slug === "genoray" ? "/spare-parts" : `/spare-parts?brand=${encodeURIComponent(brand.slug)}`}
-                    aria-hidden={index >= marqueeBrands.length ? true : undefined}
-                    tabIndex={index >= marqueeBrands.length ? -1 : undefined}
-                    className="group flex h-24 w-44 shrink-0 items-center justify-center rounded-2xl border border-[#e2e8f0] bg-white px-5 text-center shadow-xs transition hover:border-[#0a4052] hover:shadow-md"
-                  >
-                    {brand.logoUrl || brandLogoOverrides[brand.slug] ? (
-                      <img
-                        src={brand.logoUrl || brandLogoOverrides[brand.slug]}
-                        alt={`${brand.name} logo`}
-                        loading="lazy"
-                        decoding="async"
-                        className="max-h-12 max-w-full object-contain transition duration-300 group-hover:scale-105"
-                      />
-                    ) : (
-                      <span className="text-lg font-bold tracking-tight text-[#64748b] transition-colors group-hover:text-[#0a4052] sm:text-xl">
-                        {brand.name}
-                      </span>
-                    )}
-                  </Link>
-                ))}
-              </div>
+            <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {hermannHighlights.map(item => (
+                <Link key={item.slug} href={`/catalogue/${item.slug}`} className="group overflow-hidden rounded-2xl border border-[#dce7eb] bg-white shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-[#0a4052] hover:shadow-xl">
+                  <div className="relative h-44 overflow-hidden bg-[#eaf4fa]">
+                    <img src={item.mainImage} alt={item.name} loading="lazy" decoding="async" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                    <span className="absolute left-3 top-3 rounded-full bg-[#061f2b]/80 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-[#8be0d5] backdrop-blur-sm">{item.category}</span>
+                  </div>
+                  <div className="p-5">
+                    <h3 className="text-base font-extrabold leading-snug text-[#0a4052] group-hover:text-[#0f6fae]">{item.name}</h3>
+                    <p className="mt-2 line-clamp-3 text-xs leading-6 text-[#617180]">{item.description}</p>
+                    <span className="mt-4 inline-flex items-center text-xs font-bold text-[#c2410c]">View system details <ArrowUpRight className="ml-1.5 h-3.5 w-3.5" /></span>
+                  </div>
+                </Link>
+              ))}
             </div>
           </div>
         </section>
