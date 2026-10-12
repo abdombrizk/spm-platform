@@ -44,33 +44,36 @@ const solutions = [
   {
     icon: Wrench,
     eyebrow: "Field Engineering",
-    title: "10 Core Service Pillars for Mission-Critical Systems",
+    title: "Mission-Critical Field Engineering",
     text: "From preventive & corrective maintenance to complete system commissioning, calibration, and tube/detector refurbishment.",
     href: "/services",
     serviceEquipment: "C-Arm and X-ray systems",
     image: "/manus-storage/spm-carmex-maintenance-card-optimized_fde07293.jpg",
+    imageAlt: "Biomedical engineer inspecting a C-Arm X-ray system in a clinical room",
     cta: "Explore Service Pillars",
     badge: "24/48h Response",
   },
   {
     icon: Boxes,
     eyebrow: "Systems Catalogue",
-    title: "Medical Imaging Equipment",
+    title: "Medical Imaging Systems",
     text: "Explore C-Arm systems, digital radiography, fluoroscopy, and surgical technology with full technical specs and ISO documents.",
     href: "/catalogue",
     serviceEquipment: "Italray medical imaging systems",
     image: "/manus-storage/clinodigit-omega-hero_dc3ed0c5.jpg",
+    imageAlt: "Italray mobile imaging system prepared for a surgical workflow",
     cta: "Browse Imaging Systems",
     badge: "Italray Exclusive Agent",
   },
   {
     icon: Layers,
     eyebrow: "Global Sourcing",
-    title: "Verified OEM Spare Parts & Fast Dispatch",
+    title: "OEM Spare Parts & Fast Dispatch",
     text: "Direct access to tested original components for GE, Siemens, Philips, Ziehm, Genoray, and leading multi-vendor platforms.",
     href: "/spare-parts",
     serviceEquipment: "OEM imaging systems and spare parts",
     image: "/manus-storage/spm-parts-lab_656efe60.jpg",
+    imageAlt: "Organized medical imaging spare parts and technical components",
     cta: "Request a Part Number",
     badge: "Engineering Warranty",
   },
@@ -238,6 +241,16 @@ export default function Home() {
   const [hermannSlide, setHermannSlide] = useState(0);
   const [hermannAutoplayPaused, setHermannAutoplayPaused] = useState(false);
 
+  const moveHermannSlide = (direction: 1 | -1) => {
+    setHermannAutoplayPaused(true);
+    setHermannSlide(current => (current + direction + hermannGallerySlides.length) % hermannGallerySlides.length);
+  };
+
+  const selectHermannSlide = (index: number) => {
+    setHermannAutoplayPaused(true);
+    setHermannSlide(index);
+  };
+
   useEffect(() => {
     if (hermannAutoplayPaused || typeof window === "undefined" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const timer = window.setInterval(() => {
@@ -309,10 +322,11 @@ export default function Home() {
   const hermannHighlights = hermannFallbackHighlights.map(fallbackItem => {
     const liveItem = hermannProducts.find(item => item.slug === fallbackItem.slug);
     return liveItem ? { ...fallbackItem, ...liveItem.product } : fallbackItem;
-  });
+  }).slice(0, 3);
   const hermannSystemCount = hermannProducts.length || 20;
   const hermannFamilyCount = hermannProducts.filter(item => String(item.product.name ?? "").toLowerCase().includes("families")).length || 7;
   const activeHermannSlide = hermannGallerySlides[hermannSlide] ?? hermannGallerySlides[0];
+  const visibleHermannCategories = hermannCategoryChips.slice(0, 6);
 
   const eventsData = eventsPageQuery.data?.data as { items?: Array<{ title: string; date: string; location: string; image?: string; isPast?: boolean }> } | undefined;
   const pastEvents = (eventsData?.items ?? []).filter(ev => {
@@ -331,7 +345,7 @@ export default function Home() {
         url="/"
       />
       <main>
-        {/* Section 1: Hero Section */}
+        {/* Hero: primary value proposition */}
         <section className="relative isolate min-h-[640px] overflow-hidden border-b border-[#0a4052] bg-[#061f2b] text-white sm:min-h-[720px] lg:min-h-[760px]">
           <img
             src={heroImage}
@@ -416,8 +430,14 @@ export default function Home() {
                     </div>
                     <div>
                       <div className="flex items-baseline gap-1 text-3xl font-black tracking-tight text-[#0a4052]">
-                        <span>{stat.prefix}</span>
-                        <AnimatedCounter targetValue={stat.num} formatNumber={stat.prefix !== "Since "} />
+                        {statsQuery.isLoading || statsQuery.isError ? (
+                          <span aria-label={statsQuery.isError ? "Statistics unavailable" : "Loading statistics"}>—</span>
+                        ) : (
+                          <>
+                            <span>{stat.prefix}</span>
+                            <AnimatedCounter targetValue={stat.num} formatNumber={stat.prefix !== "Since "} />
+                          </>
+                        )}
                       </div>
                       <p className="mt-0.5 text-sm font-bold text-[#1e293b]">{stat.label}</p>
                       <p className="text-xs text-[#64748b]">{stat.sub}</p>
@@ -433,7 +453,7 @@ export default function Home() {
                 </div>
                 <div>
                   <p className="text-[11px] font-extrabold uppercase tracking-[.16em] text-[#047857]">Quality badge</p>
-                  <p className="mt-1 text-sm font-bold text-[#0a4052]">ISO 9001-aligned quality framework</p>
+                  <p className="mt-1 text-sm font-bold text-[#0a4052]">Documented quality workflow</p>
                   <p className="mt-0.5 text-xs text-[#64748b]">Documented review and traceable technical records.</p>
                 </div>
               </div>
@@ -443,15 +463,16 @@ export default function Home() {
                 </div>
                 <div>
                   <p className="text-[11px] font-extrabold uppercase tracking-[.16em] text-[#0f6fae]">Radiation compliance</p>
-                  <p className="mt-1 text-sm font-bold text-[#0a4052]">Radiation safety & licensing dossier</p>
-                  <p className="mt-0.5 text-xs text-[#64748b]">Regulatory documentation coordinated for each project.</p>
+                  <p className="mt-1 text-sm font-bold text-[#0a4052]">Project-specific radiation documentation</p>
+                  <p className="mt-0.5 text-xs text-[#64748b]">Safety and regulatory records coordinated where required.</p>
                 </div>
               </div>
             </div>
+            {statsQuery.isError ? <p role="status" className="mt-3 text-xs font-semibold text-[#9a3412]">Live statistics are temporarily unavailable; the rest of the Home experience remains available.</p> : null}
           </div>
         </section>
 
-        {/* Section 3: Strategic Partnerships */}
+        {/* Strategic partnerships */}
         <section className="border-y border-[#dce7eb] bg-[#f7fafc] py-20 lg:py-24" aria-labelledby="strategic-partnerships-title">
           <div className="mx-auto max-w-[1280px] px-5 lg:px-8">
             <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
@@ -488,7 +509,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Section 4: Solutions Overview */}
+        {/* Lifecycle solutions overview */}
         <section className="mx-auto max-w-[1280px] px-5 py-20 lg:px-8 lg:py-24">
           <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div>
@@ -518,7 +539,9 @@ export default function Home() {
                   <div className="relative h-60 overflow-hidden bg-[#061f2b]">
                     <img
                       src={item.image}
-                      alt={item.title}
+                      alt={item.imageAlt}
+                      loading="lazy"
+                      decoding="async"
                       className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0a4052]/80 via-transparent to-transparent" />
@@ -547,7 +570,7 @@ export default function Home() {
                 <div className="border-t border-[#dce7eb] bg-[#f8fafc] px-7 py-3">
                   <Link
                     href={`/request-service?equipment=${encodeURIComponent(item.serviceEquipment)}`}
-                    className="inline-flex items-center gap-2 text-xs font-bold text-[#0a4052] transition-colors hover:text-[#0f6fae] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6fae] focus-visible:ring-offset-2"
+                    className="inline-flex min-h-11 items-center gap-2 py-2 text-xs font-bold text-[#0a4052] transition-colors hover:text-[#0f6fae] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6fae] focus-visible:ring-offset-2"
                   >
                     <Wrench className="h-3.5 w-3.5 text-[#0f6fae]" />
                     Request service for this equipment
@@ -559,11 +582,14 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Section 4: Hermann Surgical Technology */}
+        {/* Hermann portfolio showcase */}
         <section className="border-y border-[#dce7eb] bg-[#f7fafc] py-20 lg:py-24" aria-label="Hermann surgical technology">
           <div className="mx-auto max-w-[1280px] px-5 lg:px-8">
             <div className="grid gap-10 lg:grid-cols-[.95fr_1.05fr] lg:items-center">
               <div
+                role="region"
+                aria-roledescription="carousel"
+                aria-label="Hermann portfolio image gallery"
                 className="group relative min-h-[460px] overflow-hidden rounded-[32px] bg-[#0a4052] shadow-2xl shadow-[#0a4052]/20 sm:min-h-[520px] lg:min-h-[600px]"
                 onMouseEnter={() => setHermannAutoplayPaused(true)}
                 onMouseLeave={() => setHermannAutoplayPaused(false)}
@@ -575,7 +601,7 @@ export default function Home() {
                     key={slide.image}
                     src={slide.image}
                     alt={slide.alt}
-                    loading={index === 0 ? "eager" : "lazy"}
+                    loading="lazy"
                     decoding="async"
                     aria-hidden={index !== hermannSlide}
                     className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ease-out ${index === hermannSlide ? "opacity-100" : "opacity-0"}`}
@@ -591,20 +617,20 @@ export default function Home() {
                 <button
                   type="button"
                   aria-label="Previous Hermann gallery image"
-                  onClick={() => setHermannSlide(current => (current - 1 + hermannGallerySlides.length) % hermannGallerySlides.length)}
-                  className="absolute left-4 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-[#061f2b]/60 text-white opacity-0 shadow-lg backdrop-blur-sm transition hover:bg-[#061f2b]/85 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5] group-hover:opacity-100"
+                  onClick={() => moveHermannSlide(-1)}
+                  className="absolute left-4 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/50 bg-[#061f2b]/70 text-white shadow-lg backdrop-blur-sm transition hover:bg-[#061f2b]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5] sm:opacity-0 sm:group-hover:opacity-100"
                 >
                   <ChevronLeft className="h-5 w-5" />
                 </button>
                 <button
                   type="button"
                   aria-label="Next Hermann gallery image"
-                  onClick={() => setHermannSlide(current => (current + 1) % hermannGallerySlides.length)}
-                  className="absolute right-4 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-[#061f2b]/60 text-white opacity-0 shadow-lg backdrop-blur-sm transition hover:bg-[#061f2b]/85 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5] group-hover:opacity-100"
+                  onClick={() => moveHermannSlide(1)}
+                  className="absolute right-4 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/50 bg-[#061f2b]/70 text-white shadow-lg backdrop-blur-sm transition hover:bg-[#061f2b]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5] sm:opacity-0 sm:group-hover:opacity-100"
                 >
                   <ChevronRight className="h-5 w-5" />
                 </button>
-                <div className="absolute bottom-6 left-6 right-6 text-white">
+                <div className="absolute bottom-6 left-6 right-6 text-white" aria-live="polite">
                   <p className="text-xs font-bold uppercase tracking-[.2em] text-[#8be0d5]">{activeHermannSlide.eyebrow}</p>
                   <h3 className="mt-2 max-w-lg text-2xl font-bold leading-tight sm:text-3xl">{activeHermannSlide.title}</h3>
                   <p className="mt-3 max-w-xl text-sm leading-6 text-white/80">{activeHermannSlide.description}</p>
@@ -618,9 +644,11 @@ export default function Home() {
                           role="tab"
                           aria-label={`Show Hermann image ${index + 1}`}
                           aria-selected={index === hermannSlide}
-                          onClick={() => setHermannSlide(index)}
-                          className={`h-2 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#061f2b] ${index === hermannSlide ? "w-8 bg-[#8be0d5]" : "w-2 bg-white/55 hover:bg-white"}`}
-                        />
+                          onClick={() => selectHermannSlide(index)}
+                          className="inline-flex h-11 w-11 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#061f2b]"
+                        >
+                          <span aria-hidden="true" className={`h-2.5 rounded-full transition-all duration-300 ${index === hermannSlide ? "w-8 bg-[#8be0d5]" : "w-2.5 bg-white/55 hover:bg-white"}`} />
+                        </button>
                       ))}
                     </div>
                   </div>
@@ -631,14 +659,16 @@ export default function Home() {
                   <BadgeCheck className="h-3.5 w-3.5 text-[#0f6fae]" /> Hermann portfolio
                 </div>
                 <h2 className="mt-4 max-w-2xl text-3xl font-extrabold leading-tight tracking-[-.03em] text-[#0a4052] sm:text-4xl lg:text-5xl">
-                  Endoscopy, electrosurgery and surgical instrumentation in one trusted portfolio.
+                  Endoscopy, electrosurgery & surgical instruments.
                 </h2>
                 <p className="mt-5 max-w-2xl text-base leading-8 text-[#617180]">
                   SPM presents Hermann Medizintechnik’s German surgical and endoscopic portfolio for Egyptian healthcare teams, with equipment selection, quotation review, installation coordination, training and lifecycle support.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-2" aria-label="Hermann official product categories">
-                  {hermannCategoryChips.map(category => <span key={category} className="rounded-full border border-[#cfe4e8] bg-white px-3 py-1.5 text-[11px] font-bold text-[#0a4052]">{category}</span>)}
+                  {visibleHermannCategories.map(category => <span key={category} className="rounded-full border border-[#cfe4e8] bg-white px-3 py-1.5 text-[11px] font-bold text-[#0a4052]">{category}</span>)}
+                  <span className="rounded-full border border-dashed border-[#9fcbd1] bg-white px-3 py-1.5 text-[11px] font-bold text-[#0a4052]">+3 more categories</span>
                 </div>
+                {productsQuery.isLoading || productsQuery.isError ? <p role="status" className="mt-3 text-xs font-semibold text-[#64748b]">{productsQuery.isError ? "Showing the curated Hermann preview while live catalogue entries reconnect." : "Loading live Hermann catalogue entries…"}</p> : null}
                 <div className="mt-7 grid gap-3 sm:grid-cols-3">
                   <div className="rounded-2xl border border-[#dce7eb] bg-white p-4"><p className="text-2xl font-extrabold text-[#0a4052]">{hermannSystemCount}</p><p className="mt-1 text-xs font-bold text-[#0a4052]">SPM catalogue entries</p></div>
                   <div className="rounded-2xl border border-[#dce7eb] bg-white p-4"><p className="text-2xl font-extrabold text-[#0a4052]">{hermannFamilyCount}</p><p className="mt-1 text-xs font-bold text-[#0a4052]">Curated instrument families</p></div>
@@ -669,8 +699,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Section 5: Past Events & Exhibitions */}
-        {pastEvents.length > 0 ? (
+        {/* Past events and exhibitions */}
+        {eventsPageQuery.isLoading ? null : pastEvents.length > 0 ? (
           <section className="border-b border-[#dce7eb] bg-[#f8fafc] py-20" aria-label="Events and Exhibitions">
             <div className="mx-auto max-w-[1280px] px-5 lg:px-8">
               <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
@@ -726,9 +756,26 @@ export default function Home() {
               </div>
             </div>
           </section>
-        ) : null}
+        ) : (
+          <section className="border-b border-[#dce7eb] bg-[#f8fafc] py-14" aria-label="Events and Exhibitions">
+            <div className="mx-auto flex max-w-[1280px] flex-col items-start justify-between gap-4 px-5 sm:flex-row sm:items-center lg:px-8">
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full border border-[#bcdde2] bg-white px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#0a4052]">
+                  <Calendar className="h-3.5 w-3.5 text-[#0f6fae]" /> Market Presence
+                </div>
+                <h2 className="mt-4 text-2xl font-extrabold tracking-tight text-[#0a4052] sm:text-3xl">Events & technical sessions</h2>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-[#617180]">
+                  {eventsPageQuery.isError ? "Our events feed is temporarily unavailable." : "Explore SPM participation, technical sessions and upcoming market activity."}
+                </p>
+              </div>
+              <Link href="/events" className="inline-flex min-h-11 items-center rounded-xl border border-[#0a4052] px-4 py-2 text-sm font-bold text-[#0a4052] hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6fae] focus-visible:ring-offset-2">
+                Explore all events <ArrowUpRight className="ml-2 h-4 w-4" />
+              </Link>
+            </div>
+          </section>
+        )}
 
-        {/* Section 7: Decisive Global CTA */}
+        {/* Final conversion CTA */}
         <section className="mx-auto max-w-[1280px] px-5 py-20 text-center lg:px-8 lg:py-24">
           <div className="mx-auto max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-[#bcdde2] bg-[#eaf4fa] px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#0a4052]">
@@ -738,7 +785,7 @@ export default function Home() {
               Tell SPM what needs to move forward.
             </h2>
             <p className="mt-5 text-base leading-relaxed text-[#617180]">
-              Choose the journey that matches your technical need. Attach equipment specs, photos or error descriptions along the way.
+              For a new system, specification or budget, request a quote. For an existing device, fault or site visit, request service. Attach equipment specs, photos or error descriptions along the way.
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
               <Button size="lg" className="h-13 rounded-xl bg-[#c2410c] px-8 text-sm font-bold text-white shadow-lg shadow-[#c2410c]/20 hover:bg-[#9a3412]" asChild><Link href="/request-a-quote">

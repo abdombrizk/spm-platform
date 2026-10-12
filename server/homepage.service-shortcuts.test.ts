@@ -14,8 +14,8 @@ describe("homepage service shortcuts and trust badges", () => {
   });
 
   it("keeps the quality and radiation compliance badges next to the trust statistics", () => {
-    expect(homeSource).toContain("ISO 9001-aligned quality framework");
-    expect(homeSource).toContain("Radiation safety & licensing dossier");
+    expect(homeSource).toContain("Documented quality workflow");
+    expect(homeSource).toContain("Project-specific radiation documentation");
     expect(homeSource).toContain('aria-label="Quality and regulatory evidence"');
   });
 
@@ -35,8 +35,21 @@ describe("homepage service shortcuts and trust badges", () => {
     expect(homeSource).toContain("/manus-storage/hermann-catalog_444df261.pdf");
     expect(homeSource).toContain('aria-label="Hermann official product categories"');
     expect(homeSource).toContain("Tungsten Carbide Instruments");
+    expect(homeSource).toContain("+3 more categories");
+    expect(homeSource).toContain(".slice(0, 3)");
     expect(homeSource).toContain("SPM presents Hermann Medizintechnik");
     expect(homeSource).not.toContain("SPM is an authorized Hermann partner");
+  });
+
+  it("keeps Home controls touch-friendly and resilient for reduced motion", () => {
+    expect(homeSource).toContain('role="region"');
+    expect(homeSource).toContain('aria-roledescription="carousel"');
+    expect(homeSource).toContain("className=\"inline-flex h-11 w-11 items-center justify-center rounded-full");
+    expect(homeSource).toContain('loading="lazy"');
+    expect(homeSource).toContain('aria-live="polite"');
+    expect(homeSource).toContain("eventsPageQuery.isError");
+    expect(homeSource).toContain("statsQuery.isError");
+    expect(homeSource).toContain("productsQuery.isError");
   });
 
   it("reads the equipment query parameter into the service request equipment model", () => {
