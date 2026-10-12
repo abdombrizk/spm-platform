@@ -395,9 +395,6 @@ export default function Home() {
                 <span className="inline-flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-[#60c1bb]" /> Documented quality alignment
                 </span>
-                <span className="inline-flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-[#60c1bb]" /> 24/27 governorates coverage
-                </span>
               </div>
             </div>
           </div>
@@ -731,49 +728,7 @@ export default function Home() {
           </section>
         ) : null}
 
-        {/* Section 6: Operating Rhythm & Trust */}
-        <section className="bg-[#eaf4fa] py-20 lg:py-24">
-          <div className="mx-auto grid max-w-[1280px] gap-10 px-5 lg:grid-cols-[.9fr_1.1fr] lg:items-center lg:px-8">
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#bcdde2] bg-white px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#0a4052]">
-                <ShieldCheck className="h-3.5 w-3.5 text-[#0a4052]" /> Governed Operations
-              </div>
-              <h2 className="mt-4 text-3xl font-extrabold leading-tight tracking-[-.03em] text-[#0a4052] sm:text-4xl">
-                Make every technical next step clear, traceable & verified.
-              </h2>
-              <p className="mt-5 max-w-lg text-base leading-relaxed text-[#617180]">
-                Every request journey is structured to gather exact equipment context, preserve confidentiality, and route directly to the designated department.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Button className="h-12 rounded-xl bg-[#0a4052] px-6 text-sm font-bold text-white shadow-md hover:bg-[#063545]" asChild><Link href="/request-service">
-                    Start a Service Request <ArrowUpRight className="ml-2 h-4 w-4" />
-                  </Link></Button>
-                <Button variant="outline" className="h-12 rounded-xl border-[#0a4052] text-[#0a4052] hover:bg-[#0a4052]/5" asChild><Link href="/maintenance-contracts">
-                    Annual Contracts
-                  </Link></Button>
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-3xl border border-[#dce7eb] bg-white p-7 shadow-xs">
-                <ShieldCheck className="h-8 w-8 text-[#0a4052]" />
-                <h3 className="mt-5 text-lg font-bold text-[#0a4052]">Controlled Content</h3>
-                <p className="mt-2 text-sm leading-relaxed text-[#617180]">
-                  Equipment specifications, technical files and public claims are verified through our internal QA framework.
-                </p>
-              </div>
-              <div className="rounded-3xl border border-[#0a4052] bg-[#0a4052] p-7 text-white shadow-xl">
-                <BadgeCheck className="h-8 w-8 text-[#8be0d5]" />
-                <h3 className="mt-5 text-lg font-bold">Dedicated Triage</h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/80">
-                  Every quote, service or parts request generates a unique reference number with direct engineering assignment.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Section 8: Decisive Global CTA */}
+        {/* Section 7: Decisive Global CTA */}
         <section className="mx-auto max-w-[1280px] px-5 py-20 text-center lg:px-8 lg:py-24">
           <div className="mx-auto max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-[#bcdde2] bg-[#eaf4fa] px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#0a4052]">

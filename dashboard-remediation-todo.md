@@ -79,3 +79,9 @@ The public product preview and build/test suite are available for verification. 
 - [x] Restored the exact user-supplied image after the composite revision, removed the crowded Hermann badge/link from the Hero, widened the editorial text column, and tuned the gradient for a cleaner premium composition.
 - [x] Synchronized both fallback markup and live published CMS content; added regression assertion in `server/homepage.service-shortcuts.test.ts`.
 - [x] Verified DOM loading, screenshot render, TypeScript, 40/40 tests, and production build.
+
+## Homepage declutter pass
+
+- [x] Removed the `24/27 governorates coverage` Hero badge on request.
+- [x] Removed the full `Governed Operations` section from Home on request, leaving the lifecycle showcase and final CTA flow intact.
+- [x] Verified the shortened Home page visually and passed TypeScript, 40/40 non-Shopify tests, production build, and `git diff --check`.
