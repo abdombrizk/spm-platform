@@ -342,20 +342,20 @@ export default function Home() {
             loading="eager"
             fetchPriority="high"
             decoding="async"
-            className="absolute inset-0 h-full w-full object-cover object-[44%_center] transition duration-1000 hover:scale-[1.01] lg:object-center"
+            className="absolute left-0 top-0 h-full w-full object-cover object-[44%_center] transition duration-1000 hover:scale-[1.01] lg:left-[10%] lg:w-[90%] lg:object-center"
           />
           {/* Multi-stage calibrated gradient overlay */}
           <div
-            className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,31,43,.98)_0%,rgba(6,31,43,.92)_24%,rgba(6,31,43,.66)_40%,rgba(6,31,43,.22)_66%,rgba(6,31,43,.38)_100%)]"
+            className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,31,43,.98)_0%,rgba(6,31,43,.88)_16%,rgba(6,31,43,.42)_30%,rgba(6,31,43,.14)_48%,rgba(6,31,43,.28)_100%)]"
             aria-hidden="true"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/80 via-transparent to-[#061f2b]/30" aria-hidden="true" />
 
           <div className="relative mx-auto flex min-h-[640px] max-w-[1280px] items-center px-5 py-24 sm:min-h-[720px] lg:min-h-[760px] lg:px-8">
-            <div className="max-w-2xl text-left">
+            <div className="max-w-2xl text-left lg:max-w-[330px]">
               {/* Category Pill */}
               <div className="mb-5 flex flex-wrap items-center gap-3">
-                <div className="inline-flex items-center gap-2 rounded-full border border-[#60c1bb]/40 bg-[#061f2b]/60 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[.18em] text-[#8be0d5] shadow-lg backdrop-blur-md">
+                <div className="inline-flex max-w-[315px] items-center gap-2 rounded-full border border-[#60c1bb]/40 bg-[#061f2b]/60 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[.14em] text-[#8be0d5] shadow-lg backdrop-blur-md">
                   <span className="h-2 w-2 rounded-full bg-[#60c1bb] animate-pulse" />
                   {content["hero.eyebrow"] || fallback["hero.eyebrow"]}
                 </div>
@@ -370,16 +370,16 @@ export default function Home() {
               </div>
 
               {/* Dominant Headline */}
-              <h1 className="max-w-2xl text-4xl font-extrabold leading-[1.05] tracking-[-.04em] text-white sm:text-5xl lg:text-[64px]">
+              <h1 className="max-w-2xl text-4xl font-extrabold leading-[1.05] tracking-[-.04em] text-white sm:text-5xl lg:max-w-[310px] lg:text-[56px]">
                 {content["hero.title"] || fallback["hero.title"]}
               </h1>
 
               {/* Supporting Copy */}
-              <p className="mt-6 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg">
+              <p className="mt-6 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg lg:max-w-[305px]">
                 {content["hero.description"] || fallback["hero.description"]}
               </p>
 
-              <Link href="/catalogue?brand=hermann" className="mt-5 inline-flex items-center gap-2 border-l-2 border-[#c74755] pl-3 text-sm font-semibold text-white/90 transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#061f2b]">
+              <Link href="/catalogue?brand=hermann" className="mt-5 inline-flex max-w-[310px] items-center gap-2 border-l-2 border-[#c74755] pl-3 text-sm font-semibold text-white/90 transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#061f2b]">
                 Hermann Medizintechnik surgical and endoscopic systems, supported by SPM.
                 <ArrowRight className="h-4 w-4 text-[#ee7b86]" />
               </Link>
