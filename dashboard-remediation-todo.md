@@ -59,3 +59,9 @@ The public product preview and build/test suite are available for verification. 
 - [x] Verified Home and Spare Parts browser rendering, TypeScript, 37/37 non-Shopify tests, production build, and `git diff --check`.
 - [x] Added a large Hermann gallery using six supplied, optimized and managed-storage images with meaningful per-slide titles, descriptions, accessible alt text, arrows, dots, autoplay, hover/focus pause and reduced-motion support.
 - [x] Added a direct link to the official Hermann catalog PDF and extended the Home regression test; final suite now passes 38/38 non-Shopify tests.
+
+## Hermann official-source research
+
+- [x] Researched the public Hermann Medizintechnik website, official sitemap, certificates, privacy/customer-area pages, German jobs pages and linked official PDFs.
+- [x] Saved the Arabic report and page-by-page evidence notes under `hermann-official-research/` and packaged them in `hermann-official-research-package.zip`.
+- [x] Flagged material claims requiring confirmation before publication: ISO edition/date discrepancy, employee-count discrepancy, OEM/private-label wording, manufacturing-location wording, certificate QR/DQS verification, and agency/exclusivity claims.
