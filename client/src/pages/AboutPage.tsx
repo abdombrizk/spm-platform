@@ -42,7 +42,7 @@ const fallback = {
   geography:
     "We support customers across Egypt and selected MENA markets, with service operations spanning 24 of Egypt's 27 governorates—from Alexandria to Aswan.",
   address: "16 Ahmed Hassan El Zyaat Street, 7th District, Nasr City, Cairo, Egypt",
-  heroImage: "/manus-storage/spm-about-xray-carm-hero_d720db48.jpg",
+  heroImage: "/manus-storage/spm-hero-exact-half-split_1a839b26.webp",
   profileDocument: "",
   careersVisible: "true",
 };
@@ -63,7 +63,7 @@ const fallbackData: AboutData = {
     { value: "450+", label: "Hospitals Reached", description: "Healthcare partners and centers" },
     { value: "66", label: "UPA Projects", description: "Public-sector project experience" },
     { value: "2019", label: "Established", description: "SPM medical imaging and surgical technology partner" },
-    { value: "24/27", label: "Governorates Covered", description: "Nationwide Egyptian service reach" },
+    { value: "48h", label: "Maximum Response", description: "Target service response window" },
   ],
   missionBullets: [
     "Keep critical imaging systems clinically ready and operational.",
@@ -147,7 +147,7 @@ export default function AboutPage() {
               </div>
             </div>
             <div className="relative min-h-[390px] overflow-hidden rounded-[30px] bg-[#0a4052] shadow-2xl shadow-[#0a4052]/20 lg:min-h-[520px]">
-              <img src={heroImage} alt="Mobile C-Arm X-ray imaging system in a modern operating room" loading="eager" decoding="async" className="absolute inset-0 h-full w-full object-cover object-[62%_center] transition duration-700 hover:scale-[1.02]" />
+              <img src={heroImage} alt="Italray C-Arm and surgical imaging equipment in a modern operating room" loading="eager" decoding="async" className="absolute inset-0 h-full w-full object-cover object-[62%_center] transition duration-700 hover:scale-[1.02]" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#061f2b]/45 via-[#061f2b]/10 to-transparent" />
               <div className="absolute right-5 top-5 sm:right-7 sm:top-7">
                 <div className="rounded-2xl border border-white/20 bg-[#061f2b]/80 p-3 shadow-xl backdrop-blur-md">

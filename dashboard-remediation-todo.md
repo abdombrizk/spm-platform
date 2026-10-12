@@ -85,3 +85,9 @@ The public product preview and build/test suite are available for verification. 
 - [x] Removed the `24/27 governorates coverage` Hero badge on request.
 - [x] Removed the full `Governed Operations` section from Home on request, leaving the lifecycle showcase and final CTA flow intact.
 - [x] Verified the shortened Home page visually and passed TypeScript, 40/40 non-Shopify tests, production build, and `git diff --check`.
+
+## About page Hero and response update
+
+- [x] Replaced the About Hero with the exact homepage Hero visual (`/manus-storage/spm-hero-exact-half-split_1a839b26.webp`) and aligned its accessible alt text.
+- [x] Replaced the About statistics card “Governorates Covered” with “48h Maximum Response” and synchronized the live CMS content.
+- [x] Added `server/about.presentation.test.ts` to cover both static fallback and public CMS values; final suite passes 42/42 non-Shopify tests.
