@@ -19,6 +19,15 @@ describe("homepage service shortcuts and trust badges", () => {
     expect(homeSource).toContain('aria-label="Quality and regulatory evidence"');
   });
 
+  it("keeps the Hermann visual showcase connected to the supplied gallery", () => {
+    expect(homeSource).toContain('aria-label="Hermann surgical technology"');
+    expect(homeSource).toContain('const hermannGallerySlides = [');
+    expect((homeSource.match(/hermann-gallery-[a-z-]+_[a-f0-9]+\.jpg/g) ?? [])).toHaveLength(6);
+    expect(homeSource).toContain('role="tablist" aria-label="Hermann gallery images"');
+    expect(homeSource).toContain("setHermannSlide(current => (current + 1) % hermannGallerySlides.length)");
+    expect(homeSource).toContain("/manus-storage/hermann-catalog_444df261.pdf");
+  });
+
   it("reads the equipment query parameter into the service request equipment model", () => {
     expect(serviceRequestSource).toContain('const equipmentName = params.get("equipment")');
     expect(serviceRequestSource).toContain("model: modelName || equipmentName");

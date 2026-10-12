@@ -57,3 +57,5 @@ The public product preview and build/test suite are available for verification. 
 - [x] Added a large Hermann Medizintechnik showcase to Home with partner logo, surgical/laparoscopy visual, portfolio explanation, published-system and family counts, quote/catalogue CTAs, and four live-linked featured Hermann products.
 - [x] Moved the verified manufacturer logo marquee into Spare Parts with GE, Siemens, Ziehm, Philips and Genoray managed-storage logos, while preserving the existing brand tabs, search and quote workflows.
 - [x] Verified Home and Spare Parts browser rendering, TypeScript, 37/37 non-Shopify tests, production build, and `git diff --check`.
+- [x] Added a large Hermann gallery using six supplied, optimized and managed-storage images with meaningful per-slide titles, descriptions, accessible alt text, arrows, dots, autoplay, hover/focus pause and reduced-motion support.
+- [x] Added a direct link to the official Hermann catalog PDF and extended the Home regression test; final suite now passes 38/38 non-Shopify tests.

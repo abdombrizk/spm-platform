@@ -8,6 +8,8 @@ import {
   Calendar,
   CheckCircle2,
   Clock,
+  ChevronLeft,
+  ChevronRight,
   Globe2,
   Layers,
   MapPin,
@@ -84,6 +86,51 @@ const brandLogoOverrides: Record<string, string> = {
   "philips-healthcare": "/manus-storage/philips-healthcare_8bdab1dd.png",
   genoray: "/manus-storage/genoray_c6662250.png",
 };
+
+const hermannGallerySlides = [
+  {
+    image: "/manus-storage/hermann-gallery-team_a6d54a5b.jpg",
+    eyebrow: "Hermann in action",
+    title: "Engineering people behind dependable systems",
+    description: "A closer look at the specialists, production discipline and technical culture behind Hermann Medizintechnik.",
+    alt: "Hermann engineering team in a modern production environment",
+  },
+  {
+    image: "/manus-storage/hermann-gallery-engineering_bb728050.jpg",
+    eyebrow: "Technical confidence",
+    title: "Built around precision and repeatability",
+    description: "Engineering teams work with the equipment directly so every detail is understood before it reaches the operating room.",
+    alt: "Hermann engineers reviewing medical technology equipment",
+  },
+  {
+    image: "/manus-storage/hermann-gallery-inspection_974fa9eb.jpg",
+    eyebrow: "Quality mindset",
+    title: "Inspection that protects clinical performance",
+    description: "Careful inspection and controlled manufacturing are part of the quality story SPM brings to every Hermann conversation.",
+    alt: "Hermann technician inspecting precision medical equipment",
+  },
+  {
+    image: "/manus-storage/hermann-gallery-endoscopy_d4d02539.jpg",
+    eyebrow: "Endoscopy expertise",
+    title: "Clear vision for minimally invasive procedures",
+    description: "Hermann endoscopy solutions combine visualization, handling and instrument control for confident surgical workflows.",
+    alt: "Hermann specialist handling an endoscopic instrument",
+  },
+  {
+    image: "/manus-storage/hermann-gallery-instruments-close_ee51200c.jpg",
+    eyebrow: "Instrument detail",
+    title: "Designed around the surgeon’s hand",
+    description: "Fine instrument geometry, balanced handling and procedure-focused configurations support repeatable surgical technique.",
+    alt: "Close-up of Hermann laparoscopic instruments",
+  },
+  {
+    image: "/manus-storage/hermann-gallery-instruments-rack_bab031be.jpg",
+    eyebrow: "Ready for the OR",
+    title: "A complete surgical instrumentation language",
+    description: "From reusable tools to procedure-specific families, Hermann helps teams build a coherent and maintainable setup.",
+    alt: "Organized Hermann surgical instruments ready for use",
+  },
+];
 
 const strategicPartners = [
   {
@@ -177,6 +224,16 @@ export default function Home() {
   const statsQuery = trpc.cms.publishedStats.useQuery();
   const productsQuery = trpc.products.published.useQuery();
   const eventsPageQuery = trpc.cms.publishedBySlug.useQuery({ slug: "events" });
+  const [hermannSlide, setHermannSlide] = useState(0);
+  const [hermannAutoplayPaused, setHermannAutoplayPaused] = useState(false);
+
+  useEffect(() => {
+    if (hermannAutoplayPaused || typeof window === "undefined" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = window.setInterval(() => {
+      setHermannSlide(current => (current + 1) % hermannGallerySlides.length);
+    }, 5200);
+    return () => window.clearInterval(timer);
+  }, [hermannAutoplayPaused]);
 
   const rawStats = statsQuery.data ?? [];
   const stats = new Map(rawStats.map(item => [item.metricKey, item]));
@@ -244,6 +301,7 @@ export default function Home() {
   });
   const hermannSystemCount = hermannProducts.length || 20;
   const hermannFamilyCount = hermannProducts.filter(item => String(item.product.name ?? "").toLowerCase().includes("families")).length || 7;
+  const activeHermannSlide = hermannGallerySlides[hermannSlide] ?? hermannGallerySlides[0];
 
   const eventsData = eventsPageQuery.data?.data as { items?: Array<{ title: string; date: string; location: string; image?: string; isPast?: boolean }> } | undefined;
   const pastEvents = (eventsData?.items ?? []).filter(ev => {
@@ -496,25 +554,68 @@ export default function Home() {
         {/* Section 4: Hermann Surgical Technology */}
         <section className="border-y border-[#dce7eb] bg-[#f7fafc] py-20 lg:py-24" aria-label="Hermann surgical technology">
           <div className="mx-auto max-w-[1280px] px-5 lg:px-8">
-            <div className="grid gap-10 lg:grid-cols-[.82fr_1.18fr] lg:items-center">
-              <div className="relative min-h-[360px] overflow-hidden rounded-[32px] bg-[#0a4052] shadow-2xl shadow-[#0a4052]/20">
-                <img
-                  src="/manus-storage/hermann-family-page-116_e79c21e8.jpg"
-                  alt="Hermann laparoscopic surgical instrument systems"
-                  loading="lazy"
-                  decoding="async"
-                  className="absolute inset-0 h-full w-full object-cover object-center transition duration-700 hover:scale-[1.03]"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/95 via-[#061f2b]/25 to-transparent" aria-hidden="true" />
+            <div className="grid gap-10 lg:grid-cols-[.95fr_1.05fr] lg:items-center">
+              <div
+                className="group relative min-h-[460px] overflow-hidden rounded-[32px] bg-[#0a4052] shadow-2xl shadow-[#0a4052]/20 sm:min-h-[520px] lg:min-h-[600px]"
+                onMouseEnter={() => setHermannAutoplayPaused(true)}
+                onMouseLeave={() => setHermannAutoplayPaused(false)}
+                onFocus={() => setHermannAutoplayPaused(true)}
+                onBlur={() => setHermannAutoplayPaused(false)}
+              >
+                {hermannGallerySlides.map((slide, index) => (
+                  <img
+                    key={slide.image}
+                    src={slide.image}
+                    alt={slide.alt}
+                    loading={index === 0 ? "eager" : "lazy"}
+                    decoding="async"
+                    aria-hidden={index !== hermannSlide}
+                    className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ease-out ${index === hermannSlide ? "opacity-100" : "opacity-0"}`}
+                  />
+                ))}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/95 via-[#061f2b]/20 to-[#061f2b]/10" aria-hidden="true" />
                 <div className="absolute left-6 right-6 top-6 flex items-center justify-between gap-4">
                   <div className="flex h-14 w-36 items-center justify-center rounded-2xl bg-white px-4 shadow-lg">
                     <img src={brandLogoOverrides.hermann} alt="Hermann Medizintechnik official logo" loading="lazy" decoding="async" className="max-h-9 max-w-full object-contain" />
                   </div>
                   <span className="rounded-full border border-white/30 bg-[#061f2b]/70 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[.16em] text-[#8be0d5] backdrop-blur-sm">Authorized Partner</span>
                 </div>
+                <button
+                  type="button"
+                  aria-label="Previous Hermann gallery image"
+                  onClick={() => setHermannSlide(current => (current - 1 + hermannGallerySlides.length) % hermannGallerySlides.length)}
+                  className="absolute left-4 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-[#061f2b]/60 text-white opacity-0 shadow-lg backdrop-blur-sm transition hover:bg-[#061f2b]/85 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5] group-hover:opacity-100"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Next Hermann gallery image"
+                  onClick={() => setHermannSlide(current => (current + 1) % hermannGallerySlides.length)}
+                  className="absolute right-4 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-[#061f2b]/60 text-white opacity-0 shadow-lg backdrop-blur-sm transition hover:bg-[#061f2b]/85 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5] group-hover:opacity-100"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
                 <div className="absolute bottom-6 left-6 right-6 text-white">
-                  <p className="text-xs font-bold uppercase tracking-[.2em] text-[#8be0d5]">Hermann Medizintechnik</p>
-                  <p className="mt-2 max-w-md text-2xl font-bold leading-tight">Surgical systems designed for confident operating-room performance.</p>
+                  <p className="text-xs font-bold uppercase tracking-[.2em] text-[#8be0d5]">{activeHermannSlide.eyebrow}</p>
+                  <h3 className="mt-2 max-w-lg text-2xl font-bold leading-tight sm:text-3xl">{activeHermannSlide.title}</h3>
+                  <p className="mt-3 max-w-xl text-sm leading-6 text-white/80">{activeHermannSlide.description}</p>
+                  <div className="mt-5 flex items-center justify-between gap-4">
+                    <span className="text-[11px] font-bold uppercase tracking-[.16em] text-white/65">Hermann Medizintechnik</span>
+                    <div className="flex items-center gap-2" role="tablist" aria-label="Hermann gallery images">
+                      {hermannGallerySlides.map((slide, index) => (
+                        <button
+                          key={slide.image}
+                          type="button"
+                          role="tab"
+                          aria-label={`Show Hermann image ${index + 1}`}
+                          aria-selected={index === hermannSlide}
+                          onClick={() => setHermannSlide(index)}
+                          className={`h-2 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#061f2b] ${index === hermannSlide ? "w-8 bg-[#8be0d5]" : "w-2 bg-white/55 hover:bg-white"}`}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
               <div>
@@ -530,7 +631,7 @@ export default function Home() {
                 <div className="mt-7 grid gap-3 sm:grid-cols-3">
                   <div className="rounded-2xl border border-[#dce7eb] bg-white p-4"><p className="text-2xl font-extrabold text-[#0a4052]">{hermannSystemCount}</p><p className="mt-1 text-xs font-bold text-[#617180]">Published systems</p></div>
                   <div className="rounded-2xl border border-[#dce7eb] bg-white p-4"><p className="text-2xl font-extrabold text-[#0a4052]">{hermannFamilyCount}</p><p className="mt-1 text-xs font-bold text-[#617180]">Instrument families</p></div>
-                  <div className="rounded-2xl border border-[#dce7eb] bg-white p-4"><p className="text-2xl font-extrabold text-[#0a4052]">PDF</p><p className="mt-1 text-xs font-bold text-[#617180]">Official catalog evidence</p></div>
+                  <a href="/manus-storage/hermann-catalog_444df261.pdf" target="_blank" rel="noreferrer" className="rounded-2xl border border-[#dce7eb] bg-white p-4 transition hover:border-[#0a4052] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6fae] focus-visible:ring-offset-2"><p className="text-2xl font-extrabold text-[#0a4052]">PDF</p><p className="mt-1 text-xs font-bold text-[#617180]">Open official catalog</p></a>
                 </div>
                 <div className="mt-8 flex flex-wrap gap-3">
                   <Button className="h-12 rounded-xl bg-[#0a4052] px-6 text-sm font-bold text-white shadow-md hover:bg-[#063545]" asChild><Link href="/catalogue?brand=hermann">Explore Hermann Portfolio <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button>
