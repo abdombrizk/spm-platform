@@ -35,7 +35,7 @@ const fallback: Record<string, string> = {
   "hero.primary.url": "/request-a-quote",
   "hero.secondary.label": "Request Service",
   "hero.secondary.url": "/request-service",
-  "hero.image": "/manus-storage/carmex-rkfps-operating-room-hero_aa00194d.jpg",
+  "hero.image": "/manus-storage/spm-hero-exact-half-split_1a839b26.webp",
   "panel.eyebrow": "FIELD READINESS",
   "panel.title": "24–48h Cairo Response",
   "panel.description": "Dedicated biomedical engineers covering 24 of 27 Egyptian governorates with remote diagnostics within 4 hours.",
@@ -338,7 +338,7 @@ export default function Home() {
         <section className="relative isolate min-h-[640px] overflow-hidden border-b border-[#0a4052] bg-[#061f2b] text-white sm:min-h-[720px] lg:min-h-[760px]">
           <img
             src={heroImage}
-            alt="Italray CARMEX mobile C-Arm medical imaging system in a modern operating room"
+            alt="Italray C-Arm and surgical imaging systems in a modern operating room"
             loading="eager"
             fetchPriority="high"
             decoding="async"
@@ -346,10 +346,10 @@ export default function Home() {
           />
           {/* Multi-stage calibrated gradient overlay */}
           <div
-            className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,31,43,.98)_0%,rgba(6,31,43,.88)_40%,rgba(6,31,43,.45)_75%,rgba(6,31,43,.60)_100%)]"
+            className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,31,43,.86)_0%,rgba(6,31,43,.72)_38%,rgba(6,31,43,.18)_72%,rgba(6,31,43,.34)_100%)]"
             aria-hidden="true"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/80 via-transparent to-[#061f2b]/30" aria-hidden="true" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/65 via-transparent to-[#061f2b]/20" aria-hidden="true" />
 
           <div className="relative mx-auto flex min-h-[640px] max-w-[1280px] items-center px-5 py-24 sm:min-h-[720px] lg:min-h-[760px] lg:px-8">
             <div className="max-w-2xl text-left">

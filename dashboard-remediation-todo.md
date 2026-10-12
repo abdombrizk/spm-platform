@@ -72,3 +72,10 @@ The public product preview and build/test suite are available for verification. 
 - [x] Replaced unsupported Hermann agency/authorized-partner wording across Home, Catalogue, About, navigation and Footer with accurate portfolio/support language; synchronized the live About CMS partner text and product-brand label.
 - [x] Corrected product detail metadata from “Manufacturing Origin” to “Manufacturer / Supplier” and made the documentation notice conditional on quotation review.
 - [x] Verified Home gallery assets, all nine category chips, live Hermann catalogue count, product detail rendering, 39/39 non-Shopify tests, TypeScript, production build, and `git diff --check`.
+
+## Homepage Hero visual refresh
+
+- [x] Selected and uploaded the split-composition operating room visual showing both the endoscopic surgical tower and Italray C-Arm system (`/manus-storage/spm-hero-exact-half-split_1a839b26.webp`).
+- [x] Tuned the gradient overlay to maintain high contrast for the value proposition, dual CTAs, and trust badges on the left while keeping the surgical equipment crystal clear on the right.
+- [x] Synchronized both fallback markup and live published CMS content; added regression assertion in `server/homepage.service-shortcuts.test.ts`.
+- [x] Verified DOM loading, screenshot render, TypeScript, 40/40 tests, and production build.

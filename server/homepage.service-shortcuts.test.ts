@@ -19,6 +19,11 @@ describe("homepage service shortcuts and trust badges", () => {
     expect(homeSource).toContain('aria-label="Quality and regulatory evidence"');
   });
 
+  it("uses the supplied split-composition operating-room Hero", () => {
+    expect(homeSource).toContain("/manus-storage/spm-hero-exact-half-split_1a839b26.webp");
+    expect(homeSource).toContain("Italray C-Arm and surgical imaging systems in a modern operating room");
+  });
+
   it("keeps the Hermann visual showcase connected to the supplied gallery", () => {
     expect(homeSource).toContain('aria-label="Hermann surgical technology"');
     expect(homeSource).toContain('const hermannGallerySlides = [');
