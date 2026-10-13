@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const homeSource = readFileSync(resolve(process.cwd(), "client/src/pages/Home.tsx"), "utf8");
+const siteChromeSource = readFileSync(resolve(process.cwd(), "client/src/components/SiteChrome.tsx"), "utf8");
 const serviceRequestSource = readFileSync(resolve(process.cwd(), "client/src/pages/ServiceRequest.tsx"), "utf8");
 
 describe("homepage service shortcuts and trust badges", () => {
@@ -22,8 +23,29 @@ describe("homepage service shortcuts and trust badges", () => {
   it("uses the supplied split-composition operating-room Hero", () => {
     expect(homeSource).toContain("/manus-storage/spm-hero-exact-half-split_1a839b26.webp");
     expect(homeSource).toContain("Italray C-Arm and surgical imaging equipment in a modern operating room");
+    expect(homeSource).toContain('aria-label="SPM technology and service showcase"');
+    expect(homeSource).toContain('const heroSlides = [');
+    expect(homeSource).toContain("Support that keeps critical systems moving.");
+    expect(homeSource).toContain("Surgical technology, thoughtfully connected.");
+    expect(homeSource).toContain("onTouchStart={handleHeroTouchStart}");
+    expect(homeSource).toContain("onTouchEnd={handleHeroTouchEnd}");
+    expect(homeSource).toContain('role="tablist" aria-label="Hero showcase images"');
     expect(homeSource).not.toContain("24/27 governorates coverage");
     expect(homeSource).not.toContain("Make every technical next step clear, traceable & verified.");
+  });
+
+  it("keeps strategic partner cards actionable and visually uncluttered", () => {
+    expect(homeSource).toContain('href: "/catalogue?brand=italray"');
+    expect(homeSource).toContain('href: "/catalogue?brand=hermann"');
+    expect(homeSource).toContain("Explore ${partner.name} portfolio");
+    expect(homeSource).not.toContain("0{index + 1}");
+    expect(homeSource).toContain("max-h-16 max-w-[240px]");
+  });
+
+  it("keeps global navigation stable while moving between menus", () => {
+    expect(siteChromeSource).toContain("scheduleMenuClose(() => setActiveCompany(false))");
+    expect(siteChromeSource).toContain("scheduleMenuClose(() => setActiveMega(false))");
+    expect(siteChromeSource).toContain("max-h-9 max-w-16 object-contain mix-blend-multiply");
   });
 
   it("keeps the Hermann visual showcase connected to the supplied gallery", () => {

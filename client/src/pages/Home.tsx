@@ -147,12 +147,14 @@ const strategicPartners = [
     status: "Exclusive Agent in Egypt",
     text: "Original imaging systems backed by manufacturer standards, technical support, genuine spare parts and after-sales service.",
     logo: brandLogoOverrides.italray,
+    href: "/catalogue?brand=italray",
   },
   {
     name: "Hermann Medizintechnik",
     status: "Hermann portfolio on SPM",
     text: "SPM presents Hermann Medizintechnik’s surgical, endoscopic and instrument portfolio with quote-first planning, documentation review and lifecycle support.",
     logo: brandLogoOverrides.hermann,
+    href: "/catalogue?brand=hermann",
   },
 ];
 
@@ -274,6 +276,9 @@ export default function Home() {
   const [hermannAutoplayPaused, setHermannAutoplayPaused] = useState(false);
   const [activeQualityDetail, setActiveQualityDetail] = useState<QualityDetailKey | null>(null);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [heroSlide, setHeroSlide] = useState(0);
+  const [heroAutoplayPaused, setHeroAutoplayPaused] = useState(false);
+  const [heroTouchStartX, setHeroTouchStartX] = useState<number | null>(null);
 
   const moveHermannSlide = (direction: 1 | -1) => {
     setHermannAutoplayPaused(true);
@@ -297,6 +302,23 @@ export default function Home() {
     setTouchStartX(null);
   };
 
+  const moveHeroSlide = (direction: 1 | -1) => {
+    setHeroAutoplayPaused(true);
+    setHeroSlide(current => (current + direction + 4) % 4);
+  };
+
+  const handleHeroTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    setHeroAutoplayPaused(true);
+    setHeroTouchStartX(event.touches[0]?.clientX ?? null);
+  };
+
+  const handleHeroTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (heroTouchStartX === null) return;
+    const deltaX = (event.changedTouches[0]?.clientX ?? heroTouchStartX) - heroTouchStartX;
+    if (Math.abs(deltaX) >= 48) moveHeroSlide(deltaX < 0 ? 1 : -1);
+    setHeroTouchStartX(null);
+  };
+
   useEffect(() => {
     if (hermannAutoplayPaused || typeof window === "undefined" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const timer = window.setInterval(() => {
@@ -304,6 +326,12 @@ export default function Home() {
     }, 5200);
     return () => window.clearInterval(timer);
   }, [hermannAutoplayPaused]);
+
+  useEffect(() => {
+    if (heroAutoplayPaused || typeof window === "undefined" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = window.setInterval(() => setHeroSlide(current => (current + 1) % 4), 6000);
+    return () => window.clearInterval(timer);
+  }, [heroAutoplayPaused]);
 
   const rawStats = statsQuery.data ?? [];
   const stats = new Map(rawStats.map(item => [item.metricKey, item]));
@@ -383,6 +411,37 @@ export default function Home() {
   });
 
   const heroImage = content["hero.image"] || fallback["hero.image"];
+  const heroSlides = [
+    {
+      image: heroImage,
+      alt: "Italray C-Arm and surgical imaging equipment in a modern operating room",
+      eyebrow: "Imaging systems",
+      title: "Precision imaging for decisive care.",
+      description: "Italray C-Arms and surgical imaging systems supported by SPM engineering, documentation and lifecycle care.",
+    },
+    {
+      image: solutions[0].image,
+      alt: solutions[0].imageAlt,
+      eyebrow: "Field engineering",
+      title: "Support that keeps critical systems moving.",
+      description: "From commissioning and calibration to preventive maintenance, our field team stays close to the equipment.",
+    },
+    {
+      image: solutions[1].image,
+      alt: solutions[1].imageAlt,
+      eyebrow: "Surgical technology",
+      title: "A clearer path from equipment to outcome.",
+      description: "Explore imaging platforms, technical specifications and quote-first planning for modern surgical workflows.",
+    },
+    {
+      image: hermannGallerySlides[3].image,
+      alt: hermannGallerySlides[3].alt,
+      eyebrow: "Hermann portfolio",
+      title: "Surgical technology, thoughtfully connected.",
+      description: "Hermann endoscopy and instrument systems presented with documentation review, training and lifecycle support.",
+    },
+  ];
+  const activeHeroSlide = heroSlides[heroSlide] ?? heroSlides[0];
 
   return (
     <SiteChrome transparentHeader={false}>
@@ -392,73 +451,73 @@ export default function Home() {
         url="/"
       />
       <main>
-        {/* Hero: primary value proposition */}
-        <section className="relative isolate min-h-[640px] overflow-hidden border-b border-[#0a4052] bg-[#061f2b] text-white sm:min-h-[720px] lg:min-h-[760px]">
-          <img
-            src={heroImage}
-            alt="Italray C-Arm and surgical imaging equipment in a modern operating room"
-            loading="eager"
-            fetchPriority="high"
-            decoding="async"
-            className="absolute inset-0 h-full w-full object-cover object-center transition duration-1000 hover:scale-[1.01]"
-          />
-          {/* Multi-stage calibrated gradient overlay */}
+        {/* Hero: rotating imaging, field engineering and surgical technology showcase */}
+        <section className="relative isolate min-h-[720px] overflow-hidden border-b border-[#0a4052] bg-[#061f2b] text-white sm:min-h-[760px] lg:min-h-[790px]">
           <div
-            className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,31,43,.82)_0%,rgba(6,31,43,.66)_35%,rgba(6,31,43,.12)_73%,rgba(6,31,43,.28)_100%)]"
-            aria-hidden="true"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/65 via-transparent to-[#061f2b]/20" aria-hidden="true" />
+            role="region"
+            aria-roledescription="carousel"
+            aria-label="SPM technology and service showcase"
+            tabIndex={0}
+            className="absolute inset-0 overflow-hidden outline-none lg:left-[42%]"
+            onMouseEnter={() => setHeroAutoplayPaused(true)}
+            onMouseLeave={() => setHeroAutoplayPaused(false)}
+            onFocus={() => setHeroAutoplayPaused(true)}
+            onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setHeroAutoplayPaused(false); }}
+            onKeyDown={event => { if (event.key === "ArrowLeft") moveHeroSlide(-1); if (event.key === "ArrowRight") moveHeroSlide(1); }}
+            onTouchStart={handleHeroTouchStart}
+            onTouchEnd={handleHeroTouchEnd}
+          >
+            {heroSlides.map((slide, index) => (
+              <img
+                key={slide.image}
+                src={slide.image}
+                alt={slide.alt}
+                loading={index === 0 ? "eager" : "lazy"}
+                fetchPriority={index === 0 ? "high" : "auto"}
+                decoding="async"
+                aria-hidden={index !== heroSlide}
+                className={`absolute inset-0 h-full w-full object-cover object-center transition-[opacity,transform] duration-700 ease-out ${index === heroSlide ? "scale-100 opacity-100" : "scale-[1.03] opacity-0"}`}
+              />
+            ))}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#061f2b]/10 via-[#061f2b]/10 to-[#061f2b]/35" aria-hidden="true" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/75 via-transparent to-[#061f2b]/10" aria-hidden="true" />
+            <div className="absolute bottom-8 left-6 right-6 flex items-end justify-between gap-4 sm:bottom-10 sm:left-10 sm:right-10">
+              <div className="max-w-xs rounded-2xl border border-white/20 bg-[#061f2b]/55 p-3 backdrop-blur-md">
+                <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-[#8be0d5]">{activeHeroSlide.eyebrow}</p>
+                <p className="mt-1 text-sm font-bold leading-5 text-white">{activeHeroSlide.title}</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button type="button" aria-label="Previous Hero image" onClick={() => moveHeroSlide(-1)} className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-[#061f2b]/65 text-white shadow-lg backdrop-blur-md transition hover:bg-[#061f2b]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5]"><ChevronLeft className="h-5 w-5" /></button>
+                <button type="button" aria-label="Next Hero image" onClick={() => moveHeroSlide(1)} className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-[#061f2b]/65 text-white shadow-lg backdrop-blur-md transition hover:bg-[#061f2b]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5]"><ChevronRight className="h-5 w-5" /></button>
+              </div>
+            </div>
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-b from-[#061f2b]/35 via-[#061f2b]/50 to-[#061f2b]/90 lg:hidden" aria-hidden="true" />
+          <div className="absolute inset-y-0 left-0 hidden w-[66%] bg-gradient-to-r from-[#061f2b] via-[#061f2b]/95 to-transparent lg:block" aria-hidden="true" />
 
-          <div className="relative mx-auto flex min-h-[640px] max-w-[1280px] items-center px-5 py-24 sm:min-h-[720px] lg:min-h-[760px] lg:px-8">
-            <div className="max-w-2xl text-left lg:max-w-[560px]">
-              {/* Category Pill */}
+          <div className="relative z-10 mx-auto grid min-h-[720px] max-w-[1280px] items-center px-5 py-24 sm:min-h-[760px] lg:min-h-[790px] lg:grid-cols-[.86fr_1.14fr] lg:px-8">
+            <div className="max-w-xl text-left">
               <div className="mb-6 flex flex-wrap items-center gap-3">
-                <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-[#60c1bb]/40 bg-[#061f2b]/60 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[.16em] text-[#8be0d5] shadow-lg backdrop-blur-md">
+                <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-[#60c1bb]/40 bg-[#061f2b]/70 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[.16em] text-[#8be0d5] shadow-lg backdrop-blur-md">
                   <span className="h-2 w-2 rounded-full bg-[#60c1bb] animate-pulse" />
-                  {content["hero.eyebrow"] || fallback["hero.eyebrow"]}
+                  {activeHeroSlide.eyebrow} & lifecycle management
                 </div>
               </div>
-
-              {/* Dominant Headline */}
-              <h1 className="max-w-2xl text-4xl font-extrabold leading-[1.03] tracking-[-.045em] text-white sm:text-5xl lg:max-w-[560px] lg:text-[64px]">
-                {content["hero.title"] || fallback["hero.title"]}
-              </h1>
-
-              {/* Supporting Copy */}
-              <p className="mt-6 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg">
-                {content["hero.description"] || fallback["hero.description"]}
-              </p>
-
-              {/* Dual Action CTAs */}
-              <div className="mt-8 flex flex-wrap items-center gap-4">
-                <Button
-                    size="lg"
-                    className="h-13 rounded-xl bg-[#c2410c] px-8 text-sm font-bold text-white shadow-xl shadow-[#c2410c]/25 transition-all hover:-translate-y-0.5 hover:bg-[#9a3412] hover:shadow-2xl active:scale-97"
-                   asChild><Link href={content["hero.primary.url"] || fallback["hero.primary.url"]}>
-                    {content["hero.primary.label"] || fallback["hero.primary.label"]}
-                    <ArrowUpRight className="ml-2 h-4 w-4" />
-                  </Link></Button>
-                <Button
-                    size="lg"
-                    variant="outline"
-                    className="h-13 rounded-xl border-2 border-white/70 bg-white/10 px-8 text-sm font-bold text-white backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:bg-white/20 active:scale-97"
-                   asChild><Link href={content["hero.secondary.url"] || fallback["hero.secondary.url"]}>
-                    {content["hero.secondary.label"] || fallback["hero.secondary.label"]}
-                    <ArrowUpRight className="ml-2 h-4 w-4" />
-                  </Link></Button>
+              <div aria-live="polite">
+                <h1 className="max-w-xl text-4xl font-extrabold leading-[1.03] tracking-[-.045em] text-white sm:text-5xl lg:text-[62px]">{activeHeroSlide.title}</h1>
+                <p className="mt-6 max-w-lg text-base leading-relaxed text-white/85 sm:text-lg">{activeHeroSlide.description}</p>
               </div>
-
+              <div className="mt-8 flex flex-wrap items-center gap-4">
+                <Button size="lg" className="h-13 rounded-xl bg-[#c2410c] px-8 text-sm font-bold text-white shadow-xl shadow-[#c2410c]/25 transition-all hover:-translate-y-0.5 hover:bg-[#9a3412] hover:shadow-2xl active:scale-97" asChild>
+                  <Link href={content["hero.primary.url"] || fallback["hero.primary.url"]}>{content["hero.primary.label"] || fallback["hero.primary.label"]}<ArrowUpRight className="ml-2 h-4 w-4" /></Link>
+                </Button>
+                <Button size="lg" variant="outline" className="h-13 rounded-xl border-2 border-white/70 bg-white/10 px-8 text-sm font-bold text-white backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:bg-white/20 active:scale-97" asChild>
+                  <Link href={content["hero.secondary.url"] || fallback["hero.secondary.url"]}>{content["hero.secondary.label"] || fallback["hero.secondary.label"]}<ArrowUpRight className="ml-2 h-4 w-4" /></Link>
+                </Button>
+              </div>
               <div className="mt-5 flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-3">
                 <label htmlFor="hero-quick-path" className="text-xs font-bold uppercase tracking-[.14em] text-white/70">Find your path</label>
-                <select
-                  id="hero-quick-path"
-                  defaultValue=""
-                  aria-label="Choose a product or support path"
-                  onChange={event => {
-                    if (event.target.value) window.location.assign(event.target.value);
-                  }}
-                  className="min-h-11 w-full max-w-xs rounded-xl border border-white/40 bg-[#061f2b]/75 px-3.5 text-sm font-semibold text-white shadow-lg outline-none backdrop-blur-sm transition hover:border-[#8be0d5] focus-visible:ring-2 focus-visible:ring-[#8be0d5] sm:w-auto"
-                >
+                <select id="hero-quick-path" defaultValue="" aria-label="Choose a product or support path" onChange={event => { if (event.target.value) window.location.assign(event.target.value); }} className="min-h-11 w-full max-w-xs rounded-xl border border-white/40 bg-[#061f2b]/75 px-3.5 text-sm font-semibold text-white shadow-lg outline-none backdrop-blur-sm transition hover:border-[#8be0d5] focus-visible:ring-2 focus-visible:ring-[#8be0d5] sm:w-auto">
                   <option value="" disabled>Choose a destination…</option>
                   <option value="/catalogue?category=c-arm">C-Arm systems</option>
                   <option value="/catalogue?brand=hermann">Hermann surgical portfolio</option>
@@ -466,15 +525,13 @@ export default function Home() {
                   <option value="/request-service">Field service support</option>
                 </select>
               </div>
-
-              {/* Value Badges */}
-              <div className="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-sm font-medium text-white/80">
-                <span className="inline-flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-[#60c1bb]" /> Structured request tracking
-                </span>
-                <span className="inline-flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-[#60c1bb]" /> Documented quality alignment
-                </span>
+              <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3 text-sm font-medium text-white/80">
+                <span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-[#60c1bb]" /> Structured request tracking</span>
+                <span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-[#60c1bb]" /> Documented quality alignment</span>
+              </div>
+              <div className="mt-7 flex items-center gap-2" role="tablist" aria-label="Hero showcase images">
+                {heroSlides.map((slide, index) => <button key={slide.image} type="button" role="tab" aria-label={`Show Hero image ${index + 1}`} aria-selected={index === heroSlide} onClick={() => { setHeroAutoplayPaused(true); setHeroSlide(index); }} className="inline-flex h-9 w-9 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5]"><span aria-hidden="true" className={`h-2 rounded-full transition-all duration-300 ${index === heroSlide ? "w-7 bg-[#8be0d5]" : "w-2 bg-white/55 hover:bg-white"}`} /></button>)}
+                <span className="ml-2 text-[10px] font-bold uppercase tracking-[.16em] text-white/55">{heroSlide + 1} / {heroSlides.length}</span>
               </div>
             </div>
           </div>
@@ -570,14 +627,14 @@ export default function Home() {
               <p className="max-w-xs text-sm font-semibold leading-6 text-[#0f6fae]">Two trusted technology relationships. One accountable SPM support model.</p>
             </div>
             <div className="mt-12 grid gap-6 lg:grid-cols-2">
-              {strategicPartners.map((partner, index) => (
-                <article key={partner.name} className="group relative overflow-hidden rounded-3xl border border-[#dce7eb] bg-white p-7 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-[#0a4052] hover:shadow-xl sm:p-9">
+              {strategicPartners.map((partner) => (
+                <Link key={partner.name} href={partner.href} aria-label={`Explore ${partner.name} portfolio`} className="group block rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6fae] focus-visible:ring-offset-2">
+                <article className="relative overflow-hidden rounded-3xl border border-[#dce7eb] bg-white p-7 shadow-xs transition-all duration-300 group-hover:-translate-y-1 group-hover:border-[#0a4052] group-hover:shadow-xl sm:p-9">
                   <div className="absolute right-0 top-0 h-28 w-28 rounded-bl-[72px] bg-[#eaf4fa] transition-transform duration-500 group-hover:scale-125" aria-hidden="true" />
                   <div className="relative flex items-start justify-between gap-5">
-                    <div className="flex h-20 min-w-[150px] items-center rounded-2xl border border-[#e5edf1] bg-[#fafcfd] px-5">
-                      <img src={partner.logo} alt={`${partner.name} official logo`} loading="lazy" decoding="async" className="max-h-12 max-w-[190px] object-contain" />
+                    <div className="flex h-24 min-w-[190px] items-center rounded-2xl border border-transparent bg-transparent px-0 transition-transform duration-300 group-hover:scale-[1.03]">
+                      <img src={partner.logo} alt={`${partner.name} official logo`} loading="lazy" decoding="async" className="max-h-16 max-w-[240px] scale-125 object-contain mix-blend-multiply transition-transform duration-300 group-hover:scale-150" />
                     </div>
-                    <span className="mt-1 rounded-full bg-[#eaf4fa] px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[#0f6fae]">0{index + 1}</span>
                   </div>
                   <p className="relative mt-7 inline-flex rounded-full bg-[#fff1e9] px-3 py-1 text-xs font-bold text-[#c2410c]">{partner.status}</p>
                   <h3 className="relative mt-4 text-2xl font-bold text-[#0a4052]">{partner.name}</h3>
@@ -588,6 +645,7 @@ export default function Home() {
                     <span className="rounded-full border border-[#dce7eb] px-3 py-1.5">Lifecycle care</span>
                   </div>
                 </article>
+                </Link>
               ))}
             </div>
           </div>

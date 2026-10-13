@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import SiteSearchDialog from "@/components/SiteSearchDialog";
 import { ChevronDown, ChevronRight, Menu, X, ArrowUpRight, Facebook, Linkedin, Stethoscope, MessageCircle, Wrench, LogIn } from "lucide-react";
 import { Link, useLocation } from "wouter";
@@ -18,6 +18,17 @@ export default function SiteChrome({ children }: { children: React.ReactNode; tr
   const [activeServices, setActiveServices] = useState(false);
   const [activeNews, setActiveNews] = useState(false);
   const [location] = useLocation();
+  const menuCloseTimer = useRef<number | null>(null);
+
+  const cancelMenuClose = () => {
+    if (menuCloseTimer.current !== null) window.clearTimeout(menuCloseTimer.current);
+    menuCloseTimer.current = null;
+  };
+
+  const scheduleMenuClose = (close: () => void) => {
+    cancelMenuClose();
+    menuCloseTimer.current = window.setTimeout(close, 180);
+  };
 
   const brandsQuery = trpc.menu.productBrands.useQuery();
   const itemsQuery = trpc.menu.productItems.useQuery();
@@ -71,8 +82,8 @@ export default function SiteChrome({ children }: { children: React.ReactNode; tr
             {/* 1. Company Dropdown */}
             <div
               className="relative"
-              onMouseEnter={() => setActiveCompany(true)}
-              onMouseLeave={() => setActiveCompany(false)}
+              onMouseEnter={() => { cancelMenuClose(); setActiveCompany(true); }}
+              onMouseLeave={() => scheduleMenuClose(() => setActiveCompany(false))}
             >
               <Link
                 href="/about"
@@ -81,7 +92,7 @@ export default function SiteChrome({ children }: { children: React.ReactNode; tr
                     ? navActive
                     : navIdle
                 }`}
-                onFocus={() => setActiveCompany(true)}
+                onFocus={() => { cancelMenuClose(); setActiveCompany(true); }}
                 aria-expanded={activeCompany}
                 aria-haspopup="menu"
                 aria-controls="company-menu"
@@ -112,15 +123,15 @@ export default function SiteChrome({ children }: { children: React.ReactNode; tr
             {/* Products - text-first category flyout */}
             <div
               className="relative"
-              onMouseEnter={() => setActiveMega(true)}
-              onMouseLeave={() => setActiveMega(false)}
+              onMouseEnter={() => { cancelMenuClose(); setActiveMega(true); }}
+              onMouseLeave={() => scheduleMenuClose(() => setActiveMega(false))}
             >
               <Link
                 href="/catalogue"
                 className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-4 text-sm font-semibold transition ${
                   location.startsWith("/catalogue") || location.startsWith("/spare-parts") ? navActive : navIdle
                 }`}
-                onFocus={() => setActiveMega(true)}
+                onFocus={() => { cancelMenuClose(); setActiveMega(true); }}
                 aria-expanded={activeMega}
                 aria-haspopup="menu"
                 aria-controls="products-menu"
@@ -153,7 +164,7 @@ export default function SiteChrome({ children }: { children: React.ReactNode; tr
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
-                        <span className={`flex h-10 w-14 items-center justify-center rounded-lg px-1 ${activeProductTab === "italray" ? "bg-white" : "bg-[#eaf4fa]"}`}><img src={italrayLogo} alt="Italray logo" className="max-h-7 max-w-12 object-contain" /></span>
+                        <span className={`flex h-12 w-20 items-center justify-center rounded-lg px-1 ${activeProductTab === "italray" ? "bg-white/95" : "bg-transparent"}`}><img src={italrayLogo} alt="Italray logo" className="max-h-9 max-w-16 object-contain mix-blend-multiply" /></span>
                         <div>
                           <p className="text-sm font-bold">Italray</p>
                           <p className={`text-xs ${activeProductTab === "italray" ? "text-white/80" : "text-[#64748b]"}`}>Exclusive Agent in Egypt</p>
@@ -172,7 +183,7 @@ export default function SiteChrome({ children }: { children: React.ReactNode; tr
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
-                        <span className={`flex h-10 w-14 items-center justify-center rounded-lg px-1 ${activeProductTab === "hermann" ? "bg-white" : "bg-[#fef2f2]"}`}><img src={hermannLogo} alt="Hermann Medizintechnik logo" className="max-h-7 max-w-12 object-contain" /></span>
+                        <span className={`flex h-12 w-20 items-center justify-center rounded-lg px-1 ${activeProductTab === "hermann" ? "bg-white/95" : "bg-transparent"}`}><img src={hermannLogo} alt="Hermann Medizintechnik logo" className="max-h-9 max-w-16 object-contain mix-blend-multiply" /></span>
                         <div>
                           <p className="text-sm font-bold">Hermann</p>
                           <p className={`text-xs ${activeProductTab === "hermann" ? "text-white/80" : "text-[#64748b]"}`}>Hermann portfolio</p>
@@ -191,7 +202,7 @@ export default function SiteChrome({ children }: { children: React.ReactNode; tr
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
-                          <span className={`flex h-10 w-14 items-center justify-center rounded-lg px-1 ${activeProductTab === "parts" ? "bg-white" : "bg-[#eaf4fa]"}`}><img src={logo} alt="SPM logo" className="max-h-8 max-w-12 object-contain" /></span>
+                          <span className={`flex h-12 w-20 items-center justify-center rounded-lg px-1 ${activeProductTab === "parts" ? "bg-white/95" : "bg-transparent"}`}><img src={logo} alt="SPM logo" className="max-h-9 max-w-16 object-contain mix-blend-multiply" /></span>
                         <div>
                           <p className="text-sm font-bold">Spare Parts</p>
                           <p className={`text-xs ${activeProductTab === "parts" ? "text-white/80" : "text-[#64748b]"}`}>Genuine parts & support</p>

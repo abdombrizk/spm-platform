@@ -104,3 +104,11 @@ The public product preview and build/test suite are available for verification. 
 - [x] Converted the quality and radiation cards into keyboard-accessible buttons that open a focused Dialog with project-specific explanations and a contact CTA; wording avoids unsupported certification claims.
 - [x] Added a Hero “Find your path” select that routes directly to C-Arm systems, Hermann portfolio, OEM spare parts or field service support.
 - [x] Verified live Dialog content, native TouchEvent slide change, route options, desktop/mobile rendering, TypeScript, 44/44 non-Shopify tests, production build and `git diff --check`.
+
+## Rotating Home Hero and partner navigation
+
+- [x] Rebuilt the Home Hero as a premium split composition: editorial copy on the left and a rotating right-side visual stage using the supplied operating-room Hero, field-engineering C-Arm image, Italray system image and Hermann endoscopy image.
+- [x] Added autoplay, pause-on-hover/focus, arrows, dots, keyboard navigation, touch swipe and reduced-motion handling; each slide has meaningful accessible alt text and supporting copy.
+- [x] Rewrote the Hero message around imaging systems, field engineering and surgical technology while keeping quote/service CTAs and the quick-path selector.
+- [x] Made Italray and Hermann partnership cards actionable links, removed the visible sequence numbers, enlarged/transparent-styled partner marks, and added hover/focus motion.
+- [x] Improved global menu stability with a short close delay so the Products/Company flyouts do not disappear while the pointer crosses into them; enlarged product-brand marks.
