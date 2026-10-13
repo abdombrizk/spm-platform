@@ -20,6 +20,13 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import SiteChrome from "@/components/SiteChrome";
 import SEOHead from "@/components/SEOHead";
 import { trpc } from "@/lib/trpc";
@@ -161,6 +168,31 @@ const hermannCategoryChips = [
   "Tungsten Carbide Instruments",
 ];
 
+const qualityDetails = {
+  quality: {
+    eyebrow: "Quality workflow",
+    title: "Documented quality workflow",
+    summary: "A clear review path for technical records, equipment data and project handover.",
+    details: [
+      "Technical information is reviewed before it becomes part of a quote or project conversation.",
+      "Equipment, service and spare-parts requests are organized around traceable next steps.",
+      "Ask the SPM team for the project-specific documentation package before making a procurement decision.",
+    ],
+  },
+  radiation: {
+    eyebrow: "Radiation documentation",
+    title: "Project-specific radiation documentation",
+    summary: "Safety and regulatory records are coordinated according to the equipment and project scope.",
+    details: [
+      "Radiation-related documentation is reviewed as part of the project requirements rather than presented as a generic badge.",
+      "The required records can vary by system, installation context and applicable authority.",
+      "Contact SPM to confirm the documentation required for your facility and equipment scope.",
+    ],
+  },
+} as const;
+
+type QualityDetailKey = keyof typeof qualityDetails;
+
 const hermannFallbackHighlights = [
   {
     slug: "hermann-h4k-icg-uhd-camera",
@@ -240,6 +272,8 @@ export default function Home() {
   const eventsPageQuery = trpc.cms.publishedBySlug.useQuery({ slug: "events" });
   const [hermannSlide, setHermannSlide] = useState(0);
   const [hermannAutoplayPaused, setHermannAutoplayPaused] = useState(false);
+  const [activeQualityDetail, setActiveQualityDetail] = useState<QualityDetailKey | null>(null);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
   const moveHermannSlide = (direction: 1 | -1) => {
     setHermannAutoplayPaused(true);
@@ -249,6 +283,18 @@ export default function Home() {
   const selectHermannSlide = (index: number) => {
     setHermannAutoplayPaused(true);
     setHermannSlide(index);
+  };
+
+  const handleHermannTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    setHermannAutoplayPaused(true);
+    setTouchStartX(event.touches[0]?.clientX ?? null);
+  };
+
+  const handleHermannTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (touchStartX === null) return;
+    const deltaX = (event.changedTouches[0]?.clientX ?? touchStartX) - touchStartX;
+    if (Math.abs(deltaX) >= 48) moveHermannSlide(deltaX < 0 ? 1 : -1);
+    setTouchStartX(null);
   };
 
   useEffect(() => {
@@ -327,6 +373,7 @@ export default function Home() {
   const hermannFamilyCount = hermannProducts.filter(item => String(item.product.name ?? "").toLowerCase().includes("families")).length || 7;
   const activeHermannSlide = hermannGallerySlides[hermannSlide] ?? hermannGallerySlides[0];
   const visibleHermannCategories = hermannCategoryChips.slice(0, 6);
+  const activeQuality = activeQualityDetail ? qualityDetails[activeQualityDetail] : null;
 
   const eventsData = eventsPageQuery.data?.data as { items?: Array<{ title: string; date: string; location: string; image?: string; isPast?: boolean }> } | undefined;
   const pastEvents = (eventsData?.items ?? []).filter(ev => {
@@ -401,6 +448,25 @@ export default function Home() {
                   </Link></Button>
               </div>
 
+              <div className="mt-5 flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-3">
+                <label htmlFor="hero-quick-path" className="text-xs font-bold uppercase tracking-[.14em] text-white/70">Find your path</label>
+                <select
+                  id="hero-quick-path"
+                  defaultValue=""
+                  aria-label="Choose a product or support path"
+                  onChange={event => {
+                    if (event.target.value) window.location.assign(event.target.value);
+                  }}
+                  className="min-h-11 w-full max-w-xs rounded-xl border border-white/40 bg-[#061f2b]/75 px-3.5 text-sm font-semibold text-white shadow-lg outline-none backdrop-blur-sm transition hover:border-[#8be0d5] focus-visible:ring-2 focus-visible:ring-[#8be0d5] sm:w-auto"
+                >
+                  <option value="" disabled>Choose a destination…</option>
+                  <option value="/catalogue?category=c-arm">C-Arm systems</option>
+                  <option value="/catalogue?brand=hermann">Hermann surgical portfolio</option>
+                  <option value="/spare-parts">OEM spare parts</option>
+                  <option value="/request-service">Field service support</option>
+                </select>
+              </div>
+
               {/* Value Badges */}
               <div className="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-sm font-medium text-white/80">
                 <span className="inline-flex items-center gap-2">
@@ -447,7 +513,7 @@ export default function Home() {
               })}
             </div>
             <div className="mt-6 grid gap-3 md:grid-cols-2" aria-label="Quality and regulatory evidence">
-              <div className="flex items-center gap-4 rounded-2xl border border-[#cfe8df] bg-[#f3fbf8] px-5 py-4 transition hover:-translate-y-0.5 hover:shadow-md">
+              <button type="button" onClick={() => setActiveQualityDetail("quality")} aria-haspopup="dialog" aria-label="View documented quality workflow details" className="flex w-full items-center gap-4 rounded-2xl border border-[#cfe8df] bg-[#f3fbf8] px-5 py-4 text-left transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#047857] focus-visible:ring-offset-2">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-[#047857] shadow-xs">
                   <BadgeCheck className="h-6 w-6" aria-hidden="true" />
                 </div>
@@ -456,8 +522,8 @@ export default function Home() {
                   <p className="mt-1 text-sm font-bold text-[#0a4052]">Documented quality workflow</p>
                   <p className="mt-0.5 text-xs text-[#64748b]">Documented review and traceable technical records.</p>
                 </div>
-              </div>
-              <div className="flex items-center gap-4 rounded-2xl border border-[#cfe2ef] bg-[#f2f8fc] px-5 py-4 transition hover:-translate-y-0.5 hover:shadow-md">
+              </button>
+              <button type="button" onClick={() => setActiveQualityDetail("radiation")} aria-haspopup="dialog" aria-label="View project-specific radiation documentation details" className="flex w-full items-center gap-4 rounded-2xl border border-[#cfe2ef] bg-[#f2f8fc] px-5 py-4 text-left transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6fae] focus-visible:ring-offset-2">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-[#0f6fae] shadow-xs">
                   <ShieldCheck className="h-6 w-6" aria-hidden="true" />
                 </div>
@@ -466,11 +532,29 @@ export default function Home() {
                   <p className="mt-1 text-sm font-bold text-[#0a4052]">Project-specific radiation documentation</p>
                   <p className="mt-0.5 text-xs text-[#64748b]">Safety and regulatory records coordinated where required.</p>
                 </div>
-              </div>
+              </button>
             </div>
             {statsQuery.isError ? <p role="status" className="mt-3 text-xs font-semibold text-[#9a3412]">Live statistics are temporarily unavailable; the rest of the Home experience remains available.</p> : null}
           </div>
         </section>
+
+        <Dialog open={Boolean(activeQuality)} onOpenChange={open => { if (!open) setActiveQualityDetail(null); }}>
+          <DialogContent className="max-w-xl border-[#cfe2ef] bg-white p-7 text-[#0a4052] sm:p-8">
+            {activeQuality ? (
+              <>
+                <DialogHeader className="text-left">
+                  <p className="text-xs font-extrabold uppercase tracking-[.16em] text-[#0f6fae]">{activeQuality.eyebrow}</p>
+                  <DialogTitle className="text-2xl font-extrabold leading-tight text-[#0a4052]">{activeQuality.title}</DialogTitle>
+                  <DialogDescription className="pt-1 text-sm leading-6 text-[#617180]">{activeQuality.summary}</DialogDescription>
+                </DialogHeader>
+                <ul className="mt-2 space-y-3 text-sm leading-6 text-[#334155]">
+                  {activeQuality.details.map(detail => <li key={detail} className="flex gap-3"><CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-[#047857]" aria-hidden="true" /><span>{detail}</span></li>)}
+                </ul>
+                <Link href="/contact" onClick={() => setActiveQualityDetail(null)} className="mt-2 inline-flex min-h-11 items-center justify-center rounded-xl bg-[#0a4052] px-5 text-sm font-bold text-white hover:bg-[#063545] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6fae] focus-visible:ring-offset-2">Confirm project requirements <ArrowUpRight className="ml-2 h-4 w-4" /></Link>
+              </>
+            ) : null}
+          </DialogContent>
+        </Dialog>
 
         {/* Strategic partnerships */}
         <section className="border-y border-[#dce7eb] bg-[#f7fafc] py-20 lg:py-24" aria-labelledby="strategic-partnerships-title">
@@ -590,11 +674,15 @@ export default function Home() {
                 role="region"
                 aria-roledescription="carousel"
                 aria-label="Hermann portfolio image gallery"
+                tabIndex={0}
                 className="group relative min-h-[460px] overflow-hidden rounded-[32px] bg-[#0a4052] shadow-2xl shadow-[#0a4052]/20 sm:min-h-[520px] lg:min-h-[600px]"
                 onMouseEnter={() => setHermannAutoplayPaused(true)}
                 onMouseLeave={() => setHermannAutoplayPaused(false)}
                 onFocus={() => setHermannAutoplayPaused(true)}
-                onBlur={() => setHermannAutoplayPaused(false)}
+                onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setHermannAutoplayPaused(false); }}
+                onKeyDown={event => { if (event.key === "ArrowLeft") moveHermannSlide(-1); if (event.key === "ArrowRight") moveHermannSlide(1); }}
+                onTouchStart={handleHermannTouchStart}
+                onTouchEnd={handleHermannTouchEnd}
               >
                 {hermannGallerySlides.map((slide, index) => (
                   <img

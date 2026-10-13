@@ -97,3 +97,10 @@ The public product preview and build/test suite are available for verification. 
 - [x] Removed the large Equipment Finder heading, explanatory copy, manufacturer/category/sort controls, clear control, result badge, and category chips from the Catalogue page.
 - [x] Kept a single compact, accessible search bar below the Hero with URL-backed search behavior intact for catalogue navigation.
 - [x] Verified the rendered DOM has one search input and no legacy filter controls; final suite passes 43/43 non-Shopify tests with a successful production build.
+
+## Home next-step enhancements
+
+- [x] Added native touch swipe support to the Hermann carousel with a 48px threshold, ArrowLeft/ArrowRight keyboard alternative, visible buttons and reduced-motion-safe autoplay behavior.
+- [x] Converted the quality and radiation cards into keyboard-accessible buttons that open a focused Dialog with project-specific explanations and a contact CTA; wording avoids unsupported certification claims.
+- [x] Added a Hero “Find your path” select that routes directly to C-Arm systems, Hermann portfolio, OEM spare parts or field service support.
+- [x] Verified live Dialog content, native TouchEvent slide change, route options, desktop/mobile rendering, TypeScript, 44/44 non-Shopify tests, production build and `git diff --check`.

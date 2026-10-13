@@ -32,6 +32,10 @@ describe("homepage service shortcuts and trust badges", () => {
     expect((homeSource.match(/hermann-gallery-[a-z-]+_[a-f0-9]+\.jpg/g) ?? [])).toHaveLength(6);
     expect(homeSource).toContain('role="tablist" aria-label="Hermann gallery images"');
     expect(homeSource).toContain("setHermannSlide(current => (current + 1) % hermannGallerySlides.length)");
+    expect(homeSource).toContain("onTouchStart={handleHermannTouchStart}");
+    expect(homeSource).toContain("onTouchEnd={handleHermannTouchEnd}");
+    expect(homeSource).toContain("Math.abs(deltaX) >= 48");
+    expect(homeSource).toContain('onKeyDown={event => { if (event.key === "ArrowLeft") moveHermannSlide(-1);');
     expect(homeSource).toContain("/manus-storage/hermann-catalog_444df261.pdf");
     expect(homeSource).toContain('aria-label="Hermann official product categories"');
     expect(homeSource).toContain("Tungsten Carbide Instruments");
@@ -50,6 +54,12 @@ describe("homepage service shortcuts and trust badges", () => {
     expect(homeSource).toContain("eventsPageQuery.isError");
     expect(homeSource).toContain("statsQuery.isError");
     expect(homeSource).toContain("productsQuery.isError");
+    expect(homeSource).toContain('id="hero-quick-path"');
+    expect(homeSource).toContain("/catalogue?brand=hermann");
+    expect(homeSource).toContain("/spare-parts");
+    expect(homeSource).toContain("View documented quality workflow details");
+    expect(homeSource).toContain("View project-specific radiation documentation details");
+    expect(homeSource).toContain("Confirm project requirements");
   });
 
   it("reads the equipment query parameter into the service request equipment model", () => {
