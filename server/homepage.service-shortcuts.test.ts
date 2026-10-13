@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 
 const homeSource = readFileSync(resolve(process.cwd(), "client/src/pages/Home.tsx"), "utf8");
 const siteChromeSource = readFileSync(resolve(process.cwd(), "client/src/components/SiteChrome.tsx"), "utf8");
+const homepageEditorSource = readFileSync(resolve(process.cwd(), "client/src/pages/HomepageEditor.tsx"), "utf8");
 const serviceRequestSource = readFileSync(resolve(process.cwd(), "client/src/pages/ServiceRequest.tsx"), "utf8");
 
 describe("homepage service shortcuts and trust badges", () => {
@@ -30,6 +31,11 @@ describe("homepage service shortcuts and trust badges", () => {
     expect(homeSource).toContain("onTouchStart={handleHeroTouchStart}");
     expect(homeSource).toContain("onTouchEnd={handleHeroTouchEnd}");
     expect(homeSource).toContain('role="tablist" aria-label="Hero showcase images"');
+    expect(homeSource).toContain("Play Hero slideshow");
+    expect(homeSource).toContain("Pause Hero slideshow");
+    expect(homeSource).toContain('aria-label="C-Arm feature points"');
+    expect(homeSource).toContain("Flat-panel detector");
+    expect(homeSource).toContain('content["hero.slide.1.image"]');
     expect(homeSource).not.toContain("24/27 governorates coverage");
     expect(homeSource).not.toContain("Make every technical next step clear, traceable & verified.");
   });
@@ -46,6 +52,16 @@ describe("homepage service shortcuts and trust badges", () => {
     expect(siteChromeSource).toContain("scheduleMenuClose(() => setActiveCompany(false))");
     expect(siteChromeSource).toContain("scheduleMenuClose(() => setActiveMega(false))");
     expect(siteChromeSource).toContain("max-h-9 max-w-16 object-contain mix-blend-multiply");
+  });
+
+  it("exposes a visual Hero Studio for all four managed slides", () => {
+    expect(homepageEditorSource).toContain("Hero Studio");
+    expect(homepageEditorSource).toContain("const heroSlides = [1, 2, 3, 4]");
+    expect(homepageEditorSource).toContain("const imageKeyForSlide = `${prefix}.image`");
+    expect(homepageEditorSource).toContain("Replace image");
+    expect(homepageEditorSource).toContain("Save draft");
+    expect(homepageEditorSource).toContain("Publish");
+    expect(homepageEditorSource).toContain("Maximum upload: 8 MB");
   });
 
   it("keeps the Hermann visual showcase connected to the supplied gallery", () => {

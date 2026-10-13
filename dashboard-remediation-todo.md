@@ -112,3 +112,7 @@ The public product preview and build/test suite are available for verification. 
 - [x] Rewrote the Hero message around imaging systems, field engineering and surgical technology while keeping quote/service CTAs and the quick-path selector.
 - [x] Made Italray and Hermann partnership cards actionable links, removed the visible sequence numbers, enlarged/transparent-styled partner marks, and added hover/focus motion.
 - [x] Improved global menu stability with a short close delay so the Products/Company flyouts do not disappear while the pointer crosses into them; enlarged product-brand marks.
+- [x] Added a visual Hero Studio inside the protected Homepage/Marketing editor: four slide cards, per-slide image upload, eyebrow/title/description/alt-text fields, preview, visibility controls, Save draft and Publish workflow.
+- [x] Seeded all 20 Hero slide fields in the live homepage content store; the public Hero now reads slide images and copy from published content with safe built-in fallbacks.
+- [x] Added an explicit accessible Play/Pause control plus three contextual C-Arm hotspots with click/focus tooltips, while retaining autoplay, arrow, dot, keyboard, touch and reduced-motion behavior.
+- [x] Verified live slide rotation, hotspot expansion and Play/Pause interaction, TypeScript, 9 Home regression assertions, full non-Shopify test suite, production build and `git diff --check`.

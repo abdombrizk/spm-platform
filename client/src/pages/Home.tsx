@@ -12,6 +12,8 @@ import {
   Globe2,
   Layers,
   MapPin,
+  Pause,
+  Play,
   ShieldCheck,
   Wrench,
   Sparkles,
@@ -278,7 +280,9 @@ export default function Home() {
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [heroSlide, setHeroSlide] = useState(0);
   const [heroAutoplayPaused, setHeroAutoplayPaused] = useState(false);
+  const [heroHoverPaused, setHeroHoverPaused] = useState(false);
   const [heroTouchStartX, setHeroTouchStartX] = useState<number | null>(null);
+  const [activeHeroHotspot, setActiveHeroHotspot] = useState<string | null>(null);
 
   const moveHermannSlide = (direction: 1 | -1) => {
     setHermannAutoplayPaused(true);
@@ -305,6 +309,7 @@ export default function Home() {
   const moveHeroSlide = (direction: 1 | -1) => {
     setHeroAutoplayPaused(true);
     setHeroSlide(current => (current + direction + 4) % 4);
+    setActiveHeroHotspot(null);
   };
 
   const handleHeroTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
@@ -328,10 +333,10 @@ export default function Home() {
   }, [hermannAutoplayPaused]);
 
   useEffect(() => {
-    if (heroAutoplayPaused || typeof window === "undefined" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (heroAutoplayPaused || heroHoverPaused || typeof window === "undefined" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const timer = window.setInterval(() => setHeroSlide(current => (current + 1) % 4), 6000);
     return () => window.clearInterval(timer);
-  }, [heroAutoplayPaused]);
+  }, [heroAutoplayPaused, heroHoverPaused]);
 
   const rawStats = statsQuery.data ?? [];
   const stats = new Map(rawStats.map(item => [item.metricKey, item]));
@@ -413,35 +418,41 @@ export default function Home() {
   const heroImage = content["hero.image"] || fallback["hero.image"];
   const heroSlides = [
     {
-      image: heroImage,
-      alt: "Italray C-Arm and surgical imaging equipment in a modern operating room",
-      eyebrow: "Imaging systems",
-      title: "Precision imaging for decisive care.",
-      description: "Italray C-Arms and surgical imaging systems supported by SPM engineering, documentation and lifecycle care.",
+      image: content["hero.slide.1.image"] || heroImage,
+      alt: content["hero.slide.1.alt"] || "Italray C-Arm and surgical imaging equipment in a modern operating room",
+      eyebrow: content["hero.slide.1.eyebrow"] || "Imaging systems",
+      title: content["hero.slide.1.title"] || "Precision imaging for decisive care.",
+      description: content["hero.slide.1.description"] || "Italray C-Arms and surgical imaging systems supported by SPM engineering, documentation and lifecycle care.",
     },
     {
-      image: solutions[0].image,
-      alt: solutions[0].imageAlt,
-      eyebrow: "Field engineering",
-      title: "Support that keeps critical systems moving.",
-      description: "From commissioning and calibration to preventive maintenance, our field team stays close to the equipment.",
+      image: content["hero.slide.2.image"] || solutions[0].image,
+      alt: content["hero.slide.2.alt"] || solutions[0].imageAlt,
+      eyebrow: content["hero.slide.2.eyebrow"] || "Field engineering",
+      title: content["hero.slide.2.title"] || "Support that keeps critical systems moving.",
+      description: content["hero.slide.2.description"] || "From commissioning and calibration to preventive maintenance, our field team stays close to the equipment.",
     },
     {
-      image: solutions[1].image,
-      alt: solutions[1].imageAlt,
-      eyebrow: "Surgical technology",
-      title: "A clearer path from equipment to outcome.",
-      description: "Explore imaging platforms, technical specifications and quote-first planning for modern surgical workflows.",
+      image: content["hero.slide.3.image"] || solutions[1].image,
+      alt: content["hero.slide.3.alt"] || solutions[1].imageAlt,
+      eyebrow: content["hero.slide.3.eyebrow"] || "Surgical technology",
+      title: content["hero.slide.3.title"] || "A clearer path from equipment to outcome.",
+      description: content["hero.slide.3.description"] || "Explore imaging platforms, technical specifications and quote-first planning for modern surgical workflows.",
     },
     {
-      image: hermannGallerySlides[3].image,
-      alt: hermannGallerySlides[3].alt,
-      eyebrow: "Hermann portfolio",
-      title: "Surgical technology, thoughtfully connected.",
-      description: "Hermann endoscopy and instrument systems presented with documentation review, training and lifecycle support.",
+      image: content["hero.slide.4.image"] || hermannGallerySlides[3].image,
+      alt: content["hero.slide.4.alt"] || hermannGallerySlides[3].alt,
+      eyebrow: content["hero.slide.4.eyebrow"] || "Hermann portfolio",
+      title: content["hero.slide.4.title"] || "Surgical technology, thoughtfully connected.",
+      description: content["hero.slide.4.description"] || "Hermann endoscopy and instrument systems presented with documentation review, training and lifecycle support.",
     },
   ];
   const activeHeroSlide = heroSlides[heroSlide] ?? heroSlides[0];
+  const heroIsPaused = heroAutoplayPaused || heroHoverPaused;
+  const heroHotspots = [
+    { id: "detector", label: "Flat-panel detector", detail: "Precise image capture for demanding surgical workflows.", position: "left-[72%] top-[52%]" },
+    { id: "monitor", label: "Live imaging display", detail: "Bring the clinical view closer to the operating team.", position: "left-[58%] top-[24%]" },
+    { id: "c-arm", label: "Mobile C-Arm platform", detail: "Flexible positioning for image-guided procedures.", position: "left-[86%] top-[42%]" },
+  ];
 
   return (
     <SiteChrome transparentHeader={false}>
@@ -459,10 +470,10 @@ export default function Home() {
             aria-label="SPM technology and service showcase"
             tabIndex={0}
             className="absolute inset-0 overflow-hidden outline-none lg:left-[42%]"
-            onMouseEnter={() => setHeroAutoplayPaused(true)}
-            onMouseLeave={() => setHeroAutoplayPaused(false)}
-            onFocus={() => setHeroAutoplayPaused(true)}
-            onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setHeroAutoplayPaused(false); }}
+            onMouseEnter={() => setHeroHoverPaused(true)}
+            onMouseLeave={() => setHeroHoverPaused(false)}
+            onFocus={() => setHeroHoverPaused(true)}
+            onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setHeroHoverPaused(false); }}
             onKeyDown={event => { if (event.key === "ArrowLeft") moveHeroSlide(-1); if (event.key === "ArrowRight") moveHeroSlide(1); }}
             onTouchStart={handleHeroTouchStart}
             onTouchEnd={handleHeroTouchEnd}
@@ -481,12 +492,36 @@ export default function Home() {
             ))}
             <div className="absolute inset-0 bg-gradient-to-r from-[#061f2b]/10 via-[#061f2b]/10 to-[#061f2b]/35" aria-hidden="true" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/75 via-transparent to-[#061f2b]/10" aria-hidden="true" />
+            {heroSlide === 0 ? (
+              <div className="absolute inset-0" aria-label="C-Arm feature points">
+                {heroHotspots.map(hotspot => (
+                  <div key={hotspot.id} className={`group absolute ${hotspot.position}`}>
+                    <button
+                      type="button"
+                      aria-label={`${hotspot.label}: ${hotspot.detail}`}
+                      aria-expanded={activeHeroHotspot === hotspot.id}
+                      onClick={() => setActiveHeroHotspot(current => current === hotspot.id ? null : hotspot.id)}
+                      className="relative flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-[#0f6fae]/85 text-xs font-black text-white shadow-[0_0_0_6px_rgba(15,111,174,.22)] backdrop-blur-sm transition duration-200 hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5]"
+                    >
+                      <span aria-hidden="true" className="h-2 w-2 rounded-full bg-[#8be0d5]" />
+                    </button>
+                    <span className={`pointer-events-none absolute bottom-12 left-1/2 w-52 -translate-x-1/2 rounded-xl border border-white/20 bg-[#061f2b]/90 p-3 text-left text-xs text-white shadow-2xl backdrop-blur-md transition duration-200 ${activeHeroHotspot === hotspot.id ? "opacity-100" : "opacity-0 group-hover:opacity-100 group-focus-within:opacity-100"}`}>
+                      <strong className="block text-sm text-[#8be0d5]">{hotspot.label}</strong>
+                      <span className="mt-1 block leading-4 text-white/75">{hotspot.detail}</span>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : null}
             <div className="absolute bottom-8 left-6 right-6 flex items-end justify-between gap-4 sm:bottom-10 sm:left-10 sm:right-10">
               <div className="max-w-xs rounded-2xl border border-white/20 bg-[#061f2b]/55 p-3 backdrop-blur-md">
                 <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-[#8be0d5]">{activeHeroSlide.eyebrow}</p>
                 <p className="mt-1 text-sm font-bold leading-5 text-white">{activeHeroSlide.title}</p>
               </div>
               <div className="flex items-center gap-2">
+                <button type="button" aria-label={heroIsPaused ? "Play Hero slideshow" : "Pause Hero slideshow"} aria-pressed={heroIsPaused} onClick={() => { setHeroAutoplayPaused(current => !current); setHeroHoverPaused(false); }} className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-[#061f2b]/65 text-white shadow-lg backdrop-blur-md transition hover:bg-[#061f2b]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5]">
+                  {heroIsPaused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
+                </button>
                 <button type="button" aria-label="Previous Hero image" onClick={() => moveHeroSlide(-1)} className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-[#061f2b]/65 text-white shadow-lg backdrop-blur-md transition hover:bg-[#061f2b]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5]"><ChevronLeft className="h-5 w-5" /></button>
                 <button type="button" aria-label="Next Hero image" onClick={() => moveHeroSlide(1)} className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-[#061f2b]/65 text-white shadow-lg backdrop-blur-md transition hover:bg-[#061f2b]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5]"><ChevronRight className="h-5 w-5" /></button>
               </div>

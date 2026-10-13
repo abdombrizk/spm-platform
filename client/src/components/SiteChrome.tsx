@@ -465,8 +465,8 @@ export default function SiteChrome({ children }: { children: React.ReactNode; tr
         <div className="mx-auto max-w-[1280px] px-5 py-16 lg:px-8">
           <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
             <div>
-              <div className="inline-block rounded-xl bg-white p-2.5">
-                <img src={logo} alt="SPM" className="h-10 w-auto object-contain" />
+              <div className="inline-flex items-center">
+                <img src={logo} alt="SPM" className="h-14 w-auto object-contain brightness-0 invert opacity-95" />
               </div>
               <p className="mt-4 text-xs leading-relaxed text-[#94a3b8]">
                 Systems for Projects & Maintenance (SPM). Medical Imaging and Surgical Technology, genuine spare parts, and dedicated field engineering support across Egypt and the MENA region.
