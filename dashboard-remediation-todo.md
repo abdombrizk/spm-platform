@@ -124,6 +124,7 @@ The public product preview and build/test suite are available for verification. 
   - 3 Hermann Medizintechnik slides: specialist inspection (`/manus-storage/hermann-01-specialist_bb5c3fe6.jpg`), precision instruments (`/manus-storage/hermann-02-instruments_ee2f790e.jpg`), and laparoscopic set (`/manus-storage/hermann-03-laparoscopy_3d01e5bd.jpg`).
   - 3 Italray imaging slides: C-Arm operating room setup (`/manus-storage/italray-01-carm-or_a85c8c1d.jpg`), digital radiography room (`/manus-storage/italray-02-digital-radiography_cd60b9f4.jpg`), and mobile radiography system (`/manus-storage/italray-03-mobile-radiography_c23c7522.jpg`).
   - 3 SPM strategic partnership slides: Italray exhibition handshake (`/manus-storage/partner-01-italray-handshake_28044042.jpg`), connected imaging & surgical portfolio (`/manus-storage/partner-02-spm-italray-portfolio_34099f45.jpg`), and multi-system support visual (`/manus-storage/partner-03-systems-partnership_539b217b.jpg`).
-- [x] Extended the protected Hero Studio to all 9 slides with draft/publish fields, image upload and slide segment badges.
-- [x] Seeded and published all 45 managed fields in the homepage store.
-- [x] Verified with Vitest (17 test files, 46 passed), TypeScript, full Vite production build, live browser console checks across all 9 slides, and screenshots on desktop.
+- [x] Extended the protected Hero Studio to all 10 media slides with draft/publish fields, supplied image/video upload support, full-media previews and slide segment badges.
+- [x] Seeded and published all 50 managed fields in the homepage store, including the supplied `esophagus_LAT.mp4` as the tenth Hero slide.
+- [x] Changed public Hero media from `object-cover`/scale treatment to `object-contain` with no crop or zoom; verified all nine images load with `object-fit: contain`, and the supplied video reports a 6.23s playable MP4 stream.
+- [x] Verified with Vitest (17 test files, 46 passed), TypeScript, full Vite production build, live browser console checks across 10 slides, and a desktop screenshot.

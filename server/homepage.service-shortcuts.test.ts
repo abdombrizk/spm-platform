@@ -15,8 +15,10 @@ describe("homepage service shortcuts and trust badges", () => {
     expect(homeSource).toContain("/request-service?equipment=${encodeURIComponent(item.serviceEquipment)}");
   });
 
-  it("uses the nine-slide Hermann, Italray and SPM partnership Hero", () => {
-    expect(homeSource).toContain("const HERO_SLIDE_COUNT = 9");
+  it("uses the ten-slide Hermann, Italray, SPM and supplied-video Hero", () => {
+    expect(homeSource).toContain("const HERO_SLIDE_COUNT = 10");
+    expect(homeSource).toContain("/manus-storage/esophagus_LAT_c02b071c.mp4");
+    expect(homeSource).toContain('mediaType: "video" as const');
     expect(homeSource).toContain("/manus-storage/hermann-01-specialist_bb5c3fe6.jpg");
     expect(homeSource).toContain("/manus-storage/hermann-03-laparoscopy_3d01e5bd.jpg");
     expect(homeSource).toContain("/manus-storage/italray-01-carm-or_a85c8c1d.jpg");
@@ -57,15 +59,17 @@ describe("homepage service shortcuts and trust badges", () => {
     expect(siteChromeSource).toContain("max-h-9 max-w-16 object-contain mix-blend-multiply");
   });
 
-  it("exposes a visual Hero Studio for all nine managed slides", () => {
+  it("exposes a visual Hero Studio for all ten managed media slides", () => {
     expect(homepageEditorSource).toContain("Hero Studio");
-    expect(homepageEditorSource).toContain("const heroSlides = [1, 2, 3, 4, 5, 6, 7, 8, 9]");
-    expect(homepageEditorSource).toContain("3 Hermann · 3 Italray · 3 SPM partnerships");
+    expect(homepageEditorSource).toContain("const heroSlides = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]");
+    expect(homepageEditorSource).toContain("3 Hermann · 3 Italray · 3 SPM partnerships · 1 video");
+    expect(homepageEditorSource).toContain("video/mp4");
+    expect(homepageEditorSource).toContain("object-contain");
     expect(homepageEditorSource).toContain("const imageKeyForSlide = `${prefix}.image`");
-    expect(homepageEditorSource).toContain("Replace image");
+    expect(homepageEditorSource).toContain("Replace media");
     expect(homepageEditorSource).toContain("Save draft");
     expect(homepageEditorSource).toContain("Publish");
-    expect(homepageEditorSource).toContain("Maximum upload: 8 MB");
+    expect(homepageEditorSource).toContain("Maximum upload: 10 MB");
   });
 
   it("keeps the Hermann visual showcase connected to the supplied gallery", () => {

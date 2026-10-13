@@ -346,13 +346,13 @@ export const appRouter = router({
     uploadImage: permissionProcedure("homepage.media").input(z.object({
       contentKey: z.string().min(1),
       fileName: z.string().min(1).max(180),
-      contentType: z.enum(["image/jpeg", "image/png", "image/webp"]),
-      dataUrl: z.string().startsWith("data:image/"),
+      contentType: z.enum(["image/jpeg", "image/png", "image/webp", "video/mp4", "video/quicktime", "video/webm"]),
+      dataUrl: z.string().startsWith("data:"),
     })).mutation(async ({ ctx, input }) => {
       const encoded = input.dataUrl.split(",")[1];
-      if (!encoded) throw new TRPCError({ code: "BAD_REQUEST", message: "Image data is missing." });
+      if (!encoded) throw new TRPCError({ code: "BAD_REQUEST", message: "Media data is missing." });
       const buffer = Buffer.from(encoded, "base64");
-      const { extension } = await validateUpload({ buffer, fileName: input.fileName, contentType: input.contentType, maxBytes: 8 * 1024 * 1024 });
+      const { extension } = await validateUpload({ buffer, fileName: input.fileName, contentType: input.contentType, maxBytes: 10 * 1024 * 1024 });
       const uploaded = await storagePut(`homepage/${input.contentKey}.${extension}`, buffer, input.contentType);
       await db.updateHomepageDraft([{ contentKey: input.contentKey, draftValue: uploaded.url }], ctx.user.id);
       await db.addAuditLog({ actorUserId: ctx.user.id, action: "homepage_image_uploaded", entityType: "homepage", entityId: input.contentKey, metadata: { fileName: input.fileName, contentType: input.contentType }, ipAddress: clientIp(ctx.req) });

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowUpRight,
   BadgeCheck,
@@ -37,11 +37,12 @@ const fallback: Record<string, string> = {
   "panel.title": "24–48h Cairo Response",
   "panel.description": "Dedicated biomedical engineers covering 24 of 27 Egyptian governorates with remote diagnostics within 4 hours.",
 };
-const HERO_SLIDE_COUNT = 9;
+const HERO_SLIDE_COUNT = 10;
 const heroPortfolioSlides = [
   {
     segment: "Hermann Medizintechnik",
     image: "/manus-storage/hermann-01-specialist_bb5c3fe6.jpg",
+    mediaType: "image" as const,
     alt: "Hermann specialist examining an endoscopic instrument in a clinical technology setting",
     eyebrow: "Hermann portfolio",
     title: "Surgical precision, built around the specialist.",
@@ -50,6 +51,7 @@ const heroPortfolioSlides = [
   {
     segment: "Hermann Medizintechnik",
     image: "/manus-storage/hermann-02-instruments_ee2f790e.jpg",
+    mediaType: "image" as const,
     alt: "Close-up of Hermann surgical instruments arranged for precise minimally invasive work",
     eyebrow: "Instrument detail",
     title: "Control you can feel in every detail.",
@@ -58,6 +60,7 @@ const heroPortfolioSlides = [
   {
     segment: "Hermann Medizintechnik",
     image: "/manus-storage/hermann-03-laparoscopy_3d01e5bd.jpg",
+    mediaType: "image" as const,
     alt: "Hermann laparoscopic scissors and instruments ready for a surgical workflow",
     eyebrow: "Minimally invasive care",
     title: "A clearer language for surgical work.",
@@ -66,6 +69,7 @@ const heroPortfolioSlides = [
   {
     segment: "Italray imaging systems",
     image: "/manus-storage/italray-01-carm-or_a85c8c1d.jpg",
+    mediaType: "image" as const,
     alt: "Italray C-Arm positioned in a modern operating room for image-guided procedures",
     eyebrow: "Italray C-Arm systems",
     title: "Imaging where the procedure happens.",
@@ -74,6 +78,7 @@ const heroPortfolioSlides = [
   {
     segment: "Italray imaging systems",
     image: "/manus-storage/italray-02-digital-radiography_cd60b9f4.jpg",
+    mediaType: "image" as const,
     alt: "Italray digital radiography room with a ceiling-mounted X-ray system",
     eyebrow: "Digital radiography",
     title: "Clarity from room design to result.",
@@ -82,6 +87,7 @@ const heroPortfolioSlides = [
   {
     segment: "Italray imaging systems",
     image: "/manus-storage/italray-03-mobile-radiography_c23c7522.jpg",
+    mediaType: "image" as const,
     alt: "Italray mobile radiography system prepared in a bright clinical room",
     eyebrow: "Mobile radiography",
     title: "Keep imaging moving across the hospital.",
@@ -90,6 +96,7 @@ const heroPortfolioSlides = [
   {
     segment: "SPM strategic partnership",
     image: "/manus-storage/partner-01-italray-handshake_28044042.jpg",
+    mediaType: "image" as const,
     alt: "SPM and Italray representatives meeting at an imaging technology exhibition",
     eyebrow: "Partnership in practice",
     title: "Technology partners. Local accountability.",
@@ -98,6 +105,7 @@ const heroPortfolioSlides = [
   {
     segment: "SPM strategic partnership",
     image: "/manus-storage/partner-02-spm-italray-portfolio_34099f45.jpg",
+    mediaType: "image" as const,
     alt: "SPM and Italray imaging systems and surgical instruments presented together",
     eyebrow: "A connected portfolio",
     title: "From imaging systems to surgical solutions.",
@@ -106,10 +114,21 @@ const heroPortfolioSlides = [
   {
     segment: "SPM strategic partnership",
     image: "/manus-storage/partner-03-systems-partnership_539b217b.jpg",
+    mediaType: "image" as const,
     alt: "SPM imaging and surgical technology partnership visual with systems and instruments",
     eyebrow: "SPM support model",
     title: "Medical imaging. Surgical technology. One team.",
     description: "Move from product selection to installation, training and lifecycle care with SPM as your local point of coordination.",
+  },
+  {
+    segment: "Hermann clinical video",
+    mediaType: "video" as const,
+    image: "/manus-storage/esophagus_LAT_c02b071c.mp4",
+    poster: "/manus-storage/hermann-01-specialist_bb5c3fe6.jpg",
+    eyebrow: "Hermann clinical video",
+    title: "See the clinical workflow in motion.",
+    description: "A supplied Hermann endoscopy clip, presented as-is to give clinical teams a closer look at the workflow.",
+    alt: "Hermann endoscopic clinical video showing an esophageal examination",
   },
 ] as const;
 
@@ -278,6 +297,7 @@ export default function Home() {
   const [heroSlide, setHeroSlide] = useState(0);
   const [heroAutoplayPaused, setHeroAutoplayPaused] = useState(false);
   const [heroHoverPaused, setHeroHoverPaused] = useState(false);
+  const heroVideoRefs = useRef<Record<number, HTMLVideoElement | null>>({});
   const [heroTouchStartX, setHeroTouchStartX] = useState<number | null>(null);
   const [activeHeroHotspot, setActiveHeroHotspot] = useState<string | null>(null);
 
@@ -376,6 +396,17 @@ export default function Home() {
   });
   const activeHeroSlide = heroSlides[heroSlide] ?? heroSlides[0];
   const heroIsPaused = heroAutoplayPaused || heroHoverPaused;
+  useEffect(() => {
+    const videos = Object.values(heroVideoRefs.current).filter((video): video is HTMLVideoElement => Boolean(video));
+    videos.forEach(video => {
+      video.pause();
+      video.currentTime = 0;
+    });
+    const activeVideo = heroVideoRefs.current[heroSlide];
+    if (activeVideo && !heroIsPaused) {
+      activeVideo.play().catch(() => undefined);
+    }
+  }, [heroSlide, heroIsPaused]);
   const heroHotspots = [
     { id: "detector", label: "Flat-panel detector", detail: "Precise image capture for demanding surgical workflows.", position: "left-[72%] top-[52%]" },
     { id: "monitor", label: "Live imaging display", detail: "Bring the clinical view closer to the operating team.", position: "left-[58%] top-[24%]" },
@@ -406,7 +437,22 @@ export default function Home() {
             onTouchStart={handleHeroTouchStart}
             onTouchEnd={handleHeroTouchEnd}
           >
-            {heroSlides.map((slide, index) => (
+            {heroSlides.map((slide, index) => slide.mediaType === "video" ? (
+              <video
+                key={slide.image}
+                ref={element => { heroVideoRefs.current[index] = element; }}
+                src={slide.image}
+                poster={slide.poster}
+                muted
+                loop
+                playsInline
+                preload={index === heroSlide ? "metadata" : "none"}
+                aria-label={slide.alt}
+                aria-hidden={index !== heroSlide}
+                onLoadedData={event => { if (index === heroSlide && !heroIsPaused) event.currentTarget.play().catch(() => undefined); }}
+                className={`absolute inset-0 h-full w-full object-contain object-center transition-opacity duration-700 ease-out ${index === heroSlide ? "opacity-100" : "opacity-0"}`}
+              />
+            ) : (
               <img
                 key={slide.image}
                 src={slide.image}
@@ -415,7 +461,7 @@ export default function Home() {
                 fetchPriority={index === 0 ? "high" : "auto"}
                 decoding="async"
                 aria-hidden={index !== heroSlide}
-                className={`absolute inset-0 h-full w-full object-cover object-center transition-[opacity,transform] duration-700 ease-out ${index === heroSlide ? "scale-100 opacity-100" : "scale-[1.03] opacity-0"}`}
+                className={`absolute inset-0 h-full w-full object-contain object-center transition-opacity duration-700 ease-out ${index === heroSlide ? "opacity-100" : "opacity-0"}`}
               />
             ))}
             <div className="absolute inset-0 bg-gradient-to-r from-[#061f2b]/10 via-[#061f2b]/10 to-[#061f2b]/35" aria-hidden="true" />
