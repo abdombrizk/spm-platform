@@ -1,20 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowUpRight,
   BadgeCheck,
   Boxes,
-  Building2,
   Calendar,
   CheckCircle2,
-  Clock,
   ChevronLeft,
   ChevronRight,
-  Globe2,
   Layers,
   MapPin,
   Pause,
   Play,
-  ShieldCheck,
   Wrench,
   Sparkles,
   PhoneCall,
@@ -22,13 +18,6 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import SiteChrome from "@/components/SiteChrome";
 import SEOHead from "@/components/SEOHead";
 import { trpc } from "@/lib/trpc";
@@ -48,6 +37,81 @@ const fallback: Record<string, string> = {
   "panel.title": "24–48h Cairo Response",
   "panel.description": "Dedicated biomedical engineers covering 24 of 27 Egyptian governorates with remote diagnostics within 4 hours.",
 };
+const HERO_SLIDE_COUNT = 9;
+const heroPortfolioSlides = [
+  {
+    segment: "Hermann Medizintechnik",
+    image: "/manus-storage/hermann-01-specialist_bb5c3fe6.jpg",
+    alt: "Hermann specialist examining an endoscopic instrument in a clinical technology setting",
+    eyebrow: "Hermann portfolio",
+    title: "Surgical precision, built around the specialist.",
+    description: "Explore Hermann’s endoscopy and surgical instrument expertise through a quote-first SPM portfolio experience.",
+  },
+  {
+    segment: "Hermann Medizintechnik",
+    image: "/manus-storage/hermann-02-instruments_ee2f790e.jpg",
+    alt: "Close-up of Hermann surgical instruments arranged for precise minimally invasive work",
+    eyebrow: "Instrument detail",
+    title: "Control you can feel in every detail.",
+    description: "Procedure-focused instruments, careful handling and technical review for teams that demand repeatable performance.",
+  },
+  {
+    segment: "Hermann Medizintechnik",
+    image: "/manus-storage/hermann-03-laparoscopy_3d01e5bd.jpg",
+    alt: "Hermann laparoscopic scissors and instruments ready for a surgical workflow",
+    eyebrow: "Minimally invasive care",
+    title: "A clearer language for surgical work.",
+    description: "Build a coherent laparoscopic setup with documented selection, quotation support and lifecycle coordination.",
+  },
+  {
+    segment: "Italray imaging systems",
+    image: "/manus-storage/italray-01-carm-or_a85c8c1d.jpg",
+    alt: "Italray C-Arm positioned in a modern operating room for image-guided procedures",
+    eyebrow: "Italray C-Arm systems",
+    title: "Imaging where the procedure happens.",
+    description: "Italray mobile imaging systems supported by SPM engineering, documentation and after-sales care.",
+  },
+  {
+    segment: "Italray imaging systems",
+    image: "/manus-storage/italray-02-digital-radiography_cd60b9f4.jpg",
+    alt: "Italray digital radiography room with a ceiling-mounted X-ray system",
+    eyebrow: "Digital radiography",
+    title: "Clarity from room design to result.",
+    description: "Plan digital radiography and fixed X-ray environments with a practical path from specification to service.",
+  },
+  {
+    segment: "Italray imaging systems",
+    image: "/manus-storage/italray-03-mobile-radiography_c23c7522.jpg",
+    alt: "Italray mobile radiography system prepared in a bright clinical room",
+    eyebrow: "Mobile radiography",
+    title: "Keep imaging moving across the hospital.",
+    description: "Discover mobile imaging options with technical guidance, quote-first planning and dependable field support.",
+  },
+  {
+    segment: "SPM strategic partnership",
+    image: "/manus-storage/partner-01-italray-handshake_28044042.jpg",
+    alt: "SPM and Italray representatives meeting at an imaging technology exhibition",
+    eyebrow: "Partnership in practice",
+    title: "Technology partners. Local accountability.",
+    description: "SPM connects trusted technology relationships with an accountable Egyptian engineering and support model.",
+  },
+  {
+    segment: "SPM strategic partnership",
+    image: "/manus-storage/partner-02-spm-italray-portfolio_34099f45.jpg",
+    alt: "SPM and Italray imaging systems and surgical instruments presented together",
+    eyebrow: "A connected portfolio",
+    title: "From imaging systems to surgical solutions.",
+    description: "Bring equipment, genuine spare parts and technical service into one clear path for your facility.",
+  },
+  {
+    segment: "SPM strategic partnership",
+    image: "/manus-storage/partner-03-systems-partnership_539b217b.jpg",
+    alt: "SPM imaging and surgical technology partnership visual with systems and instruments",
+    eyebrow: "SPM support model",
+    title: "Medical imaging. Surgical technology. One team.",
+    description: "Move from product selection to installation, training and lifecycle care with SPM as your local point of coordination.",
+  },
+] as const;
 
 const solutions = [
   {
@@ -172,30 +236,6 @@ const hermannCategoryChips = [
   "Tungsten Carbide Instruments",
 ];
 
-const qualityDetails = {
-  quality: {
-    eyebrow: "Quality workflow",
-    title: "Documented quality workflow",
-    summary: "A clear review path for technical records, equipment data and project handover.",
-    details: [
-      "Technical information is reviewed before it becomes part of a quote or project conversation.",
-      "Equipment, service and spare-parts requests are organized around traceable next steps.",
-      "Ask the SPM team for the project-specific documentation package before making a procurement decision.",
-    ],
-  },
-  radiation: {
-    eyebrow: "Radiation documentation",
-    title: "Project-specific radiation documentation",
-    summary: "Safety and regulatory records are coordinated according to the equipment and project scope.",
-    details: [
-      "Radiation-related documentation is reviewed as part of the project requirements rather than presented as a generic badge.",
-      "The required records can vary by system, installation context and applicable authority.",
-      "Contact SPM to confirm the documentation required for your facility and equipment scope.",
-    ],
-  },
-} as const;
-
-type QualityDetailKey = keyof typeof qualityDetails;
 
 const hermannFallbackHighlights = [
   {
@@ -228,55 +268,12 @@ const hermannFallbackHighlights = [
   },
 ];
 
-function AnimatedCounter({ targetValue, duration = 1200, formatNumber = true }: { targetValue: number; duration?: number; formatNumber?: boolean }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef<HTMLSpanElement>(null);
-  const [hasStarted, setHasStarted] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      entries => {
-        if (entries[0]?.isIntersecting && !hasStarted) {
-          setHasStarted(true);
-        }
-      },
-      { threshold: 0.2 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [hasStarted]);
-
-  useEffect(() => {
-    if (!hasStarted) return;
-    let start = 0;
-    const stepTime = 16;
-    const totalSteps = Math.max(1, Math.floor(duration / stepTime));
-    const increment = targetValue / totalSteps;
-
-    const timer = setInterval(() => {
-      start += increment;
-      if (start >= targetValue) {
-        setCount(targetValue);
-        clearInterval(timer);
-      } else {
-        setCount(Math.floor(start));
-      }
-    }, stepTime);
-
-    return () => clearInterval(timer);
-  }, [hasStarted, targetValue, duration]);
-
-  return <span ref={ref}>{formatNumber ? count.toLocaleString() : count}</span>;
-}
-
 export default function Home() {
   const query = trpc.homepage.published.useQuery();
-  const statsQuery = trpc.cms.publishedStats.useQuery();
   const productsQuery = trpc.products.published.useQuery();
   const eventsPageQuery = trpc.cms.publishedBySlug.useQuery({ slug: "events" });
   const [hermannSlide, setHermannSlide] = useState(0);
   const [hermannAutoplayPaused, setHermannAutoplayPaused] = useState(false);
-  const [activeQualityDetail, setActiveQualityDetail] = useState<QualityDetailKey | null>(null);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [heroSlide, setHeroSlide] = useState(0);
   const [heroAutoplayPaused, setHeroAutoplayPaused] = useState(false);
@@ -308,7 +305,7 @@ export default function Home() {
 
   const moveHeroSlide = (direction: 1 | -1) => {
     setHeroAutoplayPaused(true);
-    setHeroSlide(current => (current + direction + 4) % 4);
+    setHeroSlide(current => (current + direction + HERO_SLIDE_COUNT) % HERO_SLIDE_COUNT);
     setActiveHeroHotspot(null);
   };
 
@@ -334,12 +331,10 @@ export default function Home() {
 
   useEffect(() => {
     if (heroAutoplayPaused || heroHoverPaused || typeof window === "undefined" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const timer = window.setInterval(() => setHeroSlide(current => (current + 1) % 4), 6000);
+    const timer = window.setInterval(() => setHeroSlide(current => (current + 1) % HERO_SLIDE_COUNT), 6000);
     return () => window.clearInterval(timer);
   }, [heroAutoplayPaused, heroHoverPaused]);
 
-  const rawStats = statsQuery.data ?? [];
-  const stats = new Map(rawStats.map(item => [item.metricKey, item]));
   const content = {
     ...fallback,
     ...(query.data ?? []).reduce<Record<string, string>>((acc, item) => {
@@ -347,53 +342,6 @@ export default function Home() {
       return acc;
     }, {}),
   };
-
-  const hospitals = stats.get("hospitals_reached");
-  const projects = stats.get("upa_projects");
-  const spareParts = stats.get("spare_parts_ready");
-
-  const statItems = [
-    {
-      num: parseInt(hospitals?.value ?? "450", 10) || 450,
-      prefix: "+",
-      label: hospitals?.label || "Hospitals Reached",
-      sub: "Hospitals & healthcare centers across Egypt",
-      icon: Building2,
-      accent: "text-[#0a4052]",
-      bg: "bg-[#eaf4fa]",
-      border: "hover:border-[#0a4052]",
-    },
-    {
-      num: parseInt(projects?.value ?? "66", 10) || 66,
-      prefix: "+",
-      label: projects?.label || "UPA Projects",
-      sub: "Government awarded healthcare tenders",
-      icon: Globe2,
-      accent: "text-[#0f6fae]",
-      bg: "bg-[#eaf4fa]",
-      border: "hover:border-[#0f6fae]",
-    },
-    {
-      num: 2019,
-      prefix: "Since ",
-      label: "SPM engineering commitment",
-      sub: "Medical Imaging and Surgical Technology leadership",
-      icon: Clock,
-      accent: "text-[#2b8c88]",
-      bg: "bg-[#e8f6f5]",
-      border: "hover:border-[#2b8c88]",
-    },
-    {
-      num: parseInt(spareParts?.value ?? "5000", 10) || 5000,
-      prefix: "+",
-      label: spareParts?.label || "Verified Spare Parts",
-      sub: "OEM components ready for immediate dispatch",
-      icon: Layers,
-      accent: "text-[#c2410c]",
-      bg: "bg-[#fff1e9]",
-      border: "hover:border-[#c2410c]",
-    },
-  ];
 
   const hermannProducts = (productsQuery.data ?? [])
     .map(item => ({ ...item, product: item.data as Record<string, any> }))
@@ -406,7 +354,6 @@ export default function Home() {
   const hermannFamilyCount = hermannProducts.filter(item => String(item.product.name ?? "").toLowerCase().includes("families")).length || 7;
   const activeHermannSlide = hermannGallerySlides[hermannSlide] ?? hermannGallerySlides[0];
   const visibleHermannCategories = hermannCategoryChips.slice(0, 6);
-  const activeQuality = activeQualityDetail ? qualityDetails[activeQualityDetail] : null;
 
   const eventsData = eventsPageQuery.data?.data as { items?: Array<{ title: string; date: string; location: string; image?: string; isPast?: boolean }> } | undefined;
   const pastEvents = (eventsData?.items ?? []).filter(ev => {
@@ -415,37 +362,18 @@ export default function Home() {
     return !isNaN(eventTime) && eventTime <= Date.now();
   });
 
-  const heroImage = content["hero.image"] || fallback["hero.image"];
-  const heroSlides = [
-    {
-      image: content["hero.slide.1.image"] || heroImage,
-      alt: content["hero.slide.1.alt"] || "Italray C-Arm and surgical imaging equipment in a modern operating room",
-      eyebrow: content["hero.slide.1.eyebrow"] || "Imaging systems",
-      title: content["hero.slide.1.title"] || "Precision imaging for decisive care.",
-      description: content["hero.slide.1.description"] || "Italray C-Arms and surgical imaging systems supported by SPM engineering, documentation and lifecycle care.",
-    },
-    {
-      image: content["hero.slide.2.image"] || solutions[0].image,
-      alt: content["hero.slide.2.alt"] || solutions[0].imageAlt,
-      eyebrow: content["hero.slide.2.eyebrow"] || "Field engineering",
-      title: content["hero.slide.2.title"] || "Support that keeps critical systems moving.",
-      description: content["hero.slide.2.description"] || "From commissioning and calibration to preventive maintenance, our field team stays close to the equipment.",
-    },
-    {
-      image: content["hero.slide.3.image"] || solutions[1].image,
-      alt: content["hero.slide.3.alt"] || solutions[1].imageAlt,
-      eyebrow: content["hero.slide.3.eyebrow"] || "Surgical technology",
-      title: content["hero.slide.3.title"] || "A clearer path from equipment to outcome.",
-      description: content["hero.slide.3.description"] || "Explore imaging platforms, technical specifications and quote-first planning for modern surgical workflows.",
-    },
-    {
-      image: content["hero.slide.4.image"] || hermannGallerySlides[3].image,
-      alt: content["hero.slide.4.alt"] || hermannGallerySlides[3].alt,
-      eyebrow: content["hero.slide.4.eyebrow"] || "Hermann portfolio",
-      title: content["hero.slide.4.title"] || "Surgical technology, thoughtfully connected.",
-      description: content["hero.slide.4.description"] || "Hermann endoscopy and instrument systems presented with documentation review, training and lifecycle support.",
-    },
-  ];
+  const heroSlides = heroPortfolioSlides.map((slide, index) => {
+    const slideNumber = index + 1;
+    const prefix = `hero.slide.${slideNumber}`;
+    return {
+      ...slide,
+      image: content[`${prefix}.image`] || slide.image,
+      alt: content[`${prefix}.alt`] || slide.alt,
+      eyebrow: content[`${prefix}.eyebrow`] || slide.eyebrow,
+      title: content[`${prefix}.title`] || slide.title,
+      description: content[`${prefix}.description`] || slide.description,
+    };
+  });
   const activeHeroSlide = heroSlides[heroSlide] ?? heroSlides[0];
   const heroIsPaused = heroAutoplayPaused || heroHoverPaused;
   const heroHotspots = [
@@ -469,7 +397,7 @@ export default function Home() {
             aria-roledescription="carousel"
             aria-label="SPM technology and service showcase"
             tabIndex={0}
-            className="absolute inset-0 overflow-hidden outline-none lg:left-[42%]"
+            className="absolute inset-0 overflow-hidden outline-none lg:left-[30%]"
             onMouseEnter={() => setHeroHoverPaused(true)}
             onMouseLeave={() => setHeroHoverPaused(false)}
             onFocus={() => setHeroHoverPaused(true)}
@@ -528,14 +456,14 @@ export default function Home() {
             </div>
           </div>
           <div className="absolute inset-0 bg-gradient-to-b from-[#061f2b]/35 via-[#061f2b]/50 to-[#061f2b]/90 lg:hidden" aria-hidden="true" />
-          <div className="absolute inset-y-0 left-0 hidden w-[66%] bg-gradient-to-r from-[#061f2b] via-[#061f2b]/95 to-transparent lg:block" aria-hidden="true" />
+          <div className="absolute inset-y-0 left-0 hidden w-[48%] bg-gradient-to-r from-[#061f2b] via-[#061f2b]/95 to-transparent lg:block" aria-hidden="true" />
 
           <div className="relative z-10 mx-auto grid min-h-[720px] max-w-[1280px] items-center px-5 py-24 sm:min-h-[760px] lg:min-h-[790px] lg:grid-cols-[.86fr_1.14fr] lg:px-8">
             <div className="max-w-xl text-left">
               <div className="mb-6 flex flex-wrap items-center gap-3">
                 <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-[#60c1bb]/40 bg-[#061f2b]/70 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[.16em] text-[#8be0d5] shadow-lg backdrop-blur-md">
                   <span className="h-2 w-2 rounded-full bg-[#60c1bb] animate-pulse" />
-                  {activeHeroSlide.eyebrow} & lifecycle management
+                  {activeHeroSlide.segment}
                 </div>
               </div>
               <div aria-live="polite">
@@ -571,82 +499,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-
-        {/* Section 2: Trust Statistics Bar */}
-        <section className="border-b border-[#dce7eb] bg-white py-12" aria-label="Official Evidence Statistics">
-          <div className="mx-auto max-w-[1280px] px-5 lg:px-8">
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {statItems.map((stat, idx) => {
-                const IconComponent = stat.icon;
-                return (
-                  <div
-                    key={idx}
-                    className={`flex items-center gap-4 rounded-2xl border border-[#eef3f5] bg-[#fafcfd] p-5.5 transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-lg ${stat.border}`}
-                  >
-                    <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${stat.bg} ${stat.accent}`}>
-                      <IconComponent className="h-7 w-7" />
-                    </div>
-                    <div>
-                      <div className="flex items-baseline gap-1 text-3xl font-black tracking-tight text-[#0a4052]">
-                        {statsQuery.isLoading || statsQuery.isError ? (
-                          <span aria-label={statsQuery.isError ? "Statistics unavailable" : "Loading statistics"}>—</span>
-                        ) : (
-                          <>
-                            <span>{stat.prefix}</span>
-                            <AnimatedCounter targetValue={stat.num} formatNumber={stat.prefix !== "Since "} />
-                          </>
-                        )}
-                      </div>
-                      <p className="mt-0.5 text-sm font-bold text-[#1e293b]">{stat.label}</p>
-                      <p className="text-xs text-[#64748b]">{stat.sub}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="mt-6 grid gap-3 md:grid-cols-2" aria-label="Quality and regulatory evidence">
-              <button type="button" onClick={() => setActiveQualityDetail("quality")} aria-haspopup="dialog" aria-label="View documented quality workflow details" className="flex w-full items-center gap-4 rounded-2xl border border-[#cfe8df] bg-[#f3fbf8] px-5 py-4 text-left transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#047857] focus-visible:ring-offset-2">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-[#047857] shadow-xs">
-                  <BadgeCheck className="h-6 w-6" aria-hidden="true" />
-                </div>
-                <div>
-                  <p className="text-[11px] font-extrabold uppercase tracking-[.16em] text-[#047857]">Quality badge</p>
-                  <p className="mt-1 text-sm font-bold text-[#0a4052]">Documented quality workflow</p>
-                  <p className="mt-0.5 text-xs text-[#64748b]">Documented review and traceable technical records.</p>
-                </div>
-              </button>
-              <button type="button" onClick={() => setActiveQualityDetail("radiation")} aria-haspopup="dialog" aria-label="View project-specific radiation documentation details" className="flex w-full items-center gap-4 rounded-2xl border border-[#cfe2ef] bg-[#f2f8fc] px-5 py-4 text-left transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6fae] focus-visible:ring-offset-2">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-[#0f6fae] shadow-xs">
-                  <ShieldCheck className="h-6 w-6" aria-hidden="true" />
-                </div>
-                <div>
-                  <p className="text-[11px] font-extrabold uppercase tracking-[.16em] text-[#0f6fae]">Radiation compliance</p>
-                  <p className="mt-1 text-sm font-bold text-[#0a4052]">Project-specific radiation documentation</p>
-                  <p className="mt-0.5 text-xs text-[#64748b]">Safety and regulatory records coordinated where required.</p>
-                </div>
-              </button>
-            </div>
-            {statsQuery.isError ? <p role="status" className="mt-3 text-xs font-semibold text-[#9a3412]">Live statistics are temporarily unavailable; the rest of the Home experience remains available.</p> : null}
-          </div>
-        </section>
-
-        <Dialog open={Boolean(activeQuality)} onOpenChange={open => { if (!open) setActiveQualityDetail(null); }}>
-          <DialogContent className="max-w-xl border-[#cfe2ef] bg-white p-7 text-[#0a4052] sm:p-8">
-            {activeQuality ? (
-              <>
-                <DialogHeader className="text-left">
-                  <p className="text-xs font-extrabold uppercase tracking-[.16em] text-[#0f6fae]">{activeQuality.eyebrow}</p>
-                  <DialogTitle className="text-2xl font-extrabold leading-tight text-[#0a4052]">{activeQuality.title}</DialogTitle>
-                  <DialogDescription className="pt-1 text-sm leading-6 text-[#617180]">{activeQuality.summary}</DialogDescription>
-                </DialogHeader>
-                <ul className="mt-2 space-y-3 text-sm leading-6 text-[#334155]">
-                  {activeQuality.details.map(detail => <li key={detail} className="flex gap-3"><CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-[#047857]" aria-hidden="true" /><span>{detail}</span></li>)}
-                </ul>
-                <Link href="/contact" onClick={() => setActiveQualityDetail(null)} className="mt-2 inline-flex min-h-11 items-center justify-center rounded-xl bg-[#0a4052] px-5 text-sm font-bold text-white hover:bg-[#063545] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6fae] focus-visible:ring-offset-2">Confirm project requirements <ArrowUpRight className="ml-2 h-4 w-4" /></Link>
-              </>
-            ) : null}
-          </DialogContent>
-        </Dialog>
 
         {/* Strategic partnerships */}
         <section className="border-y border-[#dce7eb] bg-[#f7fafc] py-20 lg:py-24" aria-labelledby="strategic-partnerships-title">

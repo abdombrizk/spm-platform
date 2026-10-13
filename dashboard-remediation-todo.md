@@ -116,3 +116,14 @@ The public product preview and build/test suite are available for verification. 
 - [x] Seeded all 20 Hero slide fields in the live homepage content store; the public Hero now reads slide images and copy from published content with safe built-in fallbacks.
 - [x] Added an explicit accessible Play/Pause control plus three contextual C-Arm hotspots with click/focus tooltips, while retaining autoplay, arrow, dot, keyboard, touch and reduced-motion behavior.
 - [x] Verified live slide rotation, hotspot expansion and Play/Pause interaction, TypeScript, 9 Home regression assertions, full non-Shopify test suite, production build and `git diff --check`.
+
+## Nine-Slide Portfolio Hero and Trust Bar Removal (2026-10-13)
+- [x] Removed the entire Section 2 statistics and quality badge bar directly under the Hero as requested; the page now transitions directly from the Hero into the Strategic Partnerships section.
+- [x] Rebuilt the Hero visual stage into a balanced 3/4-width composition (`left-[30%]` with a soft 48% gradient) giving the images dominant presence while preserving headline readability and CTA focus.
+- [x] Prepared, optimized and uploaded 9 supplied images to managed storage covering the three required domains:
+  - 3 Hermann Medizintechnik slides: specialist inspection (`/manus-storage/hermann-01-specialist_bb5c3fe6.jpg`), precision instruments (`/manus-storage/hermann-02-instruments_ee2f790e.jpg`), and laparoscopic set (`/manus-storage/hermann-03-laparoscopy_3d01e5bd.jpg`).
+  - 3 Italray imaging slides: C-Arm operating room setup (`/manus-storage/italray-01-carm-or_a85c8c1d.jpg`), digital radiography room (`/manus-storage/italray-02-digital-radiography_cd60b9f4.jpg`), and mobile radiography system (`/manus-storage/italray-03-mobile-radiography_c23c7522.jpg`).
+  - 3 SPM strategic partnership slides: Italray exhibition handshake (`/manus-storage/partner-01-italray-handshake_28044042.jpg`), connected imaging & surgical portfolio (`/manus-storage/partner-02-spm-italray-portfolio_34099f45.jpg`), and multi-system support visual (`/manus-storage/partner-03-systems-partnership_539b217b.jpg`).
+- [x] Extended the protected Hero Studio to all 9 slides with draft/publish fields, image upload and slide segment badges.
+- [x] Seeded and published all 45 managed fields in the homepage store.
+- [x] Verified with Vitest (17 test files, 46 passed), TypeScript, full Vite production build, live browser console checks across all 9 slides, and screenshots on desktop.

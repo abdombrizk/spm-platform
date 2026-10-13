@@ -15,19 +15,22 @@ describe("homepage service shortcuts and trust badges", () => {
     expect(homeSource).toContain("/request-service?equipment=${encodeURIComponent(item.serviceEquipment)}");
   });
 
-  it("keeps the quality and radiation compliance badges next to the trust statistics", () => {
-    expect(homeSource).toContain("Documented quality workflow");
-    expect(homeSource).toContain("Project-specific radiation documentation");
-    expect(homeSource).toContain('aria-label="Quality and regulatory evidence"');
-  });
-
-  it("uses the supplied split-composition operating-room Hero", () => {
-    expect(homeSource).toContain("/manus-storage/spm-hero-exact-half-split_1a839b26.webp");
-    expect(homeSource).toContain("Italray C-Arm and surgical imaging equipment in a modern operating room");
+  it("uses the nine-slide Hermann, Italray and SPM partnership Hero", () => {
+    expect(homeSource).toContain("const HERO_SLIDE_COUNT = 9");
+    expect(homeSource).toContain("/manus-storage/hermann-01-specialist_bb5c3fe6.jpg");
+    expect(homeSource).toContain("/manus-storage/hermann-03-laparoscopy_3d01e5bd.jpg");
+    expect(homeSource).toContain("/manus-storage/italray-01-carm-or_a85c8c1d.jpg");
+    expect(homeSource).toContain("/manus-storage/italray-03-mobile-radiography_c23c7522.jpg");
+    expect(homeSource).toContain("/manus-storage/partner-01-italray-handshake_28044042.jpg");
+    expect(homeSource).toContain("/manus-storage/partner-03-systems-partnership_539b217b.jpg");
+    expect(homeSource).toContain("const heroPortfolioSlides = [");
+    expect(homeSource).toContain("Hermann Medizintechnik");
+    expect(homeSource).toContain("Italray imaging systems");
+    expect(homeSource).toContain("SPM strategic partnership");
     expect(homeSource).toContain('aria-label="SPM technology and service showcase"');
-    expect(homeSource).toContain('const heroSlides = [');
-    expect(homeSource).toContain("Support that keeps critical systems moving.");
-    expect(homeSource).toContain("Surgical technology, thoughtfully connected.");
+    expect(homeSource).toContain("const heroSlides = heroPortfolioSlides.map");
+    expect(homeSource).toContain("Surgical precision, built around the specialist.");
+    expect(homeSource).toContain("Medical imaging. Surgical technology. One team.");
     expect(homeSource).toContain("onTouchStart={handleHeroTouchStart}");
     expect(homeSource).toContain("onTouchEnd={handleHeroTouchEnd}");
     expect(homeSource).toContain('role="tablist" aria-label="Hero showcase images"');
@@ -35,7 +38,7 @@ describe("homepage service shortcuts and trust badges", () => {
     expect(homeSource).toContain("Pause Hero slideshow");
     expect(homeSource).toContain('aria-label="C-Arm feature points"');
     expect(homeSource).toContain("Flat-panel detector");
-    expect(homeSource).toContain('content["hero.slide.1.image"]');
+    expect(homeSource).toContain("content[`${prefix}.image`]" );
     expect(homeSource).not.toContain("24/27 governorates coverage");
     expect(homeSource).not.toContain("Make every technical next step clear, traceable & verified.");
   });
@@ -54,9 +57,10 @@ describe("homepage service shortcuts and trust badges", () => {
     expect(siteChromeSource).toContain("max-h-9 max-w-16 object-contain mix-blend-multiply");
   });
 
-  it("exposes a visual Hero Studio for all four managed slides", () => {
+  it("exposes a visual Hero Studio for all nine managed slides", () => {
     expect(homepageEditorSource).toContain("Hero Studio");
-    expect(homepageEditorSource).toContain("const heroSlides = [1, 2, 3, 4]");
+    expect(homepageEditorSource).toContain("const heroSlides = [1, 2, 3, 4, 5, 6, 7, 8, 9]");
+    expect(homepageEditorSource).toContain("3 Hermann · 3 Italray · 3 SPM partnerships");
     expect(homepageEditorSource).toContain("const imageKeyForSlide = `${prefix}.image`");
     expect(homepageEditorSource).toContain("Replace image");
     expect(homepageEditorSource).toContain("Save draft");
@@ -90,14 +94,12 @@ describe("homepage service shortcuts and trust badges", () => {
     expect(homeSource).toContain('loading="lazy"');
     expect(homeSource).toContain('aria-live="polite"');
     expect(homeSource).toContain("eventsPageQuery.isError");
-    expect(homeSource).toContain("statsQuery.isError");
     expect(homeSource).toContain("productsQuery.isError");
     expect(homeSource).toContain('id="hero-quick-path"');
     expect(homeSource).toContain("/catalogue?brand=hermann");
     expect(homeSource).toContain("/spare-parts");
-    expect(homeSource).toContain("View documented quality workflow details");
-    expect(homeSource).toContain("View project-specific radiation documentation details");
-    expect(homeSource).toContain("Confirm project requirements");
+    expect(homeSource).not.toContain("Official Evidence Statistics");
+    expect(homeSource).not.toContain("Quality and regulatory evidence");
   });
 
   it("reads the equipment query parameter into the service request equipment model", () => {

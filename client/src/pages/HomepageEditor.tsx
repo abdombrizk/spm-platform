@@ -32,7 +32,7 @@ const groups = [
   { title: "Section visibility", keys: ["careers.visible"] },
 ];
 
-const heroSlides = [1, 2, 3, 4] as const;
+const heroSlides = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
 
 export default function HomepageEditor() {
   const draft = trpc.homepage.draft.useQuery();
@@ -140,7 +140,7 @@ export default function HomepageEditor() {
         <section className="overflow-hidden rounded-3xl border border-[#0a4052]/15 bg-[#061f2b] text-white shadow-xl">
           <div className="flex flex-col gap-4 border-b border-white/10 p-5 sm:p-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <div className="mb-2 flex flex-wrap items-center gap-2"><Badge className="bg-[#8be0d5] text-[#061f2b] hover:bg-[#8be0d5]">Hero Studio</Badge><span className="text-xs font-bold uppercase tracking-[.16em] text-white/50">4 visual slides</span></div>
+              <div className="mb-2 flex flex-wrap items-center gap-2"><Badge className="bg-[#8be0d5] text-[#061f2b] hover:bg-[#8be0d5]">Hero Studio</Badge><span className="text-xs font-bold uppercase tracking-[.16em] text-white/50">9 visual slides · 3 Hermann · 3 Italray · 3 SPM partnerships</span></div>
               <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">Build the first impression visually.</h2>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-white/70">Each card controls one Hero moment: image, eyebrow, headline, supporting copy and accessible alt text. Uploading updates the draft only; the public website changes after Save draft → Publish.</p>
             </div>
