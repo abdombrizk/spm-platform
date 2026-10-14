@@ -7,6 +7,7 @@ import { trpc } from "@/lib/trpc";
 import { italrayCategoryLinks } from "@/lib/italrayCategories";
 
 const logo = "/manus-storage/spm-logo-transparent_ed0588dc.png";
+const darkNavLogo = "/manus-storage/spm-logo-header-transparent_f3f257c9.png";
 const italrayLogo = "/manus-storage/italray-logo_57cfff13.png";
 const hermannLogo = "/manus-storage/hermann-logo_7f4be603.png";
 
@@ -70,7 +71,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
         <div className="mx-auto flex h-[80px] max-w-[1280px] items-center justify-between gap-6 px-5 lg:px-8">
           <Link href="/" className="flex shrink-0 items-center gap-3" onClick={() => setOpen(false)}>
             <img
-              src={logo}
+              src={isDarkNav ? darkNavLogo : logo}
               alt="SPM Medical Imaging and Surgical Technology"
               className={`spm-header-logo h-14 w-auto max-w-[208px] object-contain transition-transform hover:scale-105 sm:h-16 ${isDarkNav ? "brightness-0 invert opacity-95" : "mix-blend-multiply"}`}
             />

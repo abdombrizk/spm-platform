@@ -543,10 +543,10 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <section aria-label="SPM trust signals" className="relative z-20 border-t border-[#d8e7ea]/80 bg-white text-[#0a4052] shadow-sm">
-            <div className="mx-auto flex max-w-[1280px] flex-col gap-4 px-5 py-4 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
+          <section aria-label="SPM trust signals" className="relative z-20 mx-auto -mt-8 max-w-[1120px] px-4 pb-8 sm:-mt-10 sm:px-6 lg:-mt-12">
+            <div className="flex flex-col gap-4 rounded-2xl border border-white/75 bg-white px-4 py-4 text-[#0a4052] shadow-[0_18px_45px_rgba(7,39,52,.24)] sm:px-6 lg:flex-row lg:items-center lg:gap-6 lg:px-7">
               <div className="flex items-center gap-3 border-b border-[#e6eff2] pb-3 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-6">
-                <span className="rounded-md bg-[#061f2b] px-2.5 py-1 text-[11px] font-black uppercase tracking-[.18em] text-[#8be0d5]">SNAPSHOT</span>
+                <span className="text-[11px] font-black uppercase tracking-[.14em] text-[#0a4052]">SNAPSHOT</span>
               </div>
               <div className="grid flex-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {heroTrustStats.map(stat => {
