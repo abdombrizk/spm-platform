@@ -132,6 +132,18 @@ const heroPortfolioSlides = [
   },
 ] as const;
 
+const heroTrustStats = [
+  { value: "+450", label: "Hospitals Reached", detail: "Hospitals & healthcare centers across Egypt", icon: Boxes, tone: "from-[#e7f7fb] to-[#f7fcfd]" },
+  { value: "+66", label: "UPA Projects", detail: "Government-awarded healthcare tenders", icon: MapPin, tone: "from-[#edf7fb] to-[#f8fcfe]" },
+  { value: "Since 2019", label: "SPM engineering commitment", detail: "Medical imaging and surgical technology leadership", icon: Calendar, tone: "from-[#e9f8f4] to-[#f7fcfb]" },
+  { value: "+5,000", label: "Spare Parts in Stock", detail: "OEM components ready for immediate dispatch", icon: Layers, tone: "from-[#fff3e8] to-[#fffaf5]" },
+] as const;
+
+const heroTrustSignals = [
+  { eyebrow: "Quality badge", title: "Documented quality workflow", detail: "Documented review and traceable technical records.", icon: BadgeCheck, tone: "border-[#b9ddd2] bg-[#f2faf7] text-[#13705d]" },
+  { eyebrow: "Radiation compliance", title: "Project-specific radiation documentation", detail: "Safety and regulatory records coordinated where required.", icon: CheckCircle2, tone: "border-[#c5dbe9] bg-[#f2f8fc] text-[#0f6fae]" },
+] as const;
+
 const solutions = [
   {
     icon: Wrench,
@@ -428,7 +440,7 @@ export default function Home() {
             aria-roledescription="carousel"
             aria-label="SPM technology and service showcase"
             tabIndex={0}
-            className="absolute inset-0 overflow-hidden outline-none lg:left-[30%]"
+            className="absolute inset-x-0 top-0 h-[720px] overflow-hidden outline-none sm:h-[760px] lg:left-[30%] lg:h-[790px]"
             onMouseEnter={() => setHeroHoverPaused(true)}
             onMouseLeave={() => setHeroHoverPaused(false)}
             onFocus={() => setHeroHoverPaused(true)}
@@ -487,18 +499,18 @@ export default function Home() {
                 ))}
               </div>
             ) : null}
-            <div className="absolute bottom-8 left-6 right-6 flex items-end justify-between gap-4 sm:bottom-10 sm:left-10 sm:right-10">
+            <div className="absolute bottom-8 left-6 right-6 sm:bottom-10 sm:left-10 sm:right-10">
               <div className="max-w-xs rounded-2xl border border-white/20 bg-[#061f2b]/55 p-3 backdrop-blur-md">
                 <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-[#8be0d5]">{activeHeroSlide.eyebrow}</p>
                 <p className="mt-1 text-sm font-bold leading-5 text-white">{activeHeroSlide.title}</p>
               </div>
-              <div className="flex items-center gap-2">
-                <button type="button" aria-label={heroIsPaused ? "Play Hero slideshow" : "Pause Hero slideshow"} aria-pressed={heroIsPaused} onClick={() => { setHeroAutoplayPaused(current => !current); setHeroHoverPaused(false); }} className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-[#061f2b]/65 text-white shadow-lg backdrop-blur-md transition hover:bg-[#061f2b]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5]">
-                  {heroIsPaused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
-                </button>
-                <button type="button" aria-label="Previous Hero image" onClick={() => moveHeroSlide(-1)} className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-[#061f2b]/65 text-white shadow-lg backdrop-blur-md transition hover:bg-[#061f2b]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5]"><ChevronLeft className="h-5 w-5" /></button>
-                <button type="button" aria-label="Next Hero image" onClick={() => moveHeroSlide(1)} className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-[#061f2b]/65 text-white shadow-lg backdrop-blur-md transition hover:bg-[#061f2b]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5]"><ChevronRight className="h-5 w-5" /></button>
-              </div>
+            </div>
+            <div className="absolute right-6 top-7 flex items-center gap-2 sm:right-10 sm:top-9">
+              <button type="button" aria-label={heroIsPaused ? "Play Hero slideshow" : "Pause Hero slideshow"} aria-pressed={heroIsPaused} onClick={() => { setHeroAutoplayPaused(current => !current); setHeroHoverPaused(false); }} className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-[#061f2b]/65 text-white shadow-lg backdrop-blur-md transition hover:bg-[#061f2b]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5]">
+                {heroIsPaused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
+              </button>
+              <button type="button" aria-label="Previous Hero image" onClick={() => moveHeroSlide(-1)} className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-[#061f2b]/65 text-white shadow-lg backdrop-blur-md transition hover:bg-[#061f2b]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5]"><ChevronLeft className="h-5 w-5" /></button>
+              <button type="button" aria-label="Next Hero image" onClick={() => moveHeroSlide(1)} className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-[#061f2b]/65 text-white shadow-lg backdrop-blur-md transition hover:bg-[#061f2b]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5]"><ChevronRight className="h-5 w-5" /></button>
             </div>
           </div>
           <div className="absolute inset-0 bg-gradient-to-b from-[#061f2b]/35 via-[#061f2b]/50 to-[#061f2b]/90 lg:hidden" aria-hidden="true" />
@@ -541,6 +553,36 @@ export default function Home() {
               <div className="mt-7 flex items-center gap-2" role="tablist" aria-label="Hero showcase images">
                 {heroSlides.map((slide, index) => <button key={slide.image} type="button" role="tab" aria-label={`Show Hero image ${index + 1}`} aria-selected={index === heroSlide} onClick={() => { setHeroAutoplayPaused(true); setHeroSlide(index); }} className="inline-flex h-9 w-9 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5]"><span aria-hidden="true" className={`h-2 rounded-full transition-all duration-300 ${index === heroSlide ? "w-7 bg-[#8be0d5]" : "w-2 bg-white/55 hover:bg-white"}`} /></button>)}
                 <span className="ml-2 text-[10px] font-bold uppercase tracking-[.16em] text-white/55">{heroSlide + 1} / {heroSlides.length}</span>
+              </div>
+            </div>
+          </div>
+          <div className="relative z-20 mx-auto -mt-10 max-w-[1280px] px-5 pb-8 sm:-mt-12 lg:-mt-14 lg:px-8">
+            <div className="overflow-hidden rounded-[28px] border border-white/70 bg-white/95 p-3 text-[#0a4052] shadow-[0_24px_70px_rgba(0,28,42,.28)] backdrop-blur-xl sm:p-4">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {heroTrustStats.map(stat => {
+                  const Icon = stat.icon;
+                  return (
+                    <div key={stat.label} className={`flex min-h-[92px] items-center gap-3 rounded-2xl bg-gradient-to-br ${stat.tone} px-4 py-3 ring-1 ring-[#dce7eb]/80 transition duration-300 hover:-translate-y-0.5 hover:shadow-md`}>
+                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/80 text-[#0f6fae] shadow-sm"><Icon className="h-5 w-5" aria-hidden="true" /></span>
+                      <div className="min-w-0">
+                        <p className="text-xl font-black leading-none tracking-tight text-[#073c50]">{stat.value}</p>
+                        <p className="mt-1 text-xs font-extrabold leading-4 text-[#164c5d]">{stat.label}</p>
+                        <p className="mt-1 text-[10px] leading-3.5 text-[#617180]">{stat.detail}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="mt-3 grid gap-3 lg:grid-cols-2">
+                {heroTrustSignals.map(signal => {
+                  const Icon = signal.icon;
+                  return (
+                    <div key={signal.title} className={`flex min-h-[74px] items-center gap-3 rounded-2xl border px-4 py-3 ${signal.tone}`}>
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/85 shadow-sm"><Icon className="h-5 w-5" aria-hidden="true" /></span>
+                      <div><p className="text-[10px] font-black uppercase tracking-[.16em] opacity-80">{signal.eyebrow}</p><p className="mt-0.5 text-sm font-extrabold text-[#0a4052]">{signal.title}</p><p className="mt-0.5 text-[11px] leading-4 text-[#617180]">{signal.detail}</p></div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

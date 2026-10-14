@@ -102,6 +102,13 @@ describe("homepage service shortcuts and trust badges", () => {
     expect(homeSource).toContain('id="hero-quick-path"');
     expect(homeSource).toContain("/catalogue?brand=hermann");
     expect(homeSource).toContain("/spare-parts");
+    expect(homeSource).toContain("const heroTrustStats = [");
+    expect(homeSource).toContain("Hospitals Reached");
+    expect(homeSource).toContain("UPA Projects");
+    expect(homeSource).toContain("Spare Parts in Stock");
+    expect(homeSource).toContain("const heroTrustSignals = [");
+    expect(homeSource).toContain("Documented quality workflow");
+    expect(homeSource).toContain("Project-specific radiation documentation");
     expect(homeSource).not.toContain("Official Evidence Statistics");
     expect(homeSource).not.toContain("Quality and regulatory evidence");
   });
