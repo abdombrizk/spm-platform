@@ -35,7 +35,6 @@ describe("homepage service shortcuts and trust badges", () => {
     expect(homeSource).toContain("Medical imaging. Surgical technology. One team.");
     expect(homeSource).toContain("onTouchStart={handleHeroTouchStart}");
     expect(homeSource).toContain("onTouchEnd={handleHeroTouchEnd}");
-    expect(homeSource).toContain('role="tablist" aria-label="Hero showcase images"');
     expect(homeSource).toContain("Play Hero slideshow");
     expect(homeSource).toContain("Pause Hero slideshow");
     expect(homeSource).toContain('aria-label="C-Arm feature points"');
@@ -99,8 +98,6 @@ describe("homepage service shortcuts and trust badges", () => {
     expect(homeSource).toContain('aria-live="polite"');
     expect(homeSource).toContain("eventsPageQuery.isError");
     expect(homeSource).toContain("productsQuery.isError");
-    expect(homeSource).toContain('id="hero-quick-path"');
-    expect(homeSource).toContain("/catalogue?brand=hermann");
     expect(homeSource).toContain("/spare-parts");
     expect(homeSource).toContain("const heroTrustStats = [");
     expect(homeSource).toContain("Hospitals Reached");
@@ -110,6 +107,8 @@ describe("homepage service shortcuts and trust badges", () => {
     expect(homeSource).toContain("Documented quality workflow");
     expect(homeSource).toContain("Project-specific radiation documentation");
     expect(homeSource).not.toContain("Official Evidence Statistics");
+    expect(homeSource).not.toContain("hero-quick-path");
+    expect(homeSource).not.toContain("Hero showcase images");
     expect(homeSource).not.toContain("Quality and regulatory evidence");
   });
 

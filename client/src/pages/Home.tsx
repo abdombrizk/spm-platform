@@ -536,38 +536,23 @@ export default function Home() {
                   <Link href={content["hero.secondary.url"] || fallback["hero.secondary.url"]}>{content["hero.secondary.label"] || fallback["hero.secondary.label"]}<ArrowUpRight className="ml-2 h-4 w-4" /></Link>
                 </Button>
               </div>
-              <div className="mt-5 flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-3">
-                <label htmlFor="hero-quick-path" className="text-xs font-bold uppercase tracking-[.14em] text-white/70">Find your path</label>
-                <select id="hero-quick-path" defaultValue="" aria-label="Choose a product or support path" onChange={event => { if (event.target.value) window.location.assign(event.target.value); }} className="min-h-11 w-full max-w-xs rounded-xl border border-white/40 bg-[#061f2b]/75 px-3.5 text-sm font-semibold text-white shadow-lg outline-none backdrop-blur-sm transition hover:border-[#8be0d5] focus-visible:ring-2 focus-visible:ring-[#8be0d5] sm:w-auto">
-                  <option value="" disabled>Choose a destination…</option>
-                  <option value="/catalogue?category=c-arm">C-Arm systems</option>
-                  <option value="/catalogue?brand=hermann">Hermann surgical portfolio</option>
-                  <option value="/spare-parts">OEM spare parts</option>
-                  <option value="/request-service">Field service support</option>
-                </select>
-              </div>
               <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3 text-sm font-medium text-white/80">
                 <span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-[#60c1bb]" /> Structured request tracking</span>
                 <span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-[#60c1bb]" /> Documented quality alignment</span>
               </div>
-              <div className="mt-7 flex items-center gap-2" role="tablist" aria-label="Hero showcase images">
-                {heroSlides.map((slide, index) => <button key={slide.image} type="button" role="tab" aria-label={`Show Hero image ${index + 1}`} aria-selected={index === heroSlide} onClick={() => { setHeroAutoplayPaused(true); setHeroSlide(index); }} className="inline-flex h-9 w-9 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5]"><span aria-hidden="true" className={`h-2 rounded-full transition-all duration-300 ${index === heroSlide ? "w-7 bg-[#8be0d5]" : "w-2 bg-white/55 hover:bg-white"}`} /></button>)}
-                <span className="ml-2 text-[10px] font-bold uppercase tracking-[.16em] text-white/55">{heroSlide + 1} / {heroSlides.length}</span>
-              </div>
             </div>
           </div>
-          <div className="relative z-20 mx-auto -mt-10 max-w-[1280px] px-5 pb-8 sm:-mt-12 lg:-mt-14 lg:px-8">
-            <div className="overflow-hidden rounded-[28px] border border-white/70 bg-white/95 p-3 text-[#0a4052] shadow-[0_24px_70px_rgba(0,28,42,.28)] backdrop-blur-xl sm:p-4">
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <section aria-label="SPM trust signals" className="relative z-20 mx-auto -mt-10 max-w-[1280px] px-5 pb-8 sm:-mt-12 lg:-mt-14 lg:px-8">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {heroTrustStats.map(stat => {
                   const Icon = stat.icon;
                   return (
-                    <div key={stat.label} className={`flex min-h-[92px] items-center gap-3 rounded-2xl bg-gradient-to-br ${stat.tone} px-4 py-3 ring-1 ring-[#dce7eb]/80 transition duration-300 hover:-translate-y-0.5 hover:shadow-md`}>
-                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/80 text-[#0f6fae] shadow-sm"><Icon className="h-5 w-5" aria-hidden="true" /></span>
+                    <div key={stat.label} className="flex min-h-[92px] items-center gap-3 rounded-2xl border border-white/15 bg-white/[0.07] px-4 py-3 backdrop-blur-md transition duration-300 hover:-translate-y-0.5 hover:bg-white/[0.12]">
+                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-[#8be0d5] shadow-sm"><Icon className="h-5 w-5" aria-hidden="true" /></span>
                       <div className="min-w-0">
-                        <p className="text-xl font-black leading-none tracking-tight text-[#073c50]">{stat.value}</p>
-                        <p className="mt-1 text-xs font-extrabold leading-4 text-[#164c5d]">{stat.label}</p>
-                        <p className="mt-1 text-[10px] leading-3.5 text-[#617180]">{stat.detail}</p>
+                        <p className="text-xl font-black leading-none tracking-tight text-white">{stat.value}</p>
+                        <p className="mt-1 text-xs font-extrabold leading-4 text-[#8be0d5]">{stat.label}</p>
+                        <p className="mt-1 text-[10px] leading-3.5 text-white/60">{stat.detail}</p>
                       </div>
                     </div>
                   );
@@ -577,15 +562,14 @@ export default function Home() {
                 {heroTrustSignals.map(signal => {
                   const Icon = signal.icon;
                   return (
-                    <div key={signal.title} className={`flex min-h-[74px] items-center gap-3 rounded-2xl border px-4 py-3 ${signal.tone}`}>
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/85 shadow-sm"><Icon className="h-5 w-5" aria-hidden="true" /></span>
-                      <div><p className="text-[10px] font-black uppercase tracking-[.16em] opacity-80">{signal.eyebrow}</p><p className="mt-0.5 text-sm font-extrabold text-[#0a4052]">{signal.title}</p><p className="mt-0.5 text-[11px] leading-4 text-[#617180]">{signal.detail}</p></div>
+                    <div key={signal.title} className="flex min-h-[74px] items-center gap-3 rounded-2xl border border-white/15 bg-white/[0.06] px-4 py-3 backdrop-blur-md">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-[#8be0d5] shadow-sm"><Icon className="h-5 w-5" aria-hidden="true" /></span>
+                      <div><p className="text-[10px] font-black uppercase tracking-[.16em] text-[#8be0d5] opacity-90">{signal.eyebrow}</p><p className="mt-0.5 text-sm font-extrabold text-white">{signal.title}</p><p className="mt-0.5 text-[11px] leading-4 text-white/60">{signal.detail}</p></div>
                     </div>
                   );
                 })}
               </div>
-            </div>
-          </div>
+          </section>
         </section>
 
         {/* Strategic partnerships */}
