@@ -426,7 +426,7 @@ export default function Home() {
   ];
 
   return (
-    <SiteChrome transparentHeader={false}>
+    <SiteChrome transparentHeader>
       <SEOHead
         title="Medical Imaging and Surgical Technology, Service and Spare Parts"
         description="SPM supports medical imaging equipment with sourcing, service, maintenance and spare-parts request journeys for healthcare and technical teams across Egypt."
@@ -434,13 +434,13 @@ export default function Home() {
       />
       <main>
         {/* Hero: rotating imaging, field engineering and surgical technology showcase */}
-        <section className="relative isolate min-h-[720px] overflow-hidden border-b border-[#0a4052] bg-[#061f2b] text-white sm:min-h-[760px] lg:min-h-[790px]">
+        <section className="relative isolate min-h-[660px] overflow-hidden border-b border-[#0a4052] bg-[#061f2b] text-white sm:min-h-[700px] lg:min-h-[730px]">
           <div
             role="region"
             aria-roledescription="carousel"
             aria-label="SPM technology and service showcase"
             tabIndex={0}
-            className="absolute inset-x-0 top-0 h-[720px] overflow-hidden outline-none sm:h-[760px] lg:left-[30%] lg:h-[790px]"
+            className="absolute inset-x-0 top-0 z-10 h-[560px] overflow-hidden bg-[#eef6f8] outline-none sm:h-[620px] lg:left-[50%] lg:h-[660px]"
             onMouseEnter={() => setHeroHoverPaused(true)}
             onMouseLeave={() => setHeroHoverPaused(false)}
             onFocus={() => setHeroHoverPaused(true)}
@@ -476,8 +476,8 @@ export default function Home() {
                 className={`absolute inset-0 h-full w-full object-contain object-center transition-opacity duration-700 ease-out ${index === heroSlide ? "opacity-100" : "opacity-0"}`}
               />
             ))}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#061f2b]/10 via-[#061f2b]/10 to-[#061f2b]/35" aria-hidden="true" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/75 via-transparent to-[#061f2b]/10" aria-hidden="true" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#061f2b]/10 via-transparent to-[#061f2b]/10" aria-hidden="true" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/55 via-transparent to-transparent" aria-hidden="true" />
             {heroSlide === 0 ? (
               <div className="absolute inset-0" aria-label="C-Arm feature points">
                 {heroHotspots.map(hotspot => (
@@ -514,9 +514,10 @@ export default function Home() {
             </div>
           </div>
           <div className="absolute inset-0 bg-gradient-to-b from-[#061f2b]/35 via-[#061f2b]/50 to-[#061f2b]/90 lg:hidden" aria-hidden="true" />
-          <div className="absolute inset-y-0 left-0 hidden w-[48%] bg-gradient-to-r from-[#061f2b] via-[#061f2b]/95 to-transparent lg:block" aria-hidden="true" />
+          <div className="absolute inset-y-0 left-0 z-0 hidden w-1/2 bg-[#061f2b] lg:block" aria-hidden="true" />
+          <div className="absolute inset-y-0 left-1/2 z-0 hidden w-1/2 border-l border-[#d6e5e8]/30 bg-[#eef6f8] lg:block" aria-hidden="true" />
 
-          <div className="relative z-10 mx-auto grid min-h-[720px] max-w-[1280px] items-center px-5 py-24 sm:min-h-[760px] lg:min-h-[790px] lg:grid-cols-[.86fr_1.14fr] lg:px-8">
+          <div className="relative z-10 mx-auto grid min-h-[560px] max-w-[1280px] items-center px-5 py-24 sm:min-h-[620px] lg:min-h-[660px] lg:grid-cols-2 lg:px-8">
             <div className="max-w-xl text-left">
               <div className="mb-6 flex flex-wrap items-center gap-3">
                 <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-[#60c1bb]/40 bg-[#061f2b]/70 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[.16em] text-[#8be0d5] shadow-lg backdrop-blur-md">
@@ -542,33 +543,27 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <section aria-label="SPM trust signals" className="relative z-20 mx-auto -mt-10 max-w-[1280px] px-5 pb-8 sm:-mt-12 lg:-mt-14 lg:px-8">
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <section aria-label="SPM trust signals" className="relative z-20 border-t border-[#d8e7ea]/80 bg-white text-[#0a4052] shadow-sm">
+            <div className="mx-auto flex max-w-[1280px] flex-col gap-4 px-5 py-4 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex items-center gap-3 border-b border-[#e6eff2] pb-3 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-6">
+                <span className="rounded-md bg-[#061f2b] px-2.5 py-1 text-[11px] font-black uppercase tracking-[.18em] text-[#8be0d5]">SNAPSHOT</span>
+              </div>
+              <div className="grid flex-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {heroTrustStats.map(stat => {
                   const Icon = stat.icon;
                   return (
-                    <div key={stat.label} className="flex min-h-[92px] items-center gap-3 rounded-2xl border border-white/15 bg-white/[0.07] px-4 py-3 backdrop-blur-md transition duration-300 hover:-translate-y-0.5 hover:bg-white/[0.12]">
-                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-[#8be0d5] shadow-sm"><Icon className="h-5 w-5" aria-hidden="true" /></span>
+                    <div key={stat.label} className="flex items-center gap-3">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#eef7f9] text-[#0f6fae]"><Icon className="h-4 w-4" aria-hidden="true" /></span>
                       <div className="min-w-0">
-                        <p className="text-xl font-black leading-none tracking-tight text-white">{stat.value}</p>
-                        <p className="mt-1 text-xs font-extrabold leading-4 text-[#8be0d5]">{stat.label}</p>
-                        <p className="mt-1 text-[10px] leading-3.5 text-white/60">{stat.detail}</p>
+                        <p className="text-base font-black leading-none text-[#073c50]">{stat.value}</p>
+                        <p className="mt-0.5 text-xs font-bold text-[#164c5d]">{stat.label}</p>
+                        <p className="text-[10px] text-[#617180]">{stat.detail}</p>
                       </div>
                     </div>
                   );
                 })}
               </div>
-              <div className="mt-3 grid gap-3 lg:grid-cols-2">
-                {heroTrustSignals.map(signal => {
-                  const Icon = signal.icon;
-                  return (
-                    <div key={signal.title} className="flex min-h-[74px] items-center gap-3 rounded-2xl border border-white/15 bg-white/[0.06] px-4 py-3 backdrop-blur-md">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-[#8be0d5] shadow-sm"><Icon className="h-5 w-5" aria-hidden="true" /></span>
-                      <div><p className="text-[10px] font-black uppercase tracking-[.16em] text-[#8be0d5] opacity-90">{signal.eyebrow}</p><p className="mt-0.5 text-sm font-extrabold text-white">{signal.title}</p><p className="mt-0.5 text-[11px] leading-4 text-white/60">{signal.detail}</p></div>
-                    </div>
-                  );
-                })}
-              </div>
+            </div>
           </section>
         </section>
 

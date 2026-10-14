@@ -30,6 +30,10 @@ describe("homepage service shortcuts and trust badges", () => {
     expect(homeSource).toContain("Italray imaging systems");
     expect(homeSource).toContain("SPM strategic partnership");
     expect(homeSource).toContain('aria-label="SPM technology and service showcase"');
+    expect(homeSource).toContain("<SiteChrome transparentHeader>");
+    expect(homeSource).toContain("lg:left-[50%]");
+    expect(homeSource).toContain('aria-label="SPM trust signals"');
+    expect(homeSource).toContain("SNAPSHOT");
     expect(homeSource).toContain("const heroSlides = heroPortfolioSlides.map");
     expect(homeSource).toContain("Surgical precision, built around the specialist.");
     expect(homeSource).toContain("Medical imaging. Surgical technology. One team.");

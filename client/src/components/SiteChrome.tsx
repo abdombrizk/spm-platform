@@ -6,11 +6,11 @@ import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
 import { italrayCategoryLinks } from "@/lib/italrayCategories";
 
-const logo = "/manus-storage/spm-logo-cropped_7b519adc.webp";
+const logo = "/manus-storage/spm-logo-transparent_ed0588dc.png";
 const italrayLogo = "/manus-storage/italray-logo_57cfff13.png";
 const hermannLogo = "/manus-storage/hermann-logo_7f4be603.png";
 
-export default function SiteChrome({ children }: { children: React.ReactNode; transparentHeader?: boolean }) {
+export default function SiteChrome({ children, transparentHeader = false }: { children: React.ReactNode; transparentHeader?: boolean }) {
   const [open, setOpen] = useState(false);
   const [activeMega, setActiveMega] = useState(false);
   const [activeProductTab, setActiveProductTab] = useState<"italray" | "hermann" | "parts">("italray");
@@ -49,7 +49,7 @@ export default function SiteChrome({ children }: { children: React.ReactNode; tr
   ];
 
   // Keep the global navigation on a consistent white surface so the SPM mark and partner logos remain clear on every page.
-  const isDarkNav = false;
+  const isDarkNav = transparentHeader;
   const navIdle = isDarkNav ? "text-white/90 hover:text-white" : "text-[#334155] hover:text-[#0f6fae]";
   const navActive = isDarkNav ? "text-white font-bold" : "text-[#0f6fae] font-bold";
 
@@ -63,7 +63,7 @@ export default function SiteChrome({ children }: { children: React.ReactNode; tr
       <header
         className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
           isDarkNav
-            ? "border-b border-white/10 bg-[#061f2b]/40 backdrop-blur-md"
+            ? "border-b border-white/10 bg-[#061f2b] shadow-sm"
             : "border-b border-[#dce7eb] bg-white/95 shadow-xs backdrop-blur-md"
         }`}
       >
@@ -72,7 +72,7 @@ export default function SiteChrome({ children }: { children: React.ReactNode; tr
             <img
               src={logo}
               alt="SPM Medical Imaging and Surgical Technology"
-              className={`spm-header-logo h-14 w-auto max-w-[208px] object-contain transition-transform hover:scale-105 sm:h-16 ${isDarkNav ? "" : "mix-blend-multiply"}`}
+              className={`spm-header-logo h-14 w-auto max-w-[208px] object-contain transition-transform hover:scale-105 sm:h-16 ${isDarkNav ? "brightness-0 invert opacity-95" : "mix-blend-multiply"}`}
             />
             <span className="sr-only">SPM - Systems for Projects & Maintenance</span>
           </Link>
