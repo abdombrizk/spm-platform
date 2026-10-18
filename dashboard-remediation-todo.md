@@ -182,3 +182,9 @@ The public product preview and build/test suite are available for verification. 
   - Merged the 4-metric statistics rail directly into the bottom glass bar under Hero, creating a cohesive, compact trust and partner footer.
   - Refined partner badges with clean white rounded pills for crisp, high-contrast visibility of Italray and Hermann official marks.
   - Successfully passed TypeScript check, Vitest presentation tests, and full production build.
+- [x] Refined About Hero bottom bar and partner logos per visual review:
+  - Enlarged Italray and Hermann logos and stripped bounding boxes for high-contrast transparent rendering.
+  - Softened the directional gradient over the left side of the operating room image so the clinical environment shows through more naturally.
+  - Scaled down the Snapshot metrics rail and integrated it into a compact, unified bottom glass bar.
+  - Expanded hero bottom padding so action CTAs remain completely unobscured.
+  - Passed TypeScript check, all presentation tests, and full production build.

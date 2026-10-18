@@ -24,8 +24,8 @@ import SiteChrome from "@/components/SiteChrome";
 import { trpc } from "@/lib/trpc";
 
 const partnerLogos: Record<string, string> = {
-  italray: "/manus-storage/italray-logo_57cfff13.png",
-  hermann: "/manus-storage/hermann-logo_7f4be603.png",
+  italray: "/manus-storage/italray-transparent-cropped_1f5d097e.png",
+  hermann: "/manus-storage/hermann-mark-cropped_40aa4cf3.png",
 };
 
 const fallback = {
@@ -149,11 +149,11 @@ export default function AboutPage() {
           <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(139,224,213,.14)_1px,transparent_1px),linear-gradient(90deg,rgba(139,224,213,.14)_1px,transparent_1px)] [background-size:56px_56px]" aria-hidden="true" />
           <div className="absolute inset-y-0 right-0 w-full lg:w-[75%]" aria-hidden="true">
             <img src={heroImage} alt="" loading="eager" decoding="async" className="h-full w-full object-cover object-[64%_center] opacity-90" />
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,#062a35_0%,rgba(6,42,53,.94)_17%,rgba(6,42,53,.44)_43%,rgba(6,42,53,.12)_76%,rgba(6,42,53,.08)_100%)]" />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,42,53,.18)_0%,transparent_54%,rgba(6,42,53,.72)_100%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,#062a35_0%,rgba(6,42,53,.91)_17%,rgba(6,42,53,.34)_43%,rgba(6,42,53,.08)_76%,rgba(6,42,53,.04)_100%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,42,53,.12)_0%,transparent_54%,rgba(6,42,53,.58)_100%)]" />
           </div>
 
-          <div className="relative z-10 mx-auto grid min-h-[760px] max-w-[1440px] gap-12 px-5 pb-32 pt-20 sm:px-8 lg:grid-cols-[.86fr_1.14fr] lg:items-center lg:px-12 lg:pb-36 lg:pt-24">
+          <div className="relative z-10 mx-auto grid min-h-[820px] max-w-[1440px] gap-12 px-5 pb-44 pt-20 sm:px-8 lg:grid-cols-[.86fr_1.14fr] lg:items-center lg:px-12 lg:pb-36 lg:pt-24">
             <div className="max-w-[620px]">
               <p className="inline-flex items-center gap-2 rounded-full border border-[#8be0d5]/30 bg-[#8be0d5]/10 px-4 py-2 text-xs font-bold uppercase tracking-[.18em] text-[#9be8dc]"><span className="h-2 w-2 rounded-full bg-[#67e5c0] shadow-[0_0_0_5px_rgba(103,229,192,.12)]" /> Pioneering clinical continuity</p>
               <p className="mt-8 text-xs font-bold uppercase tracking-[.22em] text-[#8be0d5]">{page.eyebrow}</p>
@@ -183,23 +183,19 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="absolute bottom-4 left-4 right-4 z-30 rounded-2xl border border-white/25 bg-white/[.16] px-5 py-4 shadow-2xl backdrop-blur-xl sm:bottom-6 sm:left-8 sm:right-8 sm:px-7 lg:left-12 lg:right-12">
-            <div className="flex flex-col gap-4 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-6">
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 sm:gap-x-6">
+          <div className="absolute bottom-4 left-4 right-4 z-30 mx-auto max-w-[1180px] rounded-xl border border-white/25 bg-[#062a35]/65 px-4 py-3 shadow-2xl backdrop-blur-xl sm:bottom-6 sm:left-8 sm:right-8 sm:px-6 lg:left-12 lg:right-12">
+            <div className="flex flex-col gap-3 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-5">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 sm:gap-x-5">
                 <span className="text-xs font-bold uppercase tracking-[.16em] text-white/70">Authorized Partners:</span>
-                <div className="flex h-9 items-center rounded-lg bg-white/95 px-3 py-1 shadow-sm">
-                  <img src={partnerLogos.italray} alt="Italray official partner logo" loading="lazy" decoding="async" className="h-6 w-auto max-w-[95px] object-contain" />
-                </div>
+                <img src={partnerLogos.italray} alt="Italray official partner logo" loading="lazy" decoding="async" className="h-10 w-auto max-w-[145px] object-contain" />
                 <span className="text-xs font-bold text-white/55" aria-hidden="true">&amp;</span>
-                <div className="flex h-9 items-center rounded-lg bg-white/95 px-3 py-1 shadow-sm">
-                  <img src={partnerLogos.hermann} alt="Hermann Medizintechnik official partner logo" loading="lazy" decoding="async" className="h-6 w-auto max-w-[120px] object-contain" />
-                </div>
+                <img src={partnerLogos.hermann} alt="Hermann Medizintechnik official partner logo" loading="lazy" decoding="async" className="h-10 w-auto max-w-[155px] object-contain" />
               </div>
-              <div className="hidden h-8 w-px bg-white/25 sm:block" aria-hidden="true" />
+              <div className="hidden h-7 w-px bg-white/25 sm:block" aria-hidden="true" />
               <p className="text-sm font-semibold text-white/90"><span className="font-extrabold text-[#a5eee1]">ENGINEERED LIFECYCLE:</span> 24/7 Technical Service &amp; Support</p>
             </div>
-            <div className="mt-4 grid grid-cols-2 gap-x-5 gap-y-3 border-t border-white/20 pt-3 sm:grid-cols-4 sm:gap-x-6">
-              {page.stats?.map(stat => <div key={stat.label} className="min-w-0"><p className="text-xl font-extrabold tracking-tight text-white sm:text-2xl">{stat.value}</p><p className="mt-0.5 text-xs font-bold text-white/90">{stat.label}</p><p className="mt-0.5 hidden text-[11px] leading-4 text-white/65 sm:block">{stat.description}</p></div>)}
+            <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 border-t border-white/20 pt-2.5 sm:grid-cols-4 sm:gap-x-5">
+              {page.stats?.map(stat => <div key={stat.label} className="min-w-0"><p className="text-lg font-extrabold tracking-tight text-white sm:text-xl">{stat.value}</p><p className="mt-0.5 text-[11px] font-bold text-white/90 sm:text-xs">{stat.label}</p><p className="mt-0.5 hidden text-[10px] leading-4 text-white/65 sm:block">{stat.description}</p></div>)}
             </div>
           </div>
         </section>
