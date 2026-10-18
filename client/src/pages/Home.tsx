@@ -657,8 +657,8 @@ export default function Home() {
                 ))}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/95 via-[#061f2b]/20 to-[#061f2b]/10" aria-hidden="true" />
                 <div className="absolute left-6 right-6 top-6 flex items-center justify-between gap-4">
-                  <div className="flex h-16 min-w-[220px] items-center justify-center rounded-2xl border border-white/20 bg-[#061f2b]/55 px-5 shadow-lg backdrop-blur-sm">
-                    <img src={brandLogoOverrides.hermann} alt="Hermann Medizintechnik official logo" loading="lazy" decoding="async" className="max-h-12 max-w-[230px] object-contain" />
+                  <div className="flex h-16 min-w-[220px] items-center justify-center rounded-2xl border border-white/20 bg-[#061f2b]/55 px-5 shadow-lg backdrop-blur-sm sm:h-20 sm:min-w-[280px] sm:rounded-3xl sm:px-7">
+                    <img src={brandLogoOverrides.hermann} alt="Hermann Medizintechnik official logo" loading="lazy" decoding="async" className="max-h-12 max-w-[230px] object-contain sm:max-h-16 sm:max-w-[280px]" />
                   </div>
                   <span className="rounded-full border border-white/30 bg-[#061f2b]/70 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[.16em] text-[#8be0d5] backdrop-blur-sm">Hermann portfolio</span>
                 </div>
