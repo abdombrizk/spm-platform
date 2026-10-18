@@ -139,3 +139,16 @@ The public product preview and build/test suite are available for verification. 
 - [x] Cleaned up interactive clutter per visual feedback: removed Hero overlay hotspot dots and their popovers, removed the Hero top-right play/arrow buttons in favor of clean smooth autoplay and touch swipe, removed the Hermann gallery dot indicators while keeping side arrows and swipe, and enlarged the Hermann official logo pill on the showcase card for clear brand presence. Verified with TypeScript, full Vitest suite (46 passed), production build, and desktop screenshot.
 - [x] Further enhanced and enlarged the Hermann showcase logo container: expanded pill dimensions (up to 80px height and 280px width on desktop) with generous padding and larger image constraints, ensuring prominent brand visibility over the gallery. Verified with TypeScript, 46 tests, and full production build.
 - [x] Removed the Hermann logo container background, border, padding and box treatment so only the transparent logo remains over the gallery, with a restrained drop shadow for readability and responsive size limits. Verified by computed DOM styles, TypeScript, 46 tests and production build.
+
+## About Page Engineering & Institutional Enhancement (October 18, 2026)
+- [x] Completed comprehensive UI/UX, SEO, accessibility, performance, and claims analysis of `/about` and saved findings to `about-uiux-analysis-2026-10-18.md`.
+- [x] Executed Phase 1 structural and copy enhancement:
+  - Refined Hero to focus on engineered continuity: "Engineering continuity for critical imaging systems."
+  - Added sticky in-page contextual navigation rail with direct anchor jumps.
+  - Added three core capability pillars (Systems, Engineering, Continuity) under Who we are.
+  - Introduced "One partner, three practical perspectives" section for physicians, biomedical teams and hospital leadership.
+  - Upgraded "How we work" with concrete outcome deliverables per step (Documented diagnosis, Validated installation, Trained handover, Tracked follow-up).
+  - Set Hermann partnership status to "Exclusive Agent" per user instruction while keeping documentation claims safe until official documents arrive.
+  - Cleaned unverified ISO/license numbers from public display until official copies are uploaded.
+  - Added Spare Parts shortcut to closing CTA and explicit About image to Open Graph metadata.
+  - Verified with full TypeScript check, 46 passed tests, production build, and live browser verification.

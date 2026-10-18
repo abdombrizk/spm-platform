@@ -30,11 +30,11 @@ const partnerLogos: Record<string, string> = {
 
 const fallback = {
   eyebrow: "ABOUT SPM",
-  title: "Medical Imaging and Surgical Technology, engineered for continuity.",
+  title: "Engineering continuity for critical imaging systems.",
   intro:
     "Established in 2019, SPM is a premium medical imaging and surgical technology partner dedicated to the engineered lifecycle management of critical hospital systems.",
   whoWeAre:
-    "SPM is a leading provider of medical imaging solutions in Egypt, specializing in the supply and maintenance of advanced systems. We deliver trusted, end-to-end solutions combining innovative equipment, certified multi-vendor technical service, global spare parts sourcing, and comprehensive maintenance support.",
+    "SPM connects medical imaging equipment, technical service, genuine spare parts and lifecycle support for hospitals, physicians, biomedical engineers and procurement teams.",
   mission:
     "Our mission is to empower healthcare facilities with advanced medical imaging systems and expert maintenance services, ensuring continuous performance, operational efficiency, and uncompromised patient care. Through integrity, collaboration, and a passion for excellence, we create lasting value for our customers and support the evolving needs of the healthcare sector.",
   vision:
@@ -50,7 +50,7 @@ const fallback = {
 type AboutData = typeof fallback & {
   stats?: Array<{ value: string; label: string; description: string }>;
   services?: Array<{ title: string; text: string }>;
-  operatingModel?: Array<{ title: string; text: string }>;
+  operatingModel?: Array<{ title: string; text: string; outcome?: string }>;
   partners?: Array<{ name: string; status: string; text: string; logoUrl?: string }>;
   quality?: Array<{ title: string; text: string; imageUrl?: string }>;
   missionBullets?: string[];
@@ -77,25 +77,25 @@ const fallbackData: AboutData = {
   ],
   services: [
     { title: "Medical Imaging Equipment", text: "Supply and support for C-Arm, X-Ray, CT, Cathlab and related imaging systems." },
-    { title: "Certified Technical Service", text: "Preventive and corrective maintenance, troubleshooting, calibration and digital imaging optimization." },
+    { title: "Technical Service", text: "Preventive and corrective maintenance, troubleshooting, calibration and digital imaging optimization." },
     { title: "Installation & Commissioning", text: "Pre-installation coordination, system assembly, calibration, performance validation and safety verification." },
     { title: "Training & Warranty Support", text: "Clinical application training, biomedical engineering orientation and structured warranty service." },
   ],
   operatingModel: [
-    { title: "Technical expertise", text: "Structured service programs combine diagnostics, preventive maintenance, corrective support and performance tracking." },
-    { title: "Safe deployment", text: "Installation and commissioning follow manufacturer standards with configuration, calibration and radiation safety verification." },
-    { title: "Clinical readiness", text: "On-site guidance and operational training help healthcare teams use systems safely and efficiently." },
-    { title: "Response framework", text: "A documented service model supports remote diagnostics and timely on-site intervention when it is needed." },
+    { title: "Technical expertise", text: "Structured service programs combine diagnostics, preventive maintenance, corrective support and performance tracking.", outcome: "Documented diagnosis" },
+    { title: "Safe deployment", text: "Installation and commissioning follow manufacturer standards with configuration, calibration and radiation safety verification.", outcome: "Validated installation" },
+    { title: "Clinical readiness", text: "On-site guidance and operational training help healthcare teams use systems safely and efficiently.", outcome: "Trained handover" },
+    { title: "Response framework", text: "A documented service model supports remote diagnostics and timely on-site intervention when it is needed.", outcome: "Tracked follow-up" },
   ],
   partners: [
     { name: "Italray", status: "Exclusive Agent in Egypt", text: "Original imaging systems backed by manufacturer standards, technical support and genuine spare parts." },
-    { name: "Hermann Medizintechnik", status: "Hermann portfolio on SPM", text: "SPM presents Hermann’s surgical, endoscopic and instrument portfolio with technical review, quotation support and lifecycle coordination." },
+    { name: "Hermann Medizintechnik", status: "Exclusive Agent", text: "SPM presents Hermann’s surgical, endoscopic and instrument portfolio with technical review, quotation support and lifecycle coordination." },
   ],
   quality: [
-    { title: "Industrial Control Authority", text: "Maintenance and service documentation is organized for responsible technical review." },
-    { title: "ISO 9001 Certified", text: "A structured operating framework supports consistent service delivery and operational reliability." },
-    { title: "License No. 2528/7", text: "Official company and service records remain available for controlled internal review." },
-    { title: "Quality-aware communication", text: "Product, CE and regulatory evidence is controlled through internal review before publication." },
+    { title: "Quality review framework", text: "Maintenance and service documentation is organized for responsible technical review." },
+    { title: "Document control", text: "Operational records and technical evidence are prepared for controlled review before publication." },
+    { title: "Service records", text: "Company and service records are maintained for the evidence package appropriate to each engagement." },
+    { title: "Evidence-led communication", text: "Product, CE and regulatory claims are checked against available official evidence before publication." },
   ],
 };
 
@@ -118,6 +118,18 @@ function mergeAboutData(data: unknown): AboutData {
 const serviceIcons = [MonitorCog, Wrench, Cog, GraduationCap];
 const qualityIcons = [Scale, BadgeCheck, FileCheck2, ClipboardCheck];
 
+const continuityPillars = [
+  { title: "Systems", text: "Select and supply imaging and surgical systems around the clinical workflow." },
+  { title: "Engineering", text: "Install, calibrate, maintain and restore performance with documented technical care." },
+  { title: "Continuity", text: "Keep parts, training, evidence and follow-up connected across the equipment lifecycle." },
+];
+
+const audienceCards = [
+  { icon: MonitorCog, title: "For physicians", text: "Clinical-ready systems, dependable image workflows and practical support around daily use." },
+  { icon: Wrench, title: "For biomedical teams", text: "Diagnostics, calibration, preventive maintenance and technical escalation with traceable follow-up." },
+  { icon: Building2, title: "For hospital leadership", text: "Clear equipment planning, lifecycle visibility, documentation and a dependable route to service." },
+];
+
 export default function AboutPage() {
   const pageQuery = trpc.cms.publishedBySlug.useQuery({ slug: "about" });
   const page = mergeAboutData(pageQuery.data?.data);
@@ -127,7 +139,8 @@ export default function AboutPage() {
     <SiteChrome>
       <SEOHead
         title="About SPM | Medical Imaging and Surgical Technology & Lifecycle Support"
-        description="Learn how SPM combines medical imaging equipment, certified technical service, genuine parts and lifecycle support across Egypt and selected MENA markets."
+        description="Learn how SPM combines medical imaging equipment, technical service, genuine parts and lifecycle support across Egypt and selected MENA markets."
+        image={heroImage}
         url="/about"
       />
       <main>
@@ -170,39 +183,56 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="relative overflow-hidden border-b border-[#dce7eb] bg-white py-10">
+        <nav aria-label="About SPM sections" className="sticky top-0 z-30 border-b border-[#dce7eb] bg-white/95 shadow-sm backdrop-blur-md">
+          <div className="mx-auto flex max-w-[1280px] gap-1 overflow-x-auto px-5 py-2 lg:px-8">
+            {[['#who-we-are', 'Who we are'], ['#who-we-serve', 'Who we serve'], ['#capabilities', 'Capabilities'], ['#how-we-work', 'How we work'], ['#partnerships', 'Partnerships'], ['#quality', 'Quality']].map(([href, label]) => <a key={href} href={href} className="shrink-0 rounded-full px-3.5 py-2 text-xs font-bold text-[#536474] transition hover:bg-[#eaf4fa] hover:text-[#0a4052] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6fae]">{label}</a>)}
+          </div>
+        </nav>
+
+        <section id="impact" className="relative scroll-mt-16 overflow-hidden border-b border-[#dce7eb] bg-white py-10">
           <img src="/manus-storage/spm-logo-cropped_7b519adc.webp" alt="" aria-hidden="true" className="pointer-events-none absolute -right-20 top-1/2 w-[420px] -translate-y-1/2 opacity-[0.035]" />
           <div className="relative z-10 mx-auto grid max-w-[1280px] gap-4 px-5 sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
             {page.stats?.map(stat => <div key={stat.label} className="rounded-2xl border border-[#e5edf1] bg-[#fafcfd]/95 p-5"><p className="text-3xl font-extrabold tracking-tight text-[#0a4052]">{stat.value}</p><p className="mt-1 text-sm font-bold text-[#1e293b]">{stat.label}</p><p className="mt-1 text-xs text-[#64748b]">{stat.description}</p></div>)}
           </div>
         </section>
 
-        <section className="mx-auto max-w-[1240px] px-5 py-20 lg:px-8 lg:py-24">
+        <section id="who-we-are" className="mx-auto scroll-mt-16 max-w-[1240px] px-5 py-20 lg:px-8 lg:py-24">
           <div className="grid gap-12 lg:grid-cols-[.82fr_1.18fr] lg:items-start">
             <div><p className="text-xs font-bold uppercase tracking-[.2em] text-[#0f6fae]">Who we are</p><h2 className="mt-4 text-4xl font-semibold leading-tight tracking-[-.04em] text-[#0a4052]">A practical partner for critical hospital systems.</h2></div>
-            <div><p className="text-lg leading-8 text-[#536474]">{page.whoWeAre}</p><div className="mt-8 flex items-start gap-4 rounded-2xl border border-[#bcdde2] bg-[#f7fafc] p-5"><Building2 className="mt-1 h-6 w-6 shrink-0 text-[#0f6fae]" /><div><p className="font-bold text-[#0a4052]">Headquarters</p><p className="mt-1 text-sm leading-6 text-[#617180]">{page.address}</p></div></div></div>
+            <div>
+              <p className="text-lg leading-8 text-[#536474]">{page.whoWeAre}</p>
+              <div className="mt-8 grid gap-3 sm:grid-cols-3">{continuityPillars.map(pillar => <div key={pillar.title} className="rounded-2xl border border-[#dce7eb] bg-[#f7fafc] p-4"><p className="text-sm font-extrabold text-[#0a4052]">{pillar.title}</p><p className="mt-2 text-xs leading-5 text-[#617180]">{pillar.text}</p></div>)}</div>
+              <div className="mt-8 flex items-start gap-4 rounded-2xl border border-[#bcdde2] bg-[#f7fafc] p-5"><Building2 className="mt-1 h-6 w-6 shrink-0 text-[#0f6fae]" /><div><p className="font-bold text-[#0a4052]">Headquarters</p><p className="mt-1 text-sm leading-6 text-[#617180]">{page.address}</p></div></div>
+            </div>
           </div>
         </section>
 
-        <section className="bg-[#f7fafc] py-20 lg:py-24">
+        <section id="who-we-serve" className="scroll-mt-16 border-y border-[#dce7eb] bg-[#f7fafc] py-16 lg:py-20">
+          <div className="mx-auto max-w-[1240px] px-5 lg:px-8">
+            <div className="max-w-2xl"><p className="text-xs font-bold uppercase tracking-[.2em] text-[#0f6fae]">Built around the people using the system</p><h2 className="mt-4 text-4xl font-semibold tracking-[-.04em] text-[#0a4052]">One partner, three practical perspectives.</h2><p className="mt-4 text-base leading-7 text-[#617180]">Whether you are making a clinical decision, managing a technical team or planning hospital investment, SPM connects the next step to the right support path.</p></div>
+            <div className="mt-9 grid gap-5 md:grid-cols-3">{audienceCards.map(({ icon: Icon, title, text }) => <article key={title} className="rounded-3xl border border-[#dce7eb] bg-white p-7 shadow-[0_2px_8px_rgba(11,41,66,.05)] transition duration-300 hover:-translate-y-1 hover:shadow-lg"><div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eaf4fa] text-[#0f6fae]"><Icon className="h-6 w-6" /></div><h3 className="mt-6 text-xl font-bold text-[#0a4052]">{title}</h3><p className="mt-3 text-sm leading-7 text-[#617180]">{text}</p></article>)}</div>
+          </div>
+        </section>
+
+        <section id="mission" className="scroll-mt-16 bg-[#f7fafc] py-20 lg:py-24">
           <div className="mx-auto grid max-w-[1240px] gap-6 px-5 lg:grid-cols-2 lg:px-8">
             <article className="rounded-3xl bg-[#0a4052] p-8 text-white shadow-xl sm:p-10"><div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-[#8be0d5]"><Target className="h-6 w-6" /></div><p className="mt-7 text-xs font-bold uppercase tracking-[.2em] text-[#8be0d5]">Mission</p><ul className="mt-5 space-y-4">{page.missionBullets?.map(item => <li key={item} className="flex items-start gap-3 text-base leading-7 text-white/90"><CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-[#8be0d5]" /><span>{item}</span></li>)}</ul></article>
             <article className="rounded-3xl border border-[#d7e0e7] bg-white p-8 shadow-sm sm:p-10"><div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eaf4fa] text-[#0f6fae]"><Globe2 className="h-6 w-6" /></div><p className="mt-7 text-xs font-bold uppercase tracking-[.2em] text-[#0f6fae]">Vision</p><ul className="mt-5 space-y-4">{page.visionBullets?.map(item => <li key={item} className="flex items-start gap-3 text-base leading-7 text-[#536474]"><ArrowUpRight className="mt-1 h-5 w-5 shrink-0 text-[#0f6fae]" /><span>{item}</span></li>)}</ul></article>
           </div>
         </section>
 
-        <section className="mx-auto max-w-[1240px] px-5 py-20 lg:px-8 lg:py-24">
+        <section id="capabilities" className="mx-auto scroll-mt-16 max-w-[1240px] px-5 py-20 lg:px-8 lg:py-24">
           <div className="max-w-2xl"><p className="text-xs font-bold uppercase tracking-[.2em] text-[#0f6fae]">What we do</p><h2 className="mt-4 text-4xl font-semibold tracking-[-.04em] text-[#0a4052]">One operating model across the equipment lifecycle.</h2></div>
           <div className="mt-10 grid gap-5 sm:grid-cols-2">{page.services?.map((service, index) => { const Icon = serviceIcons[index % serviceIcons.length]; return <article key={service.title} className="rounded-2xl border border-[#d7e0e7] bg-white p-7 shadow-[0_2px_8px_rgba(11,41,66,.06)] transition hover:-translate-y-1 hover:border-[#bcdde2] hover:shadow-lg"><div className="flex items-center justify-between"><span className="text-sm font-bold text-[#0f6fae]">0{index + 1}</span><Icon className="h-6 w-6 text-[#0f6fae]" /></div><h3 className="mt-7 text-xl font-bold text-[#0a4052]">{service.title}</h3><p className="mt-3 text-sm leading-7 text-[#617180]">{service.text}</p></article>; })}</div>
         </section>
 
-        <section className="border-y border-[#dce7eb] bg-white py-20 lg:py-24">
+        <section id="how-we-work" className="scroll-mt-16 border-y border-[#dce7eb] bg-white py-20 lg:py-24">
           <div className="mx-auto max-w-[1240px] px-5 lg:px-8"><div className="flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-[#0f6fae]">How we work</p><h2 className="mt-4 text-4xl font-semibold tracking-[-.04em] text-[#0a4052]">Structured support, from planning to performance.</h2></div><p className="max-w-md text-sm leading-7 text-[#617180]">Our technical model is designed to reduce uncertainty around installation, use, maintenance and warranty support.</p></div>
-            <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">{page.operatingModel?.map((item, index) => <div key={item.title} className="relative rounded-2xl bg-[#f7fafc] p-6"><span className="text-xs font-bold text-[#0f6fae]">STEP 0{index + 1}</span><h3 className="mt-5 text-lg font-bold text-[#0a4052]">{item.title}</h3><p className="mt-3 text-sm leading-7 text-[#617180]">{item.text}</p>{index < (page.operatingModel?.length ?? 0) - 1 ? <span aria-hidden="true" className="pointer-events-none absolute -right-5 top-1/2 z-10 hidden items-center lg:flex"><span className="w-8 border-t border-dashed border-[#84bac6]" /><ArrowRight className="h-4 w-4 text-[#0f6fae]" /></span> : null}</div>)}</div>
+            <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">{page.operatingModel?.map((item, index) => <div key={item.title} className="relative rounded-2xl bg-[#f7fafc] p-6"><span className="text-xs font-bold text-[#0f6fae]">STEP 0{index + 1}</span><h3 className="mt-5 text-lg font-bold text-[#0a4052]">{item.title}</h3><p className="mt-3 text-sm leading-7 text-[#617180]">{item.text}</p>{item.outcome ? <p className="mt-4 border-t border-[#dce7eb] pt-3 text-xs font-extrabold uppercase tracking-[.12em] text-[#0f6fae]">Outcome: {item.outcome}</p> : null}{index < (page.operatingModel?.length ?? 0) - 1 ? <span aria-hidden="true" className="pointer-events-none absolute -right-5 top-1/2 z-10 hidden items-center lg:flex"><span className="w-8 border-t border-dashed border-[#84bac6]" /><ArrowRight className="h-4 w-4 text-[#0f6fae]" /></span> : null}</div>)}</div>
           </div>
         </section>
 
-        <section className="border-y border-[#dce7eb] bg-[#f7fafc] py-20 lg:py-24">
+        <section id="partnerships" className="scroll-mt-16 border-y border-[#dce7eb] bg-[#f7fafc] py-20 lg:py-24">
           <div className="mx-auto max-w-[1240px] px-5 lg:px-8">
             <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
               <div>
@@ -242,7 +272,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="bg-[#eaf4fa] py-20 lg:py-24">
+        <section id="quality" className="scroll-mt-16 bg-[#eaf4fa] py-20 lg:py-24">
           <div className="mx-auto max-w-[1240px] px-5 lg:px-8">
             <div className="max-w-2xl">
               <div className="inline-flex items-center gap-2 rounded-full border border-[#bcdde2] bg-white px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#0a4052]"><ShieldCheck className="h-3.5 w-3.5 text-[#0f6fae]" /> Quality commitment</div>
@@ -265,7 +295,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-[1240px] px-5 py-20 lg:px-8 lg:py-24"><div className="grid gap-8 rounded-3xl bg-[#061f2b] p-8 text-white sm:p-10 lg:grid-cols-[1fr_auto] lg:items-center"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-[#8be0d5]">Support across Egypt</p><h2 className="mt-4 text-3xl font-bold sm:text-4xl">Let us understand the system behind the request.</h2><div className="mt-5 flex items-start gap-3 text-sm leading-6 text-white/75"><MapPin className="mt-1 h-5 w-5 shrink-0 text-[#8be0d5]" /><span>{page.address}<br />{page.geography}</span></div></div><div className="flex flex-wrap gap-3 lg:justify-end"><Button size="lg" className="bg-[#c2410c] text-white hover:bg-[#c2410c]" asChild><Link href="/contact">Contact SPM <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button><Button size="lg" variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10" asChild><Link href="/request-service">Request Service <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button></div></div></section>
+        <section id="contact-paths" className="mx-auto scroll-mt-16 max-w-[1240px] px-5 py-20 lg:px-8 lg:py-24"><div className="grid gap-8 rounded-3xl bg-[#061f2b] p-8 text-white sm:p-10 lg:grid-cols-[1fr_auto] lg:items-center"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-[#8be0d5]">Support across Egypt</p><h2 className="mt-4 text-3xl font-bold sm:text-4xl">Let us understand the system behind the request.</h2><div className="mt-5 flex items-start gap-3 text-sm leading-6 text-white/75"><MapPin className="mt-1 h-5 w-5 shrink-0 text-[#8be0d5]" /><span>{page.address}<br />{page.geography}</span></div></div><div className="flex flex-wrap gap-3 lg:justify-end"><Button size="lg" className="bg-[#c2410c] text-white hover:bg-[#c2410c]" asChild><Link href="/contact">Contact SPM <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button><Button size="lg" variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10" asChild><Link href="/request-service">Request Service <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button><Button size="lg" variant="outline" className="border-white/30 bg-transparent text-white hover:bg-white/10" asChild><Link href="/spare-parts">Spare Parts <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button></div></div></section>
       </main>
     </SiteChrome>
   );
