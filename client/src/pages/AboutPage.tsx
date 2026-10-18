@@ -130,6 +130,15 @@ const audienceCards = [
   { icon: Building2, title: "For hospital leadership", text: "Clear equipment planning, lifecycle visibility, documentation and a dependable route to service." },
 ];
 
+const aboutGallery = [
+  { src: "/manus-storage/spm-carmex-maintenance-card-optimized_fde07293.jpg", alt: "SPM biomedical engineer supporting a C-Arm imaging system", label: "Field engineering", text: "Practical technical support around critical imaging systems." },
+  { src: "/manus-storage/italray-01-carm-or_a85c8c1d.jpg", alt: "Italray C-Arm system positioned in an operating room", label: "Italray imaging", text: "Imaging technology aligned with the clinical workflow." },
+  { src: "/manus-storage/italray-02-digital-radiography_cd60b9f4.jpg", alt: "Italray digital radiography system in a diagnostic room", label: "Diagnostic imaging", text: "Clear system planning for reliable daily operation." },
+  { src: "/manus-storage/hermann-gallery-engineering_bb728050.jpg", alt: "Hermann surgical equipment being reviewed by a technical specialist", label: "Hermann surgical", text: "Surgical and endoscopy systems supported with technical care." },
+  { src: "/manus-storage/hermann-gallery-instruments-close_ee51200c.jpg", alt: "Close view of Hermann surgical instruments", label: "Precision instruments", text: "A closer view of the systems behind clinical precision." },
+  { src: "/manus-storage/hermann-gallery-endoscopy_d4d02539.jpg", alt: "Hermann endoscopy system prepared for clinical use", label: "Endoscopy workflow", text: "Connected equipment, service and lifecycle coordination." },
+];
+
 export default function AboutPage() {
   const pageQuery = trpc.cms.publishedBySlug.useQuery({ slug: "about" });
   const page = mergeAboutData(pageQuery.data?.data);
@@ -174,9 +183,6 @@ export default function AboutPage() {
               <div className="absolute left-[7%] top-[15%] z-20 hidden rounded-xl border border-[#8be0d5]/45 bg-[#062a35]/85 px-3.5 py-2 text-xs font-semibold text-white shadow-xl backdrop-blur-md sm:block">
                 <span className="text-[#8be0d5]">01.</span> Hermann Surgical &amp; Endoscopy
               </div>
-              <div className="absolute right-[5%] top-[18%] z-20 hidden rounded-xl border border-[#8be0d5]/45 bg-[#062a35]/85 px-3.5 py-2 text-xs font-semibold text-white shadow-xl backdrop-blur-md sm:block">
-                <span className="text-[#8be0d5]">02.</span> Italray Mobile C-Arm System
-              </div>
               <div className="absolute bottom-[16%] left-[10%] z-20 hidden rounded-xl border border-[#8be0d5]/45 bg-[#062a35]/85 px-3.5 py-2 text-xs font-semibold text-white shadow-xl backdrop-blur-md sm:block">
                 <span className="text-[#8be0d5]">03.</span> Mobile Workstation &amp; Viewing Monitor
               </div>
@@ -202,7 +208,7 @@ export default function AboutPage() {
 
         <nav aria-label="About SPM sections" className="sticky top-0 z-30 border-b border-[#dce7eb] bg-white/95 shadow-sm backdrop-blur-md">
           <div className="mx-auto flex max-w-[1280px] gap-1 overflow-x-auto px-5 py-2 lg:px-8">
-            {[['#who-we-are', 'Who we are'], ['#who-we-serve', 'Who we serve'], ['#capabilities', 'Capabilities'], ['#how-we-work', 'How we work'], ['#partnerships', 'Partnerships'], ['#quality', 'Quality']].map(([href, label]) => <a key={href} href={href} className="shrink-0 rounded-full px-3.5 py-2 text-xs font-bold text-[#536474] transition hover:bg-[#eaf4fa] hover:text-[#0a4052] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6fae]">{label}</a>)}
+            {[['#who-we-are', 'Who we are'], ['#visual-story', 'In practice'], ['#who-we-serve', 'Who we serve'], ['#capabilities', 'Capabilities'], ['#how-we-work', 'How we work'], ['#partnerships', 'Partnerships'], ['#quality', 'Quality']].map(([href, label]) => <a key={href} href={href} className="shrink-0 rounded-full px-3.5 py-2 text-xs font-bold text-[#536474] transition hover:bg-[#eaf4fa] hover:text-[#0a4052] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6fae]">{label}</a>)}
           </div>
         </nav>
 
@@ -213,6 +219,28 @@ export default function AboutPage() {
               <p className="text-lg leading-8 text-[#536474]">{page.whoWeAre}</p>
               <div className="mt-8 grid gap-3 sm:grid-cols-3">{continuityPillars.map(pillar => <div key={pillar.title} className="rounded-2xl border border-[#dce7eb] bg-[#f7fafc] p-4"><p className="text-sm font-extrabold text-[#0a4052]">{pillar.title}</p><p className="mt-2 text-xs leading-5 text-[#617180]">{pillar.text}</p></div>)}</div>
               <div className="mt-8 flex items-start gap-4 rounded-2xl border border-[#bcdde2] bg-[#f7fafc] p-5"><Building2 className="mt-1 h-6 w-6 shrink-0 text-[#0f6fae]" /><div><p className="font-bold text-[#0a4052]">Headquarters</p><p className="mt-1 text-sm leading-6 text-[#617180]">{page.address}</p></div></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="visual-story" className="border-y border-[#dce7eb] bg-[#062a35] py-20 text-white lg:py-24">
+          <div className="mx-auto max-w-[1240px] px-5 lg:px-8">
+            <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+              <div className="max-w-2xl">
+                <p className="text-xs font-bold uppercase tracking-[.2em] text-[#8be0d5]">Engineering in practice</p>
+                <h2 className="mt-4 text-4xl font-semibold leading-tight tracking-[-.04em] sm:text-5xl">The systems, people and workflows behind continuity.</h2>
+              </div>
+              <p className="max-w-md text-sm leading-7 text-white/70">A visual look at the imaging, surgical and field-engineering environments SPM supports across the equipment lifecycle.</p>
+            </div>
+            <div className="mt-10 grid gap-4 lg:grid-cols-[1.35fr_1fr_1fr]">
+              {aboutGallery.map((item, index) => (
+                <figure key={item.src} className={`group relative overflow-hidden rounded-3xl border border-white/15 bg-white/10 ${index === 0 ? "lg:row-span-2" : ""}`}>
+                  <img src={item.src} alt={item.alt} loading="lazy" decoding="async" className={`w-full object-cover transition duration-500 group-hover:scale-[1.03] ${index === 0 ? "h-full min-h-[420px]" : "h-56"}`} />
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#061f2b] via-[#061f2b]/85 to-transparent px-5 pb-5 pt-14">
+                    <figcaption><p className="text-xs font-bold uppercase tracking-[.14em] text-[#8be0d5]">{item.label}</p><p className="mt-2 text-sm leading-6 text-white/85">{item.text}</p></figcaption>
+                  </div>
+                </figure>
+              ))}
             </div>
           </div>
         </section>
