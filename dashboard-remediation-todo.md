@@ -159,3 +159,9 @@ The public product preview and build/test suite are available for verification. 
   - Streamlined Hero introductory copy for lighter visual scanning.
   - Relocated the 4-metric statistics rail to sit cleanly directly underneath the Hero, followed by the sticky contextual navigation.
   - Verified responsive rendering, TypeScript compilation, 46 regression tests, production build, and live browser screenshots.
+- [x] Implemented exact split-screen Reference Hero layout for About:
+  - Technical blueprint background on the left and clinical surgical suite depth on the right.
+  - "Pioneering Clinical Continuity" top badge and high-contrast typography.
+  - Integrated supplied Italray C-Arm (FP21 & FP30) and Hermann Surgical & Endoscopy tower into dedicated studio presentation cards with floating numbering tags.
+  - Added bottom translucent partners and support glass bar showcasing official Italray and Hermann logos alongside "ENGINEERED LIFECYCLE: 24/7 Technical Service & Support".
+  - Passed TypeScript compilation, 46 tests, and full production build.

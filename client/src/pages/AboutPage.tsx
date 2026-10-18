@@ -28,6 +28,11 @@ const partnerLogos: Record<string, string> = {
   hermann: "/manus-storage/hermann-logo_7f4be603.png",
 };
 
+const aboutHeroProducts = {
+  cArm: "/manus-storage/IMG_40606_b52f1c1b.webp",
+  surgicalTower: "/manus-storage/WhatsAppImage2026-10-12at10.49.48AM-1_4233a7de.jpeg",
+};
+
 const fallback = {
   eyebrow: "ABOUT SPM",
   title: "Engineering continuity for critical imaging systems.",
@@ -67,7 +72,7 @@ const fallbackData: AboutData = {
   ],
   missionBullets: [
     "Keep critical imaging systems clinically ready and operational.",
-    "Connect equipment supply with certified service, parts and training.",
+    "Connect equipment supply with engineering, parts, training and evidence.",
     "Build lasting value through integrity, collaboration and measurable follow-through.",
   ],
   visionBullets: [
@@ -144,35 +149,72 @@ export default function AboutPage() {
         url="/about"
       />
       <main>
-        <section className="relative isolate overflow-hidden bg-[#061f2b] text-white">
-          <img src={heroImage} alt="C-Arm medical imaging system in a modern operating room" loading="eager" decoding="async" className="absolute inset-0 h-full w-full object-cover object-[62%_center]" />
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,31,43,.98)_0%,rgba(6,31,43,.86)_34%,rgba(6,31,43,.34)_66%,rgba(6,31,43,.12)_100%)]" aria-hidden="true" />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,31,43,.36)_0%,transparent_38%,rgba(6,31,43,.78)_100%)]" aria-hidden="true" />
-          <div className="relative z-10 mx-auto grid min-h-[640px] max-w-[1280px] gap-10 px-5 py-20 lg:grid-cols-[.92fr_1.08fr] lg:items-center lg:px-8 lg:py-28">
-            <div className="max-w-2xl">
-              <p className="text-xs font-bold uppercase tracking-[.22em] text-[#8be0d5]">{page.eyebrow}</p>
-              <h1 className="mt-5 max-w-2xl text-5xl font-semibold leading-[1.02] tracking-[-.05em] text-white sm:text-6xl">{page.title}</h1>
-              <p className="mt-7 max-w-xl text-lg leading-8 text-white/78">{page.intro}</p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Button size="lg" className="bg-[#c2410c] text-white shadow-lg shadow-[#c2410c]/20 hover:bg-[#c2410c]" asChild><Link href="/contact">Contact SPM <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button>
-                <Button size="lg" variant="outline" className="border-white/45 bg-white/5 text-white hover:bg-white/15" asChild><Link href="/request-a-quote">Request a Quote <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button>
+        <section className="relative isolate overflow-hidden bg-[#062a35] text-white">
+          <div className="absolute inset-y-0 left-0 hidden w-[52%] bg-[#062a35] lg:block" aria-hidden="true" />
+          <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(139,224,213,.14)_1px,transparent_1px),linear-gradient(90deg,rgba(139,224,213,.14)_1px,transparent_1px)] [background-size:56px_56px]" aria-hidden="true" />
+          <div className="absolute inset-y-0 right-0 w-full lg:w-[57%]" aria-hidden="true">
+            <img src={heroImage} alt="" loading="eager" decoding="async" className="h-full w-full object-cover object-[64%_center] opacity-90" />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,#062a35_0%,rgba(6,42,53,.9)_13%,rgba(6,42,53,.25)_52%,rgba(6,42,53,.12)_100%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,42,53,.18)_0%,transparent_54%,rgba(6,42,53,.72)_100%)]" />
+          </div>
+
+          <div className="relative z-10 mx-auto grid min-h-[760px] max-w-[1440px] gap-12 px-5 pb-32 pt-20 sm:px-8 lg:grid-cols-[.86fr_1.14fr] lg:items-center lg:px-12 lg:pb-36 lg:pt-24">
+            <div className="max-w-[620px]">
+              <p className="inline-flex items-center gap-2 rounded-full border border-[#8be0d5]/30 bg-[#8be0d5]/10 px-4 py-2 text-xs font-bold uppercase tracking-[.18em] text-[#9be8dc]"><span className="h-2 w-2 rounded-full bg-[#67e5c0] shadow-[0_0_0_5px_rgba(103,229,192,.12)]" /> Pioneering clinical continuity</p>
+              <p className="mt-8 text-xs font-bold uppercase tracking-[.22em] text-[#8be0d5]">{page.eyebrow}</p>
+              <h1 className="mt-4 max-w-2xl text-5xl font-semibold leading-[.98] tracking-[-.055em] text-white sm:text-6xl lg:text-[4.4rem]">{page.title}</h1>
+              <p className="mt-7 max-w-xl text-lg leading-8 text-white/75">{page.intro}</p>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <Button size="lg" className="bg-[#c2410c] text-white shadow-lg shadow-[#c2410c]/25 hover:bg-[#d04b10]" asChild><Link href="/contact">Contact SPM <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button>
+                <Button size="lg" variant="outline" className="border-white/45 bg-white/[.04] text-white hover:bg-white/15" asChild><Link href="/request-a-quote">Request a Quote <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button>
               </div>
-              <div className="mt-9 flex flex-wrap gap-x-7 gap-y-3 text-sm font-semibold text-white/75">
+              <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm font-semibold text-white/75">
                 <span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-[#8be0d5]" /> Established in 2019</span>
                 <span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-[#8be0d5]" /> Egypt & selected MENA markets</span>
               </div>
             </div>
-            <div className="flex justify-end lg:pr-4">
-              <div className="max-w-sm rounded-[28px] border border-white/20 bg-[#061f2b]/55 p-6 shadow-2xl backdrop-blur-md sm:p-7">
-                <p className="text-xs font-extrabold uppercase tracking-[.18em] text-[#8be0d5]">Engineering in practice</p>
-                <p className="mt-3 text-2xl font-semibold leading-tight">One accountable model from system selection to lifecycle support.</p>
-                <p className="mt-4 text-sm leading-6 text-white/72">SPM brings together medical imaging expertise, technical service, genuine parts and trusted technology relationships.</p>
-                <div className="mt-6 flex items-center gap-4 border-t border-white/15 pt-5">
-                  <img src={partnerLogos.italray} alt="Italray official partner logo" loading="lazy" decoding="async" className="max-h-8 w-auto max-w-[86px] object-contain brightness-0 invert opacity-90" />
-                  <span className="text-sm font-bold text-white/45" aria-hidden="true">+</span>
-                  <img src={partnerLogos.hermann} alt="Hermann Medizintechnik official partner logo" loading="lazy" decoding="async" className="max-h-8 w-auto max-w-[124px] object-contain brightness-0 invert opacity-90" />
+
+            <div className="relative min-h-[460px] sm:min-h-[540px] lg:min-h-[630px]">
+              {/* Ambient Blueprint Frame */}
+              <div className="absolute inset-0 rounded-[2.5rem] border border-white/15 bg-[#062a35]/35 shadow-2xl backdrop-blur-[2px]" aria-hidden="true" />
+
+              {/* Italray C-Arm Hero Product in clean studio display */}
+              <div className="absolute right-[2%] top-[4%] z-10 flex h-[88%] w-[62%] flex-col items-center justify-center overflow-hidden rounded-[2rem] border border-white/30 bg-white p-3 shadow-2xl sm:p-5">
+                <img src={aboutHeroProducts.cArm} alt="Mobile C-Arm medical imaging system" loading="eager" decoding="async" className="h-full w-full object-contain" />
+                <div className="absolute left-4 top-4 rounded-xl border border-[#8be0d5]/50 bg-[#062a35]/90 px-3 py-1.5 text-xs font-bold text-white shadow-lg backdrop-blur-md sm:left-6 sm:top-6">
+                  <span className="text-[#8be0d5]">02.</span> Italray C-Arm (FP21 &amp; FP30)
                 </div>
               </div>
+
+              {/* Hermann Surgical & Endoscopy Tower in matching clean studio display */}
+              <div className="absolute bottom-[2%] left-[2%] z-20 flex h-[64%] w-[42%] flex-col items-center justify-center overflow-hidden rounded-[1.8rem] border border-white/35 bg-white p-2.5 shadow-2xl sm:p-4">
+                <img src={aboutHeroProducts.surgicalTower} alt="Surgical and endoscopy tower system" loading="lazy" decoding="async" className="h-full w-full object-contain" />
+                <div className="absolute -bottom-2 left-3 rounded-xl border border-[#8be0d5]/50 bg-[#062a35]/95 px-3 py-1.5 text-xs font-bold text-white shadow-lg backdrop-blur-md">
+                  <span className="text-[#8be0d5]">01.</span> Hermann Surgical &amp; Endoscopy
+                </div>
+              </div>
+
+              {/* Workstation / Continuity Tag */}
+              <div className="absolute left-[6%] top-[12%] z-20 hidden rounded-xl border border-[#8be0d5]/35 bg-[#062a35]/85 px-3.5 py-2 text-xs font-semibold text-white shadow-xl backdrop-blur-md sm:block">
+                <span className="text-[#8be0d5]">03.</span> Lifecycle &amp; Workstation Support
+              </div>
+            </div>
+          </div>
+
+          <div className="absolute bottom-5 left-5 right-5 z-30 rounded-2xl border border-white/25 bg-white/[.16] px-5 py-4 shadow-2xl backdrop-blur-xl sm:bottom-7 sm:left-8 sm:right-8 sm:px-7 lg:left-12 lg:right-12">
+            <div className="flex flex-col gap-4 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 sm:gap-x-6">
+                <span className="text-xs font-bold uppercase tracking-[.16em] text-white/70">Authorized Partners:</span>
+                <div className="flex items-center gap-3 rounded-xl bg-white/90 px-3.5 py-1.5 shadow-sm">
+                  <img src={partnerLogos.italray} alt="Italray official partner logo" loading="lazy" decoding="async" className="h-6 w-auto max-w-[85px] object-contain" />
+                </div>
+                <span className="text-xs font-bold text-white/55" aria-hidden="true">&amp;</span>
+                <div className="flex items-center gap-3 rounded-xl bg-white/90 px-3.5 py-1.5 shadow-sm">
+                  <img src={partnerLogos.hermann} alt="Hermann Medizintechnik official partner logo" loading="lazy" decoding="async" className="h-6 w-auto max-w-[110px] object-contain" />
+                </div>
+              </div>
+              <div className="hidden h-8 w-px bg-white/25 sm:block" aria-hidden="true" />
+              <p className="text-sm font-semibold text-white/90"><span className="font-extrabold text-[#a5eee1]">ENGINEERED LIFECYCLE:</span> 24/7 Technical Service &amp; Support</p>
             </div>
           </div>
         </section>

@@ -15,9 +15,12 @@ const caller = appRouter.createCaller({
 describe("About presentation", () => {
   it("uses the homepage Hero visual, lifecycle message and audience paths", () => {
     expect(aboutSource).toContain("/manus-storage/spm-about-xray-carm-hero_d720db48.jpg");
+    expect(aboutSource).toContain("/manus-storage/IMG_40606_b52f1c1b.webp");
+    expect(aboutSource).toContain("/manus-storage/WhatsAppImage2026-10-12at10.49.48AM-1_4233a7de.jpeg");
+    expect(aboutSource).toContain("Pioneering clinical continuity");
     expect(aboutSource).toContain('value: "48h"');
     expect(aboutSource).toContain('label: "Maximum Response"');
-    expect(aboutSource).toContain("C-Arm medical imaging system in a modern operating room");
+    expect(aboutSource).toContain("Mobile C-Arm medical imaging system");
     expect(aboutSource).toContain("Engineering continuity for critical imaging systems.");
     expect(aboutSource).toContain('id="who-we-serve"');
     expect(aboutSource).toContain("Systems");
