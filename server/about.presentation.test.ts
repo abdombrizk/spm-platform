@@ -14,10 +14,10 @@ const caller = appRouter.createCaller({
 
 describe("About presentation", () => {
   it("uses the homepage Hero visual, lifecycle message and audience paths", () => {
-    expect(aboutSource).toContain("/manus-storage/spm-hero-exact-half-split_1a839b26.webp");
+    expect(aboutSource).toContain("/manus-storage/spm-about-xray-carm-hero_d720db48.jpg");
     expect(aboutSource).toContain('value: "48h"');
     expect(aboutSource).toContain('label: "Maximum Response"');
-    expect(aboutSource).toContain("Italray C-Arm and surgical imaging equipment in a modern operating room");
+    expect(aboutSource).toContain("C-Arm medical imaging system in a modern operating room");
     expect(aboutSource).toContain("Engineering continuity for critical imaging systems.");
     expect(aboutSource).toContain('id="who-we-serve"');
     expect(aboutSource).toContain("Systems");
@@ -31,7 +31,7 @@ describe("About presentation", () => {
   it("publishes the same Hero and response language through the public CMS", async () => {
     const page = await caller.cms.publishedBySlug({ slug: "about" });
     expect(page).not.toBeNull();
-    expect((page!.data as any).heroImage).toBe("/manus-storage/spm-hero-exact-half-split_1a839b26.webp");
+    expect((page!.data as any).heroImage).toBe("/manus-storage/spm-about-xray-carm-hero_d720db48.jpg");
     expect((page!.data as any).stats).toEqual(expect.arrayContaining([
       expect.objectContaining({ value: "48h", label: "Maximum Response" }),
     ]));

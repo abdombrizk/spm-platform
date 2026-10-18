@@ -152,3 +152,10 @@ The public product preview and build/test suite are available for verification. 
   - Cleaned unverified ISO/license numbers from public display until official copies are uploaded.
   - Added Spare Parts shortcut to closing CTA and explicit About image to Open Graph metadata.
   - Verified with full TypeScript check, 46 passed tests, production build, and live browser verification.
+- [x] Executed Hero Visual Redesign Pass:
+  - Transformed About Hero into a full-width background layout using the managed C-Arm clinical imagery (`spm-about-xray-carm-hero_d720db48.jpg`).
+  - Implemented cinematic dark directional gradients for optimal legibility while keeping the medical imaging system clearly visible.
+  - Added a frosted glass "Engineering in practice" panel displaying both Italray and Hermann agency badges with transparent high-contrast marks.
+  - Streamlined Hero introductory copy for lighter visual scanning.
+  - Relocated the 4-metric statistics rail to sit cleanly directly underneath the Hero, followed by the sticky contextual navigation.
+  - Verified responsive rendering, TypeScript compilation, 46 regression tests, production build, and live browser screenshots.

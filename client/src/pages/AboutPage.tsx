@@ -42,7 +42,7 @@ const fallback = {
   geography:
     "We support customers across Egypt and selected MENA markets, with service operations spanning 24 of Egypt's 27 governorates—from Alexandria to Aswan.",
   address: "16 Ahmed Hassan El Zyaat Street, 7th District, Nasr City, Cairo, Egypt",
-  heroImage: "/manus-storage/spm-hero-exact-half-split_1a839b26.webp",
+  heroImage: "/manus-storage/spm-about-xray-carm-hero_d720db48.jpg",
   profileDocument: "",
   careersVisible: "true",
 };
@@ -144,42 +144,43 @@ export default function AboutPage() {
         url="/about"
       />
       <main>
-        <section className="relative overflow-hidden bg-[#eaf4fa]">
-          <div className="mx-auto grid max-w-[1280px] gap-12 px-5 py-16 lg:grid-cols-[1.02fr_.98fr] lg:items-center lg:px-8 lg:py-24">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[.22em] text-[#0f6fae]">{page.eyebrow}</p>
-              <h1 className="mt-5 max-w-3xl text-5xl font-semibold leading-[1.02] tracking-[-.05em] text-[#0a4052] sm:text-6xl">{page.title}</h1>
-              <p className="mt-7 max-w-2xl text-lg leading-8 text-[#536474]">{page.intro}</p>
+        <section className="relative isolate overflow-hidden bg-[#061f2b] text-white">
+          <img src={heroImage} alt="C-Arm medical imaging system in a modern operating room" loading="eager" decoding="async" className="absolute inset-0 h-full w-full object-cover object-[62%_center]" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,31,43,.98)_0%,rgba(6,31,43,.86)_34%,rgba(6,31,43,.34)_66%,rgba(6,31,43,.12)_100%)]" aria-hidden="true" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,31,43,.36)_0%,transparent_38%,rgba(6,31,43,.78)_100%)]" aria-hidden="true" />
+          <div className="relative z-10 mx-auto grid min-h-[640px] max-w-[1280px] gap-10 px-5 py-20 lg:grid-cols-[.92fr_1.08fr] lg:items-center lg:px-8 lg:py-28">
+            <div className="max-w-2xl">
+              <p className="text-xs font-bold uppercase tracking-[.22em] text-[#8be0d5]">{page.eyebrow}</p>
+              <h1 className="mt-5 max-w-2xl text-5xl font-semibold leading-[1.02] tracking-[-.05em] text-white sm:text-6xl">{page.title}</h1>
+              <p className="mt-7 max-w-xl text-lg leading-8 text-white/78">{page.intro}</p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Button size="lg" className="bg-[#c2410c] text-white hover:bg-[#c2410c]" asChild><Link href="/contact">Contact SPM <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button>
-                <Button size="lg" variant="outline" className="border-[#0f6fae] text-[#0f6fae] hover:bg-white" asChild><Link href="/request-a-quote">Request a Quote <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button>
+                <Button size="lg" className="bg-[#c2410c] text-white shadow-lg shadow-[#c2410c]/20 hover:bg-[#c2410c]" asChild><Link href="/contact">Contact SPM <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button>
+                <Button size="lg" variant="outline" className="border-white/45 bg-white/5 text-white hover:bg-white/15" asChild><Link href="/request-a-quote">Request a Quote <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button>
               </div>
-              <div className="mt-9 flex flex-wrap gap-x-7 gap-y-3 text-sm font-semibold text-[#536474]">
-                <span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-[#1e8ac4]" /> Established in 2019</span>
-                <span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-[#1e8ac4]" /> Egypt & selected MENA markets</span>
+              <div className="mt-9 flex flex-wrap gap-x-7 gap-y-3 text-sm font-semibold text-white/75">
+                <span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-[#8be0d5]" /> Established in 2019</span>
+                <span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-[#8be0d5]" /> Egypt & selected MENA markets</span>
               </div>
             </div>
-            <div className="relative min-h-[390px] overflow-hidden rounded-[30px] bg-[#0a4052] shadow-2xl shadow-[#0a4052]/20 lg:min-h-[520px]">
-              <img src={heroImage} alt="Italray C-Arm and surgical imaging equipment in a modern operating room" loading="eager" decoding="async" className="absolute inset-0 h-full w-full object-cover object-[62%_center] transition duration-700 hover:scale-[1.02]" />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#061f2b]/45 via-[#061f2b]/10 to-transparent" />
-              <div className="absolute right-5 top-5 sm:right-7 sm:top-7">
-                <div className="rounded-2xl border border-white/20 bg-[#061f2b]/80 p-3 shadow-xl backdrop-blur-md">
-                  <p className="text-[9px] font-extrabold uppercase tracking-[.18em] text-[#8be0d5]">Technology portfolios</p>
-                  <div className="mt-2 flex items-center gap-2">
-                    <div className="flex h-9 w-[92px] items-center justify-center rounded-lg bg-white px-2"><img src={partnerLogos.italray} alt="Italray official partner logo" loading="lazy" decoding="async" className="max-h-6 w-auto max-w-full object-contain" /></div>
-                    <span className="text-sm font-bold text-white/50" aria-hidden="true">+</span>
-                    <div className="flex h-9 w-[92px] items-center justify-center rounded-lg bg-white px-2"><img src={partnerLogos.hermann} alt="Hermann Medizintechnik official partner logo" loading="lazy" decoding="async" className="max-h-6 w-auto max-w-full object-contain" /></div>
-                  </div>
-                </div>
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-7">
-                <div className="max-w-[78%] rounded-2xl border border-white/20 bg-[#061f2b]/75 p-5 text-white backdrop-blur-md">
-                  <p className="text-xs font-bold uppercase tracking-[.18em] text-[#8be0d5]">Engineered lifecycle support</p>
-                  <p className="mt-2 text-xl font-semibold">Maintenance, technology and trusted partner support in one operating model.</p>
-                  <p className="mt-2 text-sm leading-6 text-white/75">SPM keeps Italray and Hermann systems supported through responsive engineering, genuine parts and practical lifecycle guidance.</p>
+            <div className="flex justify-end lg:pr-4">
+              <div className="max-w-sm rounded-[28px] border border-white/20 bg-[#061f2b]/55 p-6 shadow-2xl backdrop-blur-md sm:p-7">
+                <p className="text-xs font-extrabold uppercase tracking-[.18em] text-[#8be0d5]">Engineering in practice</p>
+                <p className="mt-3 text-2xl font-semibold leading-tight">One accountable model from system selection to lifecycle support.</p>
+                <p className="mt-4 text-sm leading-6 text-white/72">SPM brings together medical imaging expertise, technical service, genuine parts and trusted technology relationships.</p>
+                <div className="mt-6 flex items-center gap-4 border-t border-white/15 pt-5">
+                  <img src={partnerLogos.italray} alt="Italray official partner logo" loading="lazy" decoding="async" className="max-h-8 w-auto max-w-[86px] object-contain brightness-0 invert opacity-90" />
+                  <span className="text-sm font-bold text-white/45" aria-hidden="true">+</span>
+                  <img src={partnerLogos.hermann} alt="Hermann Medizintechnik official partner logo" loading="lazy" decoding="async" className="max-h-8 w-auto max-w-[124px] object-contain brightness-0 invert opacity-90" />
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+
+        <section id="impact" className="relative scroll-mt-16 overflow-hidden border-b border-[#dce7eb] bg-white py-10">
+          <img src="/manus-storage/spm-logo-cropped_7b519adc.webp" alt="" aria-hidden="true" className="pointer-events-none absolute -right-20 top-1/2 w-[420px] -translate-y-1/2 opacity-[0.035]" />
+          <div className="relative z-10 mx-auto grid max-w-[1280px] gap-4 px-5 sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
+            {page.stats?.map(stat => <div key={stat.label} className="rounded-2xl border border-[#e5edf1] bg-[#fafcfd]/95 p-5"><p className="text-3xl font-extrabold tracking-tight text-[#0a4052]">{stat.value}</p><p className="mt-1 text-sm font-bold text-[#1e293b]">{stat.label}</p><p className="mt-1 text-xs text-[#64748b]">{stat.description}</p></div>)}
           </div>
         </section>
 
@@ -188,13 +189,6 @@ export default function AboutPage() {
             {[['#who-we-are', 'Who we are'], ['#who-we-serve', 'Who we serve'], ['#capabilities', 'Capabilities'], ['#how-we-work', 'How we work'], ['#partnerships', 'Partnerships'], ['#quality', 'Quality']].map(([href, label]) => <a key={href} href={href} className="shrink-0 rounded-full px-3.5 py-2 text-xs font-bold text-[#536474] transition hover:bg-[#eaf4fa] hover:text-[#0a4052] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6fae]">{label}</a>)}
           </div>
         </nav>
-
-        <section id="impact" className="relative scroll-mt-16 overflow-hidden border-b border-[#dce7eb] bg-white py-10">
-          <img src="/manus-storage/spm-logo-cropped_7b519adc.webp" alt="" aria-hidden="true" className="pointer-events-none absolute -right-20 top-1/2 w-[420px] -translate-y-1/2 opacity-[0.035]" />
-          <div className="relative z-10 mx-auto grid max-w-[1280px] gap-4 px-5 sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
-            {page.stats?.map(stat => <div key={stat.label} className="rounded-2xl border border-[#e5edf1] bg-[#fafcfd]/95 p-5"><p className="text-3xl font-extrabold tracking-tight text-[#0a4052]">{stat.value}</p><p className="mt-1 text-sm font-bold text-[#1e293b]">{stat.label}</p><p className="mt-1 text-xs text-[#64748b]">{stat.description}</p></div>)}
-          </div>
-        </section>
 
         <section id="who-we-are" className="mx-auto scroll-mt-16 max-w-[1240px] px-5 py-20 lg:px-8 lg:py-24">
           <div className="grid gap-12 lg:grid-cols-[.82fr_1.18fr] lg:items-start">
