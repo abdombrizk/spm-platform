@@ -145,11 +145,11 @@ export default function AboutPage() {
       />
       <main>
         <section className="relative isolate overflow-hidden bg-[#062a35] text-white">
-          <div className="absolute inset-y-0 left-0 hidden w-[52%] bg-[#062a35] lg:block" aria-hidden="true" />
+          <div className="absolute inset-y-0 left-0 hidden w-[40%] bg-[#062a35] lg:block" aria-hidden="true" />
           <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(139,224,213,.14)_1px,transparent_1px),linear-gradient(90deg,rgba(139,224,213,.14)_1px,transparent_1px)] [background-size:56px_56px]" aria-hidden="true" />
-          <div className="absolute inset-y-0 right-0 w-full lg:w-[57%]" aria-hidden="true">
+          <div className="absolute inset-y-0 right-0 w-full lg:w-[75%]" aria-hidden="true">
             <img src={heroImage} alt="" loading="eager" decoding="async" className="h-full w-full object-cover object-[64%_center] opacity-90" />
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,#062a35_0%,rgba(6,42,53,.9)_13%,rgba(6,42,53,.25)_52%,rgba(6,42,53,.12)_100%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,#062a35_0%,rgba(6,42,53,.94)_17%,rgba(6,42,53,.44)_43%,rgba(6,42,53,.12)_76%,rgba(6,42,53,.08)_100%)]" />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,42,53,.18)_0%,transparent_54%,rgba(6,42,53,.72)_100%)]" />
           </div>
 
@@ -169,9 +169,8 @@ export default function AboutPage() {
               </div>
             </div>
 
-            <div className="relative min-h-[460px] sm:min-h-[540px] lg:min-h-[630px]">
-              {/* Reference-style clinical stage: the supplied operating-room image remains fully visible. */}
-              <div className="absolute inset-0 rounded-[2.5rem] border border-white/20 bg-white/[.04] shadow-2xl backdrop-blur-[1px]" aria-hidden="true" />
+            <div className="relative pointer-events-none min-h-[460px] sm:min-h-[540px] lg:min-h-[630px]">
+              {/* Subtle clinical tags matching reference positions */}
               <div className="absolute left-[7%] top-[15%] z-20 hidden rounded-xl border border-[#8be0d5]/45 bg-[#062a35]/85 px-3.5 py-2 text-xs font-semibold text-white shadow-xl backdrop-blur-md sm:block">
                 <span className="text-[#8be0d5]">01.</span> Hermann Surgical &amp; Endoscopy
               </div>
@@ -184,28 +183,24 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="absolute bottom-5 left-5 right-5 z-30 rounded-2xl border border-white/25 bg-white/[.16] px-5 py-4 shadow-2xl backdrop-blur-xl sm:bottom-7 sm:left-8 sm:right-8 sm:px-7 lg:left-12 lg:right-12">
+          <div className="absolute bottom-4 left-4 right-4 z-30 rounded-2xl border border-white/25 bg-white/[.16] px-5 py-4 shadow-2xl backdrop-blur-xl sm:bottom-6 sm:left-8 sm:right-8 sm:px-7 lg:left-12 lg:right-12">
             <div className="flex flex-col gap-4 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-6">
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2 sm:gap-x-6">
                 <span className="text-xs font-bold uppercase tracking-[.16em] text-white/70">Authorized Partners:</span>
-                <div className="flex items-center gap-3 rounded-xl bg-white/90 px-3.5 py-1.5 shadow-sm">
-                  <img src={partnerLogos.italray} alt="Italray official partner logo" loading="lazy" decoding="async" className="h-6 w-auto max-w-[85px] object-contain" />
+                <div className="flex h-9 items-center rounded-lg bg-white/95 px-3 py-1 shadow-sm">
+                  <img src={partnerLogos.italray} alt="Italray official partner logo" loading="lazy" decoding="async" className="h-6 w-auto max-w-[95px] object-contain" />
                 </div>
                 <span className="text-xs font-bold text-white/55" aria-hidden="true">&amp;</span>
-                <div className="flex items-center gap-3 rounded-xl bg-white/90 px-3.5 py-1.5 shadow-sm">
-                  <img src={partnerLogos.hermann} alt="Hermann Medizintechnik official partner logo" loading="lazy" decoding="async" className="h-6 w-auto max-w-[110px] object-contain" />
+                <div className="flex h-9 items-center rounded-lg bg-white/95 px-3 py-1 shadow-sm">
+                  <img src={partnerLogos.hermann} alt="Hermann Medizintechnik official partner logo" loading="lazy" decoding="async" className="h-6 w-auto max-w-[120px] object-contain" />
                 </div>
               </div>
               <div className="hidden h-8 w-px bg-white/25 sm:block" aria-hidden="true" />
               <p className="text-sm font-semibold text-white/90"><span className="font-extrabold text-[#a5eee1]">ENGINEERED LIFECYCLE:</span> 24/7 Technical Service &amp; Support</p>
             </div>
-          </div>
-        </section>
-
-        <section id="impact" className="relative scroll-mt-16 overflow-hidden border-b border-[#dce7eb] bg-white py-10">
-          <img src="/manus-storage/spm-logo-cropped_7b519adc.webp" alt="" aria-hidden="true" className="pointer-events-none absolute -right-20 top-1/2 w-[420px] -translate-y-1/2 opacity-[0.035]" />
-          <div className="relative z-10 mx-auto grid max-w-[1280px] gap-4 px-5 sm:grid-cols-2 lg:grid-cols-4 lg:px-8">
-            {page.stats?.map(stat => <div key={stat.label} className="rounded-2xl border border-[#e5edf1] bg-[#fafcfd]/95 p-5"><p className="text-3xl font-extrabold tracking-tight text-[#0a4052]">{stat.value}</p><p className="mt-1 text-sm font-bold text-[#1e293b]">{stat.label}</p><p className="mt-1 text-xs text-[#64748b]">{stat.description}</p></div>)}
+            <div className="mt-4 grid grid-cols-2 gap-x-5 gap-y-3 border-t border-white/20 pt-3 sm:grid-cols-4 sm:gap-x-6">
+              {page.stats?.map(stat => <div key={stat.label} className="min-w-0"><p className="text-xl font-extrabold tracking-tight text-white sm:text-2xl">{stat.value}</p><p className="mt-0.5 text-xs font-bold text-white/90">{stat.label}</p><p className="mt-0.5 hidden text-[11px] leading-4 text-white/65 sm:block">{stat.description}</p></div>)}
+            </div>
           </div>
         </section>
 

@@ -176,3 +176,9 @@ The public product preview and build/test suite are available for verification. 
   - Added subtle floating reference tags: "01. Hermann Surgical & Endoscopy", "02. Italray Mobile C-Arm System", and "03. Mobile Workstation & Viewing Monitor".
   - Retained bottom glass bar with Authorized Partner logos and 24/7 technical service commitment.
   - Passed TypeScript check, all presentation tests, and full production build.
+- [x] Executed visual feedback adjustments on About Hero:
+  - Widened the clinical background stage to occupy 3/4 width (`lg:w-[75%]`) with smooth directional gradients, giving the operating suite visual greater breathing room.
+  - Removed internal decorative boundary frame so the clinical scene is unobstructed.
+  - Merged the 4-metric statistics rail directly into the bottom glass bar under Hero, creating a cohesive, compact trust and partner footer.
+  - Refined partner badges with clean white rounded pills for crisp, high-contrast visibility of Italray and Hermann official marks.
+  - Successfully passed TypeScript check, Vitest presentation tests, and full production build.
