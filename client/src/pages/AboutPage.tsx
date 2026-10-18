@@ -189,18 +189,19 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <div className="absolute bottom-4 left-4 right-4 z-30 mx-auto max-w-[1180px] rounded-xl border border-white/25 bg-[#062a35]/65 px-4 py-3 shadow-2xl backdrop-blur-xl sm:bottom-6 sm:left-8 sm:right-8 sm:px-6 lg:left-12 lg:right-12">
-            <div className="flex flex-col gap-3 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-5">
+        </section>
+
+        <section id="snapshot" className="border-b border-[#dce7eb] bg-[#062a35] px-4 py-5 sm:px-8 lg:px-12">
+          <div className="mx-auto max-w-[1180px] rounded-2xl border border-white/20 bg-white/[.12] px-4 py-4 shadow-xl backdrop-blur-xl sm:px-6">
+            <div className="flex flex-col gap-4 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-5">
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2 sm:gap-x-5">
                 <span className="text-xs font-bold uppercase tracking-[.16em] text-white/70">Authorized Partners:</span>
-                <img src={partnerLogos.italray} alt="Italray official partner logo" loading="lazy" decoding="async" className="h-10 w-auto max-w-[145px] object-contain" />
+                <img src={partnerLogos.italray} alt="Italray official partner logo" loading="lazy" decoding="async" className="h-10 w-[145px] object-contain object-left" />
                 <span className="text-xs font-bold text-white/55" aria-hidden="true">&amp;</span>
-                <img src={partnerLogos.hermann} alt="Hermann Medizintechnik official partner logo" loading="lazy" decoding="async" className="h-10 w-auto max-w-[155px] object-contain" />
+                <img src={partnerLogos.hermann} alt="Hermann Medizintechnik official partner logo" loading="lazy" decoding="async" className="h-10 w-[145px] object-contain object-left" />
               </div>
-              <div className="hidden h-7 w-px bg-white/25 sm:block" aria-hidden="true" />
-              <p className="text-sm font-semibold text-white/90"><span className="font-extrabold text-[#a5eee1]">ENGINEERED LIFECYCLE:</span> 24/7 Technical Service &amp; Support</p>
             </div>
-            <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 border-t border-white/20 pt-2.5 sm:grid-cols-4 sm:gap-x-5">
+            <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 border-t border-white/20 pt-3 sm:grid-cols-4 sm:gap-x-5">
               {page.stats?.map(stat => <div key={stat.label} className="min-w-0"><p className="text-lg font-extrabold tracking-tight text-white sm:text-xl">{stat.value}</p><p className="mt-0.5 text-[11px] font-bold text-white/90 sm:text-xs">{stat.label}</p><p className="mt-0.5 hidden text-[10px] leading-4 text-white/65 sm:block">{stat.description}</p></div>)}
             </div>
           </div>
@@ -290,8 +291,8 @@ export default function AboutPage() {
                   <article key={partner.name} className="group relative overflow-hidden rounded-3xl border border-[#dce7eb] bg-white p-7 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-[#0a4052] hover:shadow-xl sm:p-9">
                     <div className="absolute right-0 top-0 h-28 w-28 rounded-bl-[72px] bg-[#eaf4fa] transition-transform duration-500 group-hover:scale-125" aria-hidden="true" />
                     <div className="relative flex items-start justify-between gap-5">
-                      <div className="flex h-20 min-w-[150px] items-center rounded-2xl border border-[#e5edf1] bg-[#fafcfd] px-5">
-                        {logoUrl ? <img src={logoUrl} alt={`${partner.name} official logo`} loading="lazy" decoding="async" className="max-h-12 max-w-[190px] object-contain" /> : <span className="font-bold text-[#0f6fae]">{partner.name}</span>}
+                      <div className="flex h-20 w-[190px] items-center rounded-2xl border border-[#e5edf1] bg-[#fafcfd] px-5">
+                        {logoUrl ? <img src={logoUrl} alt={`${partner.name} official logo`} loading="lazy" decoding="async" className="h-12 w-[145px] object-contain object-left" /> : <span className="font-bold text-[#0f6fae]">{partner.name}</span>}
                       </div>
                       <span className="mt-1 rounded-full bg-[#eaf4fa] px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-[#0f6fae]">0{index + 1}</span>
                     </div>

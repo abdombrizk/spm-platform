@@ -193,3 +193,8 @@ The public product preview and build/test suite are available for verification. 
   - Added "Engineering in Practice" visual gallery section with 6 high-definition clinical, field-engineering, and surgical imagery cards.
   - Added dedicated contextual anchor jump ("In practice") in sticky navigation.
   - Verified with full test suite, TypeScript check, and production build.
+- [x] Relocated Snapshot bar beneath Hero section and unified partner logo sizes:
+  - Moved the Snapshot and partner indicators bar to sit directly below Hero, completely freeing the bottom of the clinical image.
+  - Removed redundant inline lifecycle tagline from the partner bar.
+  - Standardized Italray and Hermann partner logos to identical optical sizes with clean left-alignment across both the Snapshot bar and the Strategic Partnerships cards.
+  - Passed TypeScript check, all presentation tests, and full production build.
