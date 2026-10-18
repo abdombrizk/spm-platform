@@ -39,10 +39,10 @@ describe("homepage service shortcuts and trust badges", () => {
     expect(homeSource).toContain("Medical imaging. Surgical technology. One team.");
     expect(homeSource).toContain("onTouchStart={handleHeroTouchStart}");
     expect(homeSource).toContain("onTouchEnd={handleHeroTouchEnd}");
-    expect(homeSource).toContain("Play Hero slideshow");
-    expect(homeSource).toContain("Pause Hero slideshow");
-    expect(homeSource).toContain('aria-label="C-Arm feature points"');
-    expect(homeSource).toContain("Flat-panel detector");
+    expect(homeSource).not.toContain("Play Hero slideshow");
+    expect(homeSource).not.toContain("Pause Hero slideshow");
+    expect(homeSource).not.toContain('aria-label="C-Arm feature points"');
+    expect(homeSource).not.toContain("Flat-panel detector");
     expect(homeSource).toContain("content[`${prefix}.image`]" );
     expect(homeSource).not.toContain("24/27 governorates coverage");
     expect(homeSource).not.toContain("Make every technical next step clear, traceable & verified.");
@@ -79,7 +79,10 @@ describe("homepage service shortcuts and trust badges", () => {
     expect(homeSource).toContain('aria-label="Hermann surgical technology"');
     expect(homeSource).toContain('const hermannGallerySlides = [');
     expect((homeSource.match(/hermann-gallery-[a-z-]+_[a-f0-9]+\.jpg/g) ?? [])).toHaveLength(6);
-    expect(homeSource).toContain('role="tablist" aria-label="Hermann gallery images"');
+    expect(homeSource).not.toContain('role="tablist" aria-label="Hermann gallery images"');
+    expect(homeSource).not.toContain("Show Hermann image");
+    expect(homeSource).toContain('aria-label="Previous Hermann gallery image"');
+    expect(homeSource).toContain('aria-label="Next Hermann gallery image"');
     expect(homeSource).toContain("setHermannSlide(current => (current + 1) % hermannGallerySlides.length)");
     expect(homeSource).toContain("onTouchStart={handleHermannTouchStart}");
     expect(homeSource).toContain("onTouchEnd={handleHermannTouchEnd}");
@@ -97,7 +100,7 @@ describe("homepage service shortcuts and trust badges", () => {
   it("keeps Home controls touch-friendly and resilient for reduced motion", () => {
     expect(homeSource).toContain('role="region"');
     expect(homeSource).toContain('aria-roledescription="carousel"');
-    expect(homeSource).toContain("className=\"inline-flex h-11 w-11 items-center justify-center rounded-full");
+    expect(homeSource).toContain('aria-label="Previous Hermann gallery image"');
     expect(homeSource).toContain('loading="lazy"');
     expect(homeSource).toContain('aria-live="polite"');
     expect(homeSource).toContain("eventsPageQuery.isError");

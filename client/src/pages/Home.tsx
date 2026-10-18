@@ -9,8 +9,6 @@ import {
   ChevronRight,
   Layers,
   MapPin,
-  Pause,
-  Play,
   Wrench,
   Sparkles,
   PhoneCall,
@@ -307,20 +305,13 @@ export default function Home() {
   const [hermannAutoplayPaused, setHermannAutoplayPaused] = useState(false);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [heroSlide, setHeroSlide] = useState(0);
-  const [heroAutoplayPaused, setHeroAutoplayPaused] = useState(false);
   const [heroHoverPaused, setHeroHoverPaused] = useState(false);
   const heroVideoRefs = useRef<Record<number, HTMLVideoElement | null>>({});
   const [heroTouchStartX, setHeroTouchStartX] = useState<number | null>(null);
-  const [activeHeroHotspot, setActiveHeroHotspot] = useState<string | null>(null);
 
   const moveHermannSlide = (direction: 1 | -1) => {
     setHermannAutoplayPaused(true);
     setHermannSlide(current => (current + direction + hermannGallerySlides.length) % hermannGallerySlides.length);
-  };
-
-  const selectHermannSlide = (index: number) => {
-    setHermannAutoplayPaused(true);
-    setHermannSlide(index);
   };
 
   const handleHermannTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
@@ -336,13 +327,10 @@ export default function Home() {
   };
 
   const moveHeroSlide = (direction: 1 | -1) => {
-    setHeroAutoplayPaused(true);
     setHeroSlide(current => (current + direction + HERO_SLIDE_COUNT) % HERO_SLIDE_COUNT);
-    setActiveHeroHotspot(null);
   };
 
   const handleHeroTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
-    setHeroAutoplayPaused(true);
     setHeroTouchStartX(event.touches[0]?.clientX ?? null);
   };
 
@@ -362,10 +350,10 @@ export default function Home() {
   }, [hermannAutoplayPaused]);
 
   useEffect(() => {
-    if (heroAutoplayPaused || heroHoverPaused || typeof window === "undefined" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (heroHoverPaused || typeof window === "undefined" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const timer = window.setInterval(() => setHeroSlide(current => (current + 1) % HERO_SLIDE_COUNT), 6000);
     return () => window.clearInterval(timer);
-  }, [heroAutoplayPaused, heroHoverPaused]);
+  }, [heroHoverPaused]);
 
   const content = {
     ...fallback,
@@ -407,7 +395,7 @@ export default function Home() {
     };
   });
   const activeHeroSlide = heroSlides[heroSlide] ?? heroSlides[0];
-  const heroIsPaused = heroAutoplayPaused || heroHoverPaused;
+  const heroIsPaused = heroHoverPaused;
   useEffect(() => {
     const videos = Object.values(heroVideoRefs.current).filter((video): video is HTMLVideoElement => Boolean(video));
     videos.forEach(video => {
@@ -419,12 +407,6 @@ export default function Home() {
       activeVideo.play().catch(() => undefined);
     }
   }, [heroSlide, heroIsPaused]);
-  const heroHotspots = [
-    { id: "detector", label: "Flat-panel detector", detail: "Precise image capture for demanding surgical workflows.", position: "left-[72%] top-[52%]" },
-    { id: "monitor", label: "Live imaging display", detail: "Bring the clinical view closer to the operating team.", position: "left-[58%] top-[24%]" },
-    { id: "c-arm", label: "Mobile C-Arm platform", detail: "Flexible positioning for image-guided procedures.", position: "left-[86%] top-[42%]" },
-  ];
-
   return (
     <SiteChrome transparentHeader>
       <SEOHead
@@ -478,34 +460,6 @@ export default function Home() {
             ))}
             <div className="absolute inset-0 bg-gradient-to-r from-[#061f2b]/10 via-transparent to-[#061f2b]/10" aria-hidden="true" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/55 via-transparent to-transparent" aria-hidden="true" />
-            {heroSlide === 0 ? (
-              <div className="absolute inset-0" aria-label="C-Arm feature points">
-                {heroHotspots.map(hotspot => (
-                  <div key={hotspot.id} className={`group absolute ${hotspot.position}`}>
-                    <button
-                      type="button"
-                      aria-label={`${hotspot.label}: ${hotspot.detail}`}
-                      aria-expanded={activeHeroHotspot === hotspot.id}
-                      onClick={() => setActiveHeroHotspot(current => current === hotspot.id ? null : hotspot.id)}
-                      className="relative flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-[#0f6fae]/85 text-xs font-black text-white shadow-[0_0_0_6px_rgba(15,111,174,.22)] backdrop-blur-sm transition duration-200 hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5]"
-                    >
-                      <span aria-hidden="true" className="h-2 w-2 rounded-full bg-[#8be0d5]" />
-                    </button>
-                    <span className={`pointer-events-none absolute bottom-12 left-1/2 w-52 -translate-x-1/2 rounded-xl border border-white/20 bg-[#061f2b]/90 p-3 text-left text-xs text-white shadow-2xl backdrop-blur-md transition duration-200 ${activeHeroHotspot === hotspot.id ? "opacity-100" : "opacity-0 group-hover:opacity-100 group-focus-within:opacity-100"}`}>
-                      <strong className="block text-sm text-[#8be0d5]">{hotspot.label}</strong>
-                      <span className="mt-1 block leading-4 text-white/75">{hotspot.detail}</span>
-                    </span>
-                  </div>
-                ))}
-              </div>
-            ) : null}
-            <div className="absolute right-6 top-7 flex items-center gap-2 sm:right-10 sm:top-9">
-              <button type="button" aria-label={heroIsPaused ? "Play Hero slideshow" : "Pause Hero slideshow"} aria-pressed={heroIsPaused} onClick={() => { setHeroAutoplayPaused(current => !current); setHeroHoverPaused(false); }} className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-[#061f2b]/65 text-white shadow-lg backdrop-blur-md transition hover:bg-[#061f2b]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5]">
-                {heroIsPaused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
-              </button>
-              <button type="button" aria-label="Previous Hero image" onClick={() => moveHeroSlide(-1)} className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-[#061f2b]/65 text-white shadow-lg backdrop-blur-md transition hover:bg-[#061f2b]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5]"><ChevronLeft className="h-5 w-5" /></button>
-              <button type="button" aria-label="Next Hero image" onClick={() => moveHeroSlide(1)} className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-[#061f2b]/65 text-white shadow-lg backdrop-blur-md transition hover:bg-[#061f2b]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5]"><ChevronRight className="h-5 w-5" /></button>
-            </div>
           </div>
           <div className="absolute inset-0 bg-gradient-to-b from-[#061f2b]/35 via-[#061f2b]/50 to-[#061f2b]/90 lg:hidden" aria-hidden="true" />
           <div className="absolute inset-y-0 left-0 z-0 hidden w-1/2 bg-[#061f2b] lg:block" aria-hidden="true" />
@@ -703,8 +657,8 @@ export default function Home() {
                 ))}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/95 via-[#061f2b]/20 to-[#061f2b]/10" aria-hidden="true" />
                 <div className="absolute left-6 right-6 top-6 flex items-center justify-between gap-4">
-                  <div className="flex h-14 w-36 items-center justify-center rounded-2xl bg-white px-4 shadow-lg">
-                    <img src={brandLogoOverrides.hermann} alt="Hermann Medizintechnik official logo" loading="lazy" decoding="async" className="max-h-9 max-w-full object-contain" />
+                  <div className="flex h-16 min-w-[220px] items-center justify-center rounded-2xl border border-white/20 bg-[#061f2b]/55 px-5 shadow-lg backdrop-blur-sm">
+                    <img src={brandLogoOverrides.hermann} alt="Hermann Medizintechnik official logo" loading="lazy" decoding="async" className="max-h-12 max-w-[230px] object-contain" />
                   </div>
                   <span className="rounded-full border border-white/30 bg-[#061f2b]/70 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[.16em] text-[#8be0d5] backdrop-blur-sm">Hermann portfolio</span>
                 </div>
@@ -730,21 +684,6 @@ export default function Home() {
                   <p className="mt-3 max-w-xl text-sm leading-6 text-white/80">{activeHermannSlide.description}</p>
                   <div className="mt-5 flex items-center justify-between gap-4">
                     <span className="text-[11px] font-bold uppercase tracking-[.16em] text-white/65">Hermann Medizintechnik</span>
-                    <div className="flex items-center gap-2" role="tablist" aria-label="Hermann gallery images">
-                      {hermannGallerySlides.map((slide, index) => (
-                        <button
-                          key={slide.image}
-                          type="button"
-                          role="tab"
-                          aria-label={`Show Hermann image ${index + 1}`}
-                          aria-selected={index === hermannSlide}
-                          onClick={() => selectHermannSlide(index)}
-                          className="inline-flex h-11 w-11 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5] focus-visible:ring-offset-2 focus-visible:ring-offset-[#061f2b]"
-                        >
-                          <span aria-hidden="true" className={`h-2.5 rounded-full transition-all duration-300 ${index === hermannSlide ? "w-8 bg-[#8be0d5]" : "w-2.5 bg-white/55 hover:bg-white"}`} />
-                        </button>
-                      ))}
-                    </div>
                   </div>
                 </div>
               </div>
