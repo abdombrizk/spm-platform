@@ -499,12 +499,6 @@ export default function Home() {
                 ))}
               </div>
             ) : null}
-            <div className="absolute bottom-8 left-6 right-6 sm:bottom-10 sm:left-10 sm:right-10">
-              <div className="max-w-xs rounded-2xl border border-white/20 bg-[#061f2b]/55 p-3 backdrop-blur-md">
-                <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-[#8be0d5]">{activeHeroSlide.eyebrow}</p>
-                <p className="mt-1 text-sm font-bold leading-5 text-white">{activeHeroSlide.title}</p>
-              </div>
-            </div>
             <div className="absolute right-6 top-7 flex items-center gap-2 sm:right-10 sm:top-9">
               <button type="button" aria-label={heroIsPaused ? "Play Hero slideshow" : "Pause Hero slideshow"} aria-pressed={heroIsPaused} onClick={() => { setHeroAutoplayPaused(current => !current); setHeroHoverPaused(false); }} className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-[#061f2b]/65 text-white shadow-lg backdrop-blur-md transition hover:bg-[#061f2b]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8be0d5]">
                 {heroIsPaused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}
