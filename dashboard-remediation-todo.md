@@ -170,3 +170,9 @@ The public product preview and build/test suite are available for verification. 
   - Synchronized static fallback in `AboutPage.tsx` and live database record via CMS publishing.
   - Retained blueprint grid overlay on the left and clinical depth on the right.
   - Verified with Vitest suite (46 passed), TypeScript check, production build, and desktop/mobile screenshots.
+- [x] Aligned About Hero to exact reference split layout:
+  - Deep blueprint technical panel on the left with title, intro, and dual CTAs.
+  - Clinical surgical environment clearly visible on the right without white covering cards.
+  - Added subtle floating reference tags: "01. Hermann Surgical & Endoscopy", "02. Italray Mobile C-Arm System", and "03. Mobile Workstation & Viewing Monitor".
+  - Retained bottom glass bar with Authorized Partner logos and 24/7 technical service commitment.
+  - Passed TypeScript check, all presentation tests, and full production build.

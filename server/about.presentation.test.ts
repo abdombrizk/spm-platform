@@ -15,12 +15,10 @@ const caller = appRouter.createCaller({
 describe("About presentation", () => {
   it("uses the homepage Hero visual, lifecycle message and audience paths", () => {
     expect(aboutSource).toContain("/manus-storage/Gemini_Generated_Image_in1ewmin1ewmin1e_ea370a5c.webp");
-    expect(aboutSource).toContain("/manus-storage/IMG_40606_b52f1c1b.webp");
-    expect(aboutSource).toContain("/manus-storage/WhatsAppImage2026-10-12at10.49.48AM-1_4233a7de.jpeg");
     expect(aboutSource).toContain("Pioneering clinical continuity");
     expect(aboutSource).toContain('value: "48h"');
     expect(aboutSource).toContain('label: "Maximum Response"');
-    expect(aboutSource).toContain("Mobile C-Arm medical imaging system");
+    expect(aboutSource).toContain("Italray Mobile C-Arm System");
     expect(aboutSource).toContain("Engineering continuity for critical imaging systems.");
     expect(aboutSource).toContain('id="who-we-serve"');
     expect(aboutSource).toContain("Systems");

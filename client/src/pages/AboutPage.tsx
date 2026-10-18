@@ -28,11 +28,6 @@ const partnerLogos: Record<string, string> = {
   hermann: "/manus-storage/hermann-logo_7f4be603.png",
 };
 
-const aboutHeroProducts = {
-  cArm: "/manus-storage/IMG_40606_b52f1c1b.webp",
-  surgicalTower: "/manus-storage/WhatsAppImage2026-10-12at10.49.48AM-1_4233a7de.jpeg",
-};
-
 const fallback = {
   eyebrow: "ABOUT SPM",
   title: "Engineering continuity for critical imaging systems.",
@@ -175,28 +170,16 @@ export default function AboutPage() {
             </div>
 
             <div className="relative min-h-[460px] sm:min-h-[540px] lg:min-h-[630px]">
-              {/* Ambient Blueprint Frame */}
-              <div className="absolute inset-0 rounded-[2.5rem] border border-white/15 bg-[#062a35]/35 shadow-2xl backdrop-blur-[2px]" aria-hidden="true" />
-
-              {/* Italray C-Arm Hero Product in clean studio display */}
-              <div className="absolute right-[2%] top-[4%] z-10 flex h-[88%] w-[62%] flex-col items-center justify-center overflow-hidden rounded-[2rem] border border-white/30 bg-white p-3 shadow-2xl sm:p-5">
-                <img src={aboutHeroProducts.cArm} alt="Mobile C-Arm medical imaging system" loading="eager" decoding="async" className="h-full w-full object-contain" />
-                <div className="absolute left-4 top-4 rounded-xl border border-[#8be0d5]/50 bg-[#062a35]/90 px-3 py-1.5 text-xs font-bold text-white shadow-lg backdrop-blur-md sm:left-6 sm:top-6">
-                  <span className="text-[#8be0d5]">02.</span> Italray C-Arm (FP21 &amp; FP30)
-                </div>
+              {/* Reference-style clinical stage: the supplied operating-room image remains fully visible. */}
+              <div className="absolute inset-0 rounded-[2.5rem] border border-white/20 bg-white/[.04] shadow-2xl backdrop-blur-[1px]" aria-hidden="true" />
+              <div className="absolute left-[7%] top-[15%] z-20 hidden rounded-xl border border-[#8be0d5]/45 bg-[#062a35]/85 px-3.5 py-2 text-xs font-semibold text-white shadow-xl backdrop-blur-md sm:block">
+                <span className="text-[#8be0d5]">01.</span> Hermann Surgical &amp; Endoscopy
               </div>
-
-              {/* Hermann Surgical & Endoscopy Tower in matching clean studio display */}
-              <div className="absolute bottom-[2%] left-[2%] z-20 flex h-[64%] w-[42%] flex-col items-center justify-center overflow-hidden rounded-[1.8rem] border border-white/35 bg-white p-2.5 shadow-2xl sm:p-4">
-                <img src={aboutHeroProducts.surgicalTower} alt="Surgical and endoscopy tower system" loading="lazy" decoding="async" className="h-full w-full object-contain" />
-                <div className="absolute -bottom-2 left-3 rounded-xl border border-[#8be0d5]/50 bg-[#062a35]/95 px-3 py-1.5 text-xs font-bold text-white shadow-lg backdrop-blur-md">
-                  <span className="text-[#8be0d5]">01.</span> Hermann Surgical &amp; Endoscopy
-                </div>
+              <div className="absolute right-[5%] top-[18%] z-20 hidden rounded-xl border border-[#8be0d5]/45 bg-[#062a35]/85 px-3.5 py-2 text-xs font-semibold text-white shadow-xl backdrop-blur-md sm:block">
+                <span className="text-[#8be0d5]">02.</span> Italray Mobile C-Arm System
               </div>
-
-              {/* Workstation / Continuity Tag */}
-              <div className="absolute left-[6%] top-[12%] z-20 hidden rounded-xl border border-[#8be0d5]/35 bg-[#062a35]/85 px-3.5 py-2 text-xs font-semibold text-white shadow-xl backdrop-blur-md sm:block">
-                <span className="text-[#8be0d5]">03.</span> Lifecycle &amp; Workstation Support
+              <div className="absolute bottom-[16%] left-[10%] z-20 hidden rounded-xl border border-[#8be0d5]/45 bg-[#062a35]/85 px-3.5 py-2 text-xs font-semibold text-white shadow-xl backdrop-blur-md sm:block">
+                <span className="text-[#8be0d5]">03.</span> Mobile Workstation &amp; Viewing Monitor
               </div>
             </div>
           </div>
