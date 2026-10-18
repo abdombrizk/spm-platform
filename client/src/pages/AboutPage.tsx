@@ -47,7 +47,7 @@ const fallback = {
   geography:
     "We support customers across Egypt and selected MENA markets, with service operations spanning 24 of Egypt's 27 governorates—from Alexandria to Aswan.",
   address: "16 Ahmed Hassan El Zyaat Street, 7th District, Nasr City, Cairo, Egypt",
-  heroImage: "/manus-storage/spm-about-xray-carm-hero_d720db48.jpg",
+  heroImage: "/manus-storage/Gemini_Generated_Image_in1ewmin1ewmin1e_ea370a5c.webp",
   profileDocument: "",
   careersVisible: "true",
 };

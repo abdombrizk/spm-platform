@@ -165,3 +165,8 @@ The public product preview and build/test suite are available for verification. 
   - Integrated supplied Italray C-Arm (FP21 & FP30) and Hermann Surgical & Endoscopy tower into dedicated studio presentation cards with floating numbering tags.
   - Added bottom translucent partners and support glass bar showcasing official Italray and Hermann logos alongside "ENGINEERED LIFECYCLE: 24/7 Technical Service & Support".
   - Passed TypeScript compilation, 46 tests, and full production build.
+- [x] Updated About Hero background image:
+  - Replaced Hero operating-room visual with the newly supplied clinical suite visual (`Gemini_Generated_Image_in1ewmin1ewmin1e_ea370a5c.webp`).
+  - Synchronized static fallback in `AboutPage.tsx` and live database record via CMS publishing.
+  - Retained blueprint grid overlay on the left and clinical depth on the right.
+  - Verified with Vitest suite (46 passed), TypeScript check, production build, and desktop/mobile screenshots.

@@ -14,7 +14,7 @@ const caller = appRouter.createCaller({
 
 describe("About presentation", () => {
   it("uses the homepage Hero visual, lifecycle message and audience paths", () => {
-    expect(aboutSource).toContain("/manus-storage/spm-about-xray-carm-hero_d720db48.jpg");
+    expect(aboutSource).toContain("/manus-storage/Gemini_Generated_Image_in1ewmin1ewmin1e_ea370a5c.webp");
     expect(aboutSource).toContain("/manus-storage/IMG_40606_b52f1c1b.webp");
     expect(aboutSource).toContain("/manus-storage/WhatsAppImage2026-10-12at10.49.48AM-1_4233a7de.jpeg");
     expect(aboutSource).toContain("Pioneering clinical continuity");
@@ -34,7 +34,7 @@ describe("About presentation", () => {
   it("publishes the same Hero and response language through the public CMS", async () => {
     const page = await caller.cms.publishedBySlug({ slug: "about" });
     expect(page).not.toBeNull();
-    expect((page!.data as any).heroImage).toBe("/manus-storage/spm-about-xray-carm-hero_d720db48.jpg");
+    expect((page!.data as any).heroImage).toBe("/manus-storage/Gemini_Generated_Image_in1ewmin1ewmin1e_ea370a5c.webp");
     expect((page!.data as any).stats).toEqual(expect.arrayContaining([
       expect.objectContaining({ value: "48h", label: "Maximum Response" }),
     ]));
