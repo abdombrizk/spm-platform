@@ -217,3 +217,9 @@ The public product preview and build/test suite are available for verification. 
   - Enlarged the official brand mark rendering (using cropped transparent assets for Italray and Hermann) to 220px width with subtle drop shadow directly on the dark technical hero background.
   - Verified responsive presentation for both Italray and Hermann brand filters.
   - Passed TypeScript check, all 46 automated tests, and full production build.
+- [x] Rebuilt Italray Portfolio Hero to match exact reference composition:
+  - Applied the newly supplied high-resolution clinical C-Arm suite image (`italray-portfolio-hero_858b8677.webp`) as the hero background.
+  - Implemented the reference split composition with left-aligned institutional typography, technical grid background, "Authorized Italray Partner" pill badge, and triple feature tags (Italian imaging systems, 24/7 SPM engineering support, Genuine parts & documentation).
+  - Added the bottom status bar with "Authorized partner & service provider: Italray | Powered by SPM".
+  - Enforced strict vendor filtering to ensure the portfolio exclusively presents Italray equipment families (Mobile C-Arms, Digital Radiography, Radio-Fluoroscopy, Mammography).
+  - Passed TypeScript check, all 46 automated regression tests, and full production build.

@@ -3,17 +3,14 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,
-  BadgeCheck,
   Boxes,
   CheckCircle2,
   CircleHelp,
   Download,
-  Globe2,
   HeartPulse,
   Layers,
   Loader2,
   Mail,
-  ShieldCheck,
   Sparkles,
   Stethoscope,
   Wrench,
@@ -27,7 +24,8 @@ import SEOHead from "@/components/SEOHead";
 import { trpc } from "@/lib/trpc";
 import type { Product } from "@shared/commerce/types";
 
-const fallbackHeroImage = "/manus-storage/spm-equipment-carm_d9a563ca.jpg";
+const fallbackHeroImage = "/manus-storage/italray-portfolio-hero_858b8677.webp";
+const italrayLogo = "/manus-storage/italray-transparent-cropped_1f5d097e.png";
 
 type Family = {
   id: string;
@@ -122,8 +120,8 @@ function ProductCard({ product }: { product: Product }) {
 
 export default function ItalrayPortfolio() {
   const { data: products = [], isLoading, error } = trpc.commerce.products.list.useQuery({ first: 50 });
-  const italrayProducts = products.filter(product => (product.vendor || "").toLowerCase() === "italray");
-  const heroImage = italrayProducts.find(product => product.images[0]?.url)?.images[0]?.url || fallbackHeroImage;
+  const italrayProducts = products.filter(product => (product.vendor || "").trim().toLowerCase() === "italray");
+  const heroImage = fallbackHeroImage;
 
   return (
     <SiteChrome>
@@ -141,26 +139,36 @@ export default function ItalrayPortfolio() {
         </div>
 
         {/* Brand hero */}
-        <section className="relative isolate overflow-hidden bg-[#061f2b] text-white">
-          <img loading="eager" decoding="async" src={heroImage} alt="Italray medical imaging system" className="absolute inset-0 h-full w-full object-cover opacity-25" />
-          <div className="absolute inset-0 bg-[linear-gradient(100deg,#061f2b_0%,rgba(6,31,43,.96)_37%,rgba(10,64,82,.78)_70%,rgba(15,111,174,.34)_100%)]" aria-hidden="true" />
-          <div className="absolute -right-20 top-10 h-72 w-72 rounded-full border border-[#8be0d5]/20 sm:h-[34rem] sm:w-[34rem]" aria-hidden="true" />
-          <div className="relative mx-auto grid max-w-[1280px] gap-10 px-5 py-16 sm:py-20 lg:grid-cols-[1fr_.75fr] lg:items-center lg:px-8 lg:py-28">
-            <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#8be0d5]/35 bg-white/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-[.18em] text-[#b9f1e7] backdrop-blur-sm"><Sparkles className="h-3.5 w-3.5 text-[#8be0d5]" /> Italray X-Ray Solutions</div>
-              <h1 className="mt-6 text-5xl font-extrabold leading-[.98] tracking-[-.05em] text-white sm:text-6xl lg:text-[82px]">Imaging that moves with your clinical ambition.</h1>
+        <section className="relative isolate min-h-[760px] overflow-hidden bg-[#061f2b] text-white lg:min-h-[820px]">
+          <img loading="eager" decoding="async" src={heroImage} alt="Italray C-Arm imaging system in a modern operating room" className="absolute inset-0 h-full w-full object-cover object-[68%_center]" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,#061f2b_0%,rgba(6,31,43,.97)_25%,rgba(6,31,43,.78)_42%,rgba(6,31,43,.22)_69%,rgba(6,31,43,.16)_100%)]" aria-hidden="true" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,31,43,.2)_0%,transparent_52%,rgba(6,31,43,.78)_100%)]" aria-hidden="true" />
+          <div className="absolute inset-y-0 left-0 hidden w-[42%] [background-image:linear-gradient(rgba(139,224,213,.1)_1px,transparent_1px),linear-gradient(90deg,rgba(139,224,213,.1)_1px,transparent_1px)] [background-size:56px_56px] lg:block" aria-hidden="true" />
+          <div className="absolute -right-28 -top-24 h-72 w-72 rounded-full border border-[#8be0d5]/20 sm:h-[34rem] sm:w-[34rem]" aria-hidden="true" />
+          <div className="relative mx-auto flex min-h-[760px] max-w-[1440px] items-center px-5 pb-32 pt-20 sm:px-8 sm:pb-36 lg:min-h-[820px] lg:px-12 lg:pb-40 lg:pt-24">
+            <div className="max-w-[720px]">
+              <div className="inline-flex items-center gap-3 rounded-full border border-[#8be0d5]/35 bg-[#062a35]/70 px-4 py-2 text-xs font-bold uppercase tracking-[.16em] text-[#b9f1e7] shadow-lg backdrop-blur-md">
+                <span className="h-2 w-2 rounded-full bg-[#67e5c0] shadow-[0_0_0_5px_rgba(103,229,192,.12)]" />
+                Authorized Italray Partner
+                <span className="h-5 w-px bg-white/25" aria-hidden="true" />
+                <img src={italrayLogo} alt="Italray official logo" loading="eager" decoding="async" className="h-7 w-[92px] object-contain object-left" />
+              </div>
+              <h1 className="mt-7 max-w-3xl text-5xl font-extrabold leading-[.98] tracking-[-.055em] text-white sm:text-6xl lg:text-[5.2rem]">ITALRAY: Medical imaging, engineered for clinical confidence.</h1>
               <p className="mt-7 max-w-2xl text-base leading-8 text-white/80 sm:text-lg">A complete portfolio of mobile C-Arms, digital radiography, radio-fluoroscopy and mammography systems—presented, configured and supported by SPM in Egypt.</p>
-              <div className="mt-9 flex flex-wrap gap-3">
-                <Button size="lg" className="h-12 rounded-xl bg-[#c2410c] px-6 text-sm font-bold text-white shadow-xl shadow-[#c2410c]/25 hover:bg-[#9a3412]" asChild><a href="#italray-families">Explore product families <ArrowRight className="ml-2 h-4 w-4" /></a></Button>
-                <Button size="lg" variant="outline" className="h-12 rounded-xl border-white/40 bg-white/10 px-6 text-sm font-bold text-white hover:bg-white/20" asChild><Link href="/request-a-quote?brand=Italray">Talk to an Italray specialist <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button>
+              <div className="mt-6 flex flex-wrap gap-2 text-xs font-semibold text-white/85">
+                <span className="rounded-full border border-white/20 bg-white/10 px-3.5 py-2 backdrop-blur-sm">Italian imaging systems</span>
+                <span className="rounded-full border border-white/20 bg-white/10 px-3.5 py-2 backdrop-blur-sm">24/7 SPM engineering support</span>
+                <span className="rounded-full border border-white/20 bg-white/10 px-3.5 py-2 backdrop-blur-sm">Genuine parts &amp; documentation</span>
+              </div>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Button size="lg" className="h-12 rounded-xl bg-[#c2410c] px-6 text-sm font-bold text-white shadow-xl shadow-[#c2410c]/25 hover:bg-[#9a3412]" asChild><a href="#italray-families">Explore Italray systems <ArrowRight className="ml-2 h-4 w-4" /></a></Button>
+                <Button size="lg" variant="outline" className="h-12 rounded-xl border-white/40 bg-white/10 px-6 text-sm font-bold text-white hover:bg-white/20" asChild><Link href="/request-a-quote?brand=Italray">Request technical specs <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              <div className="rounded-3xl border border-white/15 bg-white/10 p-5 backdrop-blur-sm"><BadgeCheck className="h-6 w-6 text-[#8be0d5]" /><p className="mt-8 text-3xl font-extrabold">1974</p><p className="mt-1 text-xs leading-5 text-white/65">Italray heritage in X-ray technology</p></div>
-              <div className="rounded-3xl border border-white/15 bg-white/10 p-5 backdrop-blur-sm sm:translate-y-8"><Globe2 className="h-6 w-6 text-[#8be0d5]" /><p className="mt-8 text-3xl font-extrabold">70+</p><p className="mt-1 text-xs leading-5 text-white/65">Countries reached by the manufacturer</p></div>
-              <div className="rounded-3xl border border-white/15 bg-white/10 p-5 backdrop-blur-sm"><ShieldCheck className="h-6 w-6 text-[#8be0d5]" /><p className="mt-8 text-3xl font-extrabold">Docs</p><p className="mt-1 text-xs leading-5 text-white/65">Project documentation available on request</p></div>
-              <div className="rounded-3xl border border-white/15 bg-white/10 p-5 backdrop-blur-sm sm:translate-y-8"><Wrench className="h-6 w-6 text-[#8be0d5]" /><p className="mt-8 text-3xl font-extrabold">SPM</p><p className="mt-1 text-xs leading-5 text-white/65">Local service, parts and lifecycle support</p></div>
-            </div>
+          </div>
+          <div className="absolute bottom-5 left-5 right-5 z-10 mx-auto flex max-w-[1320px] flex-col gap-3 text-xs font-semibold text-white/80 sm:bottom-7 sm:left-8 sm:right-8 lg:flex-row lg:items-center lg:justify-between lg:px-4">
+            <div className="flex flex-wrap gap-x-5 gap-y-2 uppercase tracking-[.14em] text-white/65"><span>Italian X-ray heritage</span><span className="hidden h-4 w-px bg-white/30 sm:block" aria-hidden="true" /><span>Full lifecycle support</span></div>
+            <div className="inline-flex w-fit items-center gap-2 rounded-xl border border-white/25 bg-[#062a35]/65 px-4 py-2.5 text-sm backdrop-blur-md"><span className="text-[#b9f1e7]">Authorized partner &amp; service provider:</span><strong className="text-white">Italray</strong><span className="text-white/45">|</span><span>Powered by SPM</span></div>
           </div>
         </section>
 
