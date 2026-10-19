@@ -45,6 +45,41 @@ const hermannCategoryChips = [
 const italrayCatalogueHeroImage = "/manus-storage/italray-portfolio-hero_858b8677.webp";
 const spmMark = "/manus-storage/spm-mark-transparent-clean_35e8eb5b.png";
 
+type ItalraySectionId = "all" | "mobile-c-arm" | "clinodigit" | "mobile-x-ray" | "mammography" | "stationary-dr" | "components";
+
+const italraySections: Array<{ id: ItalraySectionId; label: string; shortLabel: string; description: string }> = [
+  { id: "all", label: "All Italray systems", shortLabel: "ALL", description: "Browse the complete Italray imaging portfolio." },
+  { id: "mobile-c-arm", label: "Mobile C-Arm systems", shortLabel: "C-ARM", description: "Mobile surgical C-Arms for fluoroscopy and intraoperative imaging." },
+  { id: "clinodigit", label: "Clinodigit series", shortLabel: "CLINODIGIT", description: "Clinodigit surgical, radiography and radio-fluoroscopy systems." },
+  { id: "mobile-x-ray", label: "Mobile X-Ray units", shortLabel: "MOBILE X-RAY", description: "Mobile digital radiography for bedside and departmental workflows." },
+  { id: "mammography", label: "Digital mammography", shortLabel: "MAMMOGRAPHY", description: "Digital mammography and tomosynthesis platforms." },
+  { id: "stationary-dr", label: "Stationary DR systems", shortLabel: "STATIONARY DR", description: "Fixed digital radiography rooms and integrated DR workflows." },
+  { id: "components", label: "Systems & components", shortLabel: "COMPONENTS", description: "Workstations, bucky stands, tables, tube stands and detectors." },
+];
+
+const italraySectionByHandle: Record<string, Exclude<ItalraySectionId, "all">> = {
+  "italray-carmex-fp21-fp30": "mobile-c-arm",
+  "italray-clinodigit-c-arm": "clinodigit",
+  "italray-clinodigit-flo-radio-fluoro": "clinodigit",
+  "italray-clinodigit-omega-drf": "clinodigit",
+  "italray-corsix-dr-mobile": "mobile-x-ray",
+  "italray-xfm-mobile-dr": "mobile-x-ray",
+  "italray-mammograph-ffdm-d-tomo": "mammography",
+  "italray-x-frame-dr-systems": "stationary-dr",
+};
+
+function getItalraySection(item: CatalogueItem): Exclude<ItalraySectionId, "all"> | null {
+  if (item.kind !== "shopify" || item.brand.toLowerCase() !== "italray") return null;
+  const text = `${item.title} ${item.category} ${item.model}`.toLowerCase();
+  return italraySectionByHandle[item.model]
+    || (text.includes("mammograph") ? "mammography"
+      : text.includes("x-frame") || text.includes("stationary") ? "stationary-dr"
+      : text.includes("clinodigit") ? "clinodigit"
+      : text.includes("c-arm") ? "mobile-c-arm"
+      : text.includes("mobile") || text.includes("corsix") || text.includes("xfm") ? "mobile-x-ray"
+      : null);
+}
+
 type CmsProduct = {
   id: number;
   slug: string;
@@ -127,11 +162,13 @@ export default function Catalogue() {
   const searchParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : new URLSearchParams();
   const initialBrandParam = searchParams.get("brand") || "all";
   const initialCategoryParam = searchParams.get("category") || "all";
+  const initialItalraySectionParam = searchParams.get("italraySection") || "all";
   const initialSortParam = searchParams.get("sort") || "relevance";
   const initialSearchParam = searchParams.get("q") || "";
 
   const [selectedCategory, setSelectedCategory] = useState(initialCategoryParam.toLowerCase());
   const [selectedBrand, setSelectedBrand] = useState(initialBrandParam.toLowerCase());
+  const [selectedItalraySection, setSelectedItalraySection] = useState<ItalraySectionId>(initialItalraySectionParam as ItalraySectionId);
   const [searchTerm, setSearchTerm] = useState(initialSearchParam);
   const [selectedSort, setSelectedSort] = useState(initialSortParam);
 
@@ -139,10 +176,12 @@ export default function Catalogue() {
     const params = new URLSearchParams(window.location.search);
     const brand = params.get("brand");
     const category = params.get("category");
+    const italraySection = params.get("italraySection") as ItalraySectionId | null;
     const q = params.get("q");
     const sort = params.get("sort");
     setSelectedBrand(brand?.toLowerCase() || "all");
     setSelectedCategory(category?.toLowerCase() || "all");
+    setSelectedItalraySection(italraySection && italraySections.some(section => section.id === italraySection) ? italraySection : "all");
     setSearchTerm(q || "");
     setSelectedSort(sort || "relevance");
   }, [location]);
@@ -151,11 +190,12 @@ export default function Catalogue() {
     const params = new URLSearchParams();
     if (selectedBrand !== "all") params.set("brand", selectedBrand);
     if (selectedCategory !== "all") params.set("category", selectedCategory);
+    if (selectedBrand === "italray" && selectedItalraySection !== "all") params.set("italraySection", selectedItalraySection);
     if (searchTerm.trim()) params.set("q", searchTerm.trim());
     if (selectedSort !== "relevance") params.set("sort", selectedSort);
     const next = params.toString() ? `/catalogue?${params.toString()}` : "/catalogue";
     if (typeof window !== "undefined" && window.location.pathname + window.location.search !== next) window.history.replaceState({}, "", next);
-  }, [selectedBrand, selectedCategory, searchTerm, selectedSort]);
+  }, [selectedBrand, selectedCategory, selectedItalraySection, searchTerm, selectedSort]);
 
   const cmsItems = useMemo(() => (query.data ?? []).map(item => toCmsItem(item as CmsProduct)), [query.data]);
   const shopifyItems = useMemo(() => (storeQuery.data ?? []).map(toShopifyItem), [storeQuery.data]);
@@ -168,15 +208,17 @@ export default function Catalogue() {
     const filtered = allItems.filter(item => {
       if (selectedCategory !== "all" && !normalize(item.category).includes(selectedCategory)) return false;
       if (selectedBrand !== "all" && (selectedBrand === "italray" ? normalize(item.brand) !== "italray" : !normalize(item.brand).includes(selectedBrand))) return false;
+      if (isItalray && selectedItalraySection !== "all" && getItalraySection(item) !== selectedItalraySection) return false;
       if (!search) return true;
       return [item.title, item.brand, item.category, item.model, item.description, ...item.specs].some(value => normalize(value).includes(search));
     });
     return [...filtered].sort((a, b) => selectedSort === "title" ? a.title.localeCompare(b.title) : selectedSort === "brand" ? a.brand.localeCompare(b.brand) : a.title.localeCompare(b.title));
-  }, [allItems, searchTerm, selectedBrand, selectedCategory, selectedSort]);
+  }, [allItems, isItalray, searchTerm, selectedBrand, selectedCategory, selectedItalraySection, selectedSort]);
 
   const resetFilters = () => {
     setSelectedCategory("all");
     setSelectedBrand("all");
+    setSelectedItalraySection("all");
     setSearchTerm("");
     setSelectedSort("relevance");
     if (typeof window !== "undefined" && window.history.replaceState) {
@@ -241,6 +283,45 @@ export default function Catalogue() {
             </div>
           </div>
         </section>
+
+        {isItalray ? (
+          <section className="relative z-10 border-b border-[#d8e2ed] bg-white px-5 pt-8 shadow-[0_8px_24px_rgba(30,55,85,.05)] lg:px-10" aria-label="Italray product sections">
+            <div className="mx-auto max-w-[1280px]">
+              <div className="flex items-end justify-between gap-5">
+                <div>
+                  <p className="text-[11px] font-extrabold uppercase tracking-[.2em] text-[#0f6fae]">Italray portfolio</p>
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-[#64748b]">Select a system family to browse the available product cards. New products will be added here as their official files and images are received.</p>
+                </div>
+                <span className="hidden rounded-full border border-[#dce7eb] bg-[#f7fafc] px-3 py-1.5 text-[11px] font-bold text-[#64748b] sm:inline-flex">{products.length} systems shown</span>
+              </div>
+              <div className="-mx-5 mt-6 overflow-x-auto px-5 [scrollbar-width:none] lg:-mx-0 lg:px-0" role="tablist" aria-label="Filter Italray products by section">
+                <div className="flex min-w-max gap-1 border-b border-[#e2e8f0]">
+                  {italraySections.map(section => {
+                    const selected = selectedItalraySection === section.id;
+                    return (
+                      <button
+                        key={section.id}
+                        type="button"
+                        role="tab"
+                        aria-selected={selected}
+                        aria-controls="catalogue-grid"
+                        onClick={() => setSelectedItalraySection(section.id)}
+                        className={`relative min-h-12 whitespace-nowrap px-4 pb-4 pt-2 text-xs font-extrabold uppercase tracking-[.12em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6fae] focus-visible:ring-offset-2 ${selected ? "text-[#0a2448]" : "text-[#94a3b8] hover:text-[#365b86]"}`}
+                      >
+                        {section.shortLabel}
+                        <span className={`absolute inset-x-2 bottom-0 h-0.5 rounded-full transition-opacity ${selected ? "bg-[#2f6de1] opacity-100" : "opacity-0"}`} aria-hidden="true" />
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="flex min-h-12 items-center justify-between gap-4 py-3 text-xs text-[#64748b]">
+                <p>{italraySections.find(section => section.id === selectedItalraySection)?.description}</p>
+                <button type="button" onClick={() => setSelectedItalraySection("all")} className={`shrink-0 font-bold text-[#0f6fae] underline-offset-4 hover:underline ${selectedItalraySection === "all" ? "invisible" : ""}`}>View all</button>
+              </div>
+            </div>
+          </section>
+        ) : null}
 
         {/* Product showcase */}
         <section id="catalogue-grid" className="relative overflow-hidden bg-[#edf2f8] px-5 py-16 lg:px-10 lg:py-24">
