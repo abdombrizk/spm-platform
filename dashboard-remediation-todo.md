@@ -203,3 +203,8 @@ The public product preview and build/test suite are available for verification. 
   - Rebuilt the Snapshot bar layout so Authorized Partners and the 4 primary impact metrics sit together in one horizontal row on desktop.
   - Maintained responsive wrapping on tablet and mobile viewports to prevent cramped text or horizontal overflow.
   - Passed TypeScript check, all presentation tests, and full production build.
+- [x] Elevated Snapshot bar and enhanced Hero background visibility:
+  - Elevated the Snapshot metrics bar with negative top margin (`-mt-10`) so it seamlessly floats into the lower edge of the Hero without creating an artificial dark separator block.
+  - Removed the solid border line beneath Hero, allowing the clinical room background to extend cleanly across the section transition.
+  - Softened the background gradients (`opacity-95` on the clinical image, reduced overlay opacity to `0.82` and `0.25`) so operating room details and equipment are more visible.
+  - Verified with full test suite, TypeScript check, and production build.

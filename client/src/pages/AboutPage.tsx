@@ -157,9 +157,9 @@ export default function AboutPage() {
           <div className="absolute inset-y-0 left-0 hidden w-[40%] bg-[#062a35] lg:block" aria-hidden="true" />
           <div className="absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(139,224,213,.14)_1px,transparent_1px),linear-gradient(90deg,rgba(139,224,213,.14)_1px,transparent_1px)] [background-size:56px_56px]" aria-hidden="true" />
           <div className="absolute inset-y-0 right-0 w-full lg:w-[75%]" aria-hidden="true">
-            <img src={heroImage} alt="" loading="eager" decoding="async" className="h-full w-full object-cover object-[64%_center] opacity-90" />
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,#062a35_0%,rgba(6,42,53,.91)_17%,rgba(6,42,53,.34)_43%,rgba(6,42,53,.08)_76%,rgba(6,42,53,.04)_100%)]" />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,42,53,.12)_0%,transparent_54%,rgba(6,42,53,.58)_100%)]" />
+            <img src={heroImage} alt="" loading="eager" decoding="async" className="h-full w-full object-cover object-[64%_center] opacity-95" />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,#062a35_0%,rgba(6,42,53,.82)_17%,rgba(6,42,53,.25)_43%,rgba(6,42,53,.06)_76%,rgba(6,42,53,.02)_100%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,42,53,.08)_0%,transparent_54%,rgba(6,42,53,.45)_100%)]" />
           </div>
 
           <div className="relative z-10 mx-auto grid min-h-[820px] max-w-[1440px] gap-12 px-5 pb-44 pt-20 sm:px-8 lg:grid-cols-[.86fr_1.14fr] lg:items-center lg:px-12 lg:pb-36 lg:pt-24">
@@ -183,8 +183,8 @@ export default function AboutPage() {
 
         </section>
 
-        <section id="snapshot" className="border-b border-[#dce7eb] bg-[#062a35] px-4 py-5 sm:px-8 lg:px-12">
-          <div className="mx-auto max-w-[1240px] rounded-2xl border border-white/20 bg-white/[.12] px-4 py-3 shadow-xl backdrop-blur-xl sm:px-6 lg:px-7">
+        <section id="snapshot" className="relative z-20 -mt-10 bg-transparent px-4 py-0 sm:px-8 lg:px-12">
+          <div className="mx-auto max-w-[1240px] rounded-2xl border border-white/20 bg-[#062a35]/72 px-4 py-3 shadow-2xl backdrop-blur-xl sm:px-6 lg:px-7">
             <div className="flex flex-col gap-3 text-sm lg:flex-row lg:items-center lg:gap-5">
               <div className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2 sm:gap-x-4">
                 <span className="text-xs font-bold uppercase tracking-[.16em] text-white/70">Authorized Partners:</span>
