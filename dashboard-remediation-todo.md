@@ -233,3 +233,10 @@ The public product preview and build/test suite are available for verification. 
   - Routing: added explicit `/partners/italray` route alias in addition to `/catalogue/italray`.
   - Confirmed the page exclusively showcases Italray equipment families.
   - Passed TypeScript check, all 46 tests, and full production build.
+- [x] Applied the exact reference Hero layout directly to the Catalogue page under the Italray filter (`/catalogue?brand=italray`):
+  - Unified the Hero presentation so visiting `/catalogue?brand=italray` directly renders the cinematic operating-room visual with the C-Arm and clinical team.
+  - Added the exact "AUTHORIZED EGYPTIAN PARTNER" pill badge with live SPM mark.
+  - Implemented the reference headline ("ITALRAY: Visionary Medical Imaging, Engineered for Life."), subtitle, dual feature badges, primary orange CTA and glass specs button.
+  - Added the bottom glass status pill: "AUTHORIZED PARTNER & SERVICE PROVIDER: Italray | Powered by SPM".
+  - Enforced exact brand filtering so when `brand=italray` is active, the equipment grid strictly displays only Italray systems.
+  - Verified TypeScript compilation, all 46 automated regression tests, and full production build.

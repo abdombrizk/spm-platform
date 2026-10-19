@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   Stethoscope,
   Truck,
+  Wrench,
   X,
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
@@ -42,6 +43,9 @@ const hermannCategoryChips = [
   "General Surgery",
   "Tungsten Carbide Instruments",
 ];
+
+const italrayCatalogueHeroImage = "/manus-storage/italray-portfolio-hero_858b8677.webp";
+const spmMark = "/manus-storage/spm-mark-transparent-clean_35e8eb5b.png";
 
 type CmsProduct = {
   id: number;
@@ -160,12 +164,13 @@ export default function Catalogue() {
   const shopifyItems = useMemo(() => (storeQuery.data ?? []).map(toShopifyItem), [storeQuery.data]);
   const allItems = useMemo(() => [...cmsItems, ...shopifyItems], [cmsItems, shopifyItems]);
   const isHermann = selectedBrand === "hermann";
+  const isItalray = selectedBrand === "italray";
 
   const products = useMemo(() => {
     const search = normalize(searchTerm);
     const filtered = allItems.filter(item => {
       if (selectedCategory !== "all" && !normalize(item.category).includes(selectedCategory)) return false;
-      if (selectedBrand !== "all" && !normalize(item.brand).includes(selectedBrand)) return false;
+      if (selectedBrand !== "all" && (selectedBrand === "italray" ? normalize(item.brand) !== "italray" : !normalize(item.brand).includes(selectedBrand))) return false;
       if (!search) return true;
       return [item.title, item.brand, item.category, item.model, item.description, ...item.specs].some(value => normalize(value).includes(search));
     });
@@ -197,46 +202,28 @@ export default function Catalogue() {
         url="/catalogue"
       />
       <main className="min-h-screen bg-[#f7fafc]">
-        {/* Italray partnership hero */}
-        <section className="relative isolate overflow-hidden bg-[#061f2b] text-white">
-          <div className="absolute inset-0 bg-cover bg-center opacity-45" style={{ backgroundImage: `url('${isHermann ? "/manus-storage/hermann-gallery-engineering_bb728050.jpg" : "/manus-storage/italray-spm-partnership-hero_fe8e7422.jpg"}')` }} aria-hidden="true" />
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,31,43,.98)_0%,rgba(6,31,43,.88)_38%,rgba(6,31,43,.48)_72%,rgba(6,31,43,.36)_100%)]" aria-hidden="true" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_10%,rgba(96,193,187,.24),transparent_28%),linear-gradient(115deg,rgba(6,31,43,.35)_0%,rgba(10,64,82,.12)_52%,rgba(15,111,174,.18)_100%)]" aria-hidden="true" />
-          <div className="absolute -right-24 -top-32 h-80 w-80 rounded-full border border-white/10 sm:h-[30rem] sm:w-[30rem]" aria-hidden="true" />
-          <div className="absolute -right-8 top-10 h-56 w-56 rounded-full border border-white/10 sm:h-80 sm:w-80" aria-hidden="true" />
+        {/* Brand hero: the Italray filter uses the same reference composition as the dedicated partner portfolio. */}
+        <section className={`relative isolate overflow-hidden bg-[#061f2b] text-white ${isItalray ? "min-h-[780px] lg:min-h-[860px]" : ""}`}>
+          <div className={`absolute inset-0 bg-cover ${isItalray ? "bg-center opacity-100" : "bg-center opacity-45"}`} style={{ backgroundImage: `url('${isItalray ? italrayCatalogueHeroImage : isHermann ? "/manus-storage/hermann-gallery-engineering_bb728050.jpg" : "/manus-storage/italray-spm-partnership-hero_fe8e7422.jpg"}')` }} aria-hidden="true" />
+          <div className={`absolute inset-0 ${isItalray ? "bg-[linear-gradient(90deg,#061f2b_0%,rgba(6,31,43,.98)_32%,rgba(6,31,43,.82)_46%,rgba(6,31,43,.25)_68%,rgba(6,31,43,.14)_100%)]" : "bg-[linear-gradient(90deg,rgba(6,31,43,.98)_0%,rgba(6,31,43,.88)_38%,rgba(6,31,43,.48)_72%,rgba(6,31,43,.36)_100%)]"}`} aria-hidden="true" />
+          <div className={`absolute inset-0 ${isItalray ? "bg-[linear-gradient(180deg,rgba(6,31,43,.25)_0%,transparent_48%,rgba(6,31,43,.82)_100%)]" : "bg-[radial-gradient(circle_at_82%_10%,rgba(96,193,187,.24),transparent_28%),linear-gradient(115deg,rgba(6,31,43,.35)_0%,rgba(10,64,82,.12)_52%,rgba(15,111,174,.18)_100%)]"}`} aria-hidden="true" />
+          {isItalray ? <div className="absolute inset-y-0 left-0 hidden w-[44%] [background-image:linear-gradient(rgba(139,224,213,.08)_1px,transparent_1px),linear-gradient(90deg,rgba(139,224,213,.08)_1px,transparent_1px)] [background-size:52px_52px] lg:block" aria-hidden="true" /> : null}
+          {!isItalray ? <><div className="absolute -right-24 -top-32 h-80 w-80 rounded-full border border-white/10 sm:h-[30rem] sm:w-[30rem]" aria-hidden="true" /><div className="absolute -right-8 top-10 h-56 w-56 rounded-full border border-white/10 sm:h-80 sm:w-80" aria-hidden="true" /></> : null}
 
-          <div className="relative mx-auto flex max-w-[1280px] px-5 py-12 sm:py-16 lg:min-h-[560px] lg:items-center lg:px-8 lg:py-20">
-            <div className="max-w-2xl lg:max-w-[760px]">
-              <div className="mb-6 flex flex-wrap items-center gap-4">
-                <div className="flex h-24 w-[240px] items-center justify-start px-0">
-                  <img src={isHermann ? "/manus-storage/hermann-mark-cropped_40aa4cf3.png" : "/manus-storage/italray-transparent-cropped_1f5d097e.png"} alt={isHermann ? "Hermann official logo" : "Italray official logo"} className="h-20 w-[220px] object-contain object-left drop-shadow-[0_4px_14px_rgba(0,0,0,.28)]" />
-                </div>
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[.2em] text-[#b9f1e7]">{isHermann ? "Official-source portfolio" : "Strategic partnership"}</p>
-                  <p className="mt-1 text-sm font-semibold text-white/85">{isHermann ? "Hermann Medizintechnik portfolio" : "Exclusive agent in Egypt"}</p>
-                </div>
+          {isItalray ? (
+            <div className="relative mx-auto flex min-h-[780px] max-w-[1440px] items-center px-5 pb-36 pt-16 sm:px-8 lg:min-h-[860px] lg:px-12 lg:pb-36 lg:pt-20">
+              <div className="max-w-[700px]">
+                <div className="inline-flex items-center gap-3 rounded-full border border-[#8be0d5]/40 bg-[#07252f]/85 px-4 py-2 text-xs font-bold uppercase tracking-[.18em] text-[#b9f1e7] shadow-xl backdrop-blur-md"><span className="h-2 w-2 rounded-full bg-[#34d399] shadow-[0_0_8px_rgba(52,211,153,.7)]" />AUTHORIZED EGYPTIAN PARTNER<span className="h-4 w-px bg-white/20" aria-hidden="true" /><span className="inline-flex items-center gap-1.5 text-white"><img src={spmMark} alt="SPM" className="h-4 w-4 object-contain brightness-0 invert" /><span className="font-extrabold tracking-wider">SPM</span></span></div>
+                <h1 className="mt-6 text-5xl font-black leading-[1.0] tracking-[-.045em] text-white sm:text-6xl lg:text-[76px]">ITALRAY: Visionary Medical Imaging, <span className="text-[#8be0d5]">Engineered for Life.</span></h1>
+                <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/85 sm:text-lg">Discover the pinnacle of Italian X-ray innovation—from <strong className="text-white">high-definition mobile C-Arms</strong> to advanced digital radiography—exclusively supported, installed, and maintained across Egypt by SPM’s expert biomedical engineering team.</p>
+                <div className="mt-6 flex flex-wrap gap-2.5 text-xs font-semibold text-white/90"><span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-[#07252f]/70 px-4 py-2 backdrop-blur-md"><span className="text-sm">🇮🇹</span>Italian Design &amp; Innovation Since 1974</span><span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-[#07252f]/70 px-4 py-2 backdrop-blur-md"><Wrench className="h-3.5 w-3.5 text-[#8be0d5]" />24/7 SPM Engineering Support</span></div>
+                <div className="mt-8 flex flex-wrap items-center gap-3.5"><Button size="lg" className="h-13 rounded-xl bg-[#f97316] px-7 text-sm font-bold text-white shadow-xl shadow-[#f97316]/30 hover:bg-[#ea580c]" asChild><a href="#catalogue-grid">Explore Systems <ArrowRight className="ml-2 h-4 w-4" /></a></Button><Button size="lg" variant="outline" className="h-13 rounded-xl border-white/40 bg-[#07252f]/60 px-6 text-sm font-bold text-white shadow-lg backdrop-blur-md hover:bg-white/15" asChild><Link href="/request-a-quote?brand=Italray">Request Tech Specs <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button></div>
               </div>
-              <h1 className="max-w-3xl text-4xl font-extrabold leading-[1.02] tracking-[-.045em] text-white sm:text-5xl lg:text-[62px]">
-                {isHermann ? "German surgical technology, prepared for informed project decisions." : "Italray imaging systems, engineered for confidence."}
-              </h1>
-              <p className="mt-5 max-w-xl text-base leading-7 text-white/80 sm:text-lg">
-                {isHermann ? "Explore Hermann’s documented surgical, endoscopic and instrument portfolio through SPM’s quote-first catalogue, technical review and lifecycle support." : "Explore Italian C-Arms, digital radiography and surgical imaging systems backed by SPM engineering, documentation and lifecycle support."}
-              </p>
-              <div className="mt-7 flex flex-wrap items-center gap-3">
-                <Button size="lg" className="h-12 rounded-xl bg-[#c2410c] px-6 text-sm font-bold text-white shadow-xl shadow-[#c2410c]/20 hover:bg-[#9a3412]" asChild><a href="#catalogue-grid">
-                    {isHermann ? "Explore Hermann systems" : "Explore Italray systems"} <ArrowRight className="ml-2 h-4 w-4" />
-                  </a></Button>
-                <Button size="lg" variant="outline" className="h-12 rounded-xl border-white/40 bg-white/10 px-6 text-sm font-bold text-white hover:bg-white/20" asChild><Link href={`/request-a-quote?brand=${isHermann ? "hermann" : "italray"}`}>
-                    Request a project quote <ArrowUpRight className="ml-2 h-4 w-4" />
-                  </Link></Button>
-              </div>
-              <div className="mt-8 flex flex-wrap gap-2 text-xs font-semibold text-white/75">
-                {isHermann ? hermannCategoryChips.map(category => <span key={category} className="rounded-full border border-white/15 bg-white/10 px-3 py-2">{category}</span>) : <><span className="rounded-full border border-white/15 bg-white/10 px-3 py-2">C-Arms</span><span className="rounded-full border border-white/15 bg-white/10 px-3 py-2">Digital radiography</span><span className="rounded-full border border-white/15 bg-white/10 px-3 py-2">SPM lifecycle care</span></>}
-              </div>
-                {isHermann ? <p className="mt-5 max-w-2xl text-xs leading-5 text-white/60">Public-source profile based on Hermann Medizintechnik’s published website and official documents. Product-level availability and configurations are confirmed during quotation review.</p> : null}
-              </div>
-
-          </div>
+            </div>
+          ) : (
+            <div className="relative mx-auto flex max-w-[1280px] px-5 py-12 sm:py-16 lg:min-h-[560px] lg:items-center lg:px-8 lg:py-20"><div className="max-w-2xl lg:max-w-[760px]"><div className="mb-6 flex flex-wrap items-center gap-4"><div className="flex h-24 w-[240px] items-center justify-start px-0"><img src="/manus-storage/hermann-mark-cropped_40aa4cf3.png" alt="Hermann official logo" className="h-20 w-[220px] object-contain object-left drop-shadow-[0_4px_14px_rgba(0,0,0,.28)]" /></div><div><p className="text-[11px] font-bold uppercase tracking-[.2em] text-[#b9f1e7]">Official-source portfolio</p><p className="mt-1 text-sm font-semibold text-white/85">Hermann Medizintechnik portfolio</p></div></div><h1 className="max-w-3xl text-4xl font-extrabold leading-[1.02] tracking-[-.045em] text-white sm:text-5xl lg:text-[62px]">German surgical technology, prepared for informed project decisions.</h1><p className="mt-5 max-w-xl text-base leading-7 text-white/80 sm:text-lg">Explore Hermann’s documented surgical, endoscopic and instrument portfolio through SPM’s quote-first catalogue, technical review and lifecycle support.</p><div className="mt-7 flex flex-wrap items-center gap-3"><Button size="lg" className="h-12 rounded-xl bg-[#c2410c] px-6 text-sm font-bold text-white shadow-xl shadow-[#c2410c]/20 hover:bg-[#9a3412]" asChild><a href="#catalogue-grid">Explore Hermann systems <ArrowRight className="ml-2 h-4 w-4" /></a></Button><Button size="lg" variant="outline" className="h-12 rounded-xl border-white/40 bg-white/10 px-6 text-sm font-bold text-white hover:bg-white/20" asChild><Link href="/request-a-quote?brand=hermann">Request a project quote <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button></div><div className="mt-8 flex flex-wrap gap-2 text-xs font-semibold text-white/75">{hermannCategoryChips.map(category => <span key={category} className="rounded-full border border-white/15 bg-white/10 px-3 py-2">{category}</span>)}</div><p className="mt-5 max-w-2xl text-xs leading-5 text-white/60">Public-source profile based on Hermann Medizintechnik’s published website and official documents. Product-level availability and configurations are confirmed during quotation review.</p></div></div>
+          )}
+          {isItalray ? <div className="absolute bottom-6 left-5 right-5 z-10 mx-auto flex max-w-[1360px] flex-col gap-4 text-xs font-semibold text-white/85 sm:left-8 sm:right-8 lg:flex-row lg:items-center lg:justify-between"><div className="flex flex-wrap items-center gap-x-6 gap-y-2 uppercase tracking-[.16em] text-white/70"><span>50+ YEARS OF X-RAY EXCELLENCE</span><span className="hidden h-3.5 w-px bg-white/25 sm:block" aria-hidden="true" /><span>FULL LIFECYCLE SUPPORT</span></div><div className="inline-flex w-fit items-center gap-2.5 rounded-2xl border border-white/25 bg-[#051c24]/80 px-5 py-3 text-sm shadow-xl backdrop-blur-md"><span className="text-white/75">AUTHORIZED PARTNER &amp; SERVICE PROVIDER:</span><strong className="text-base font-extrabold text-white">Italray</strong><span className="text-white/35">|</span><span className="text-white/80">Powered by SPM</span></div></div> : null}
         </section>
 
         {/* Compact search */}
