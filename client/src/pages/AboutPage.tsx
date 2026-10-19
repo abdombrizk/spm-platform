@@ -178,31 +178,24 @@ export default function AboutPage() {
               </div>
             </div>
 
-            <div className="relative pointer-events-none min-h-[460px] sm:min-h-[540px] lg:min-h-[630px]">
-              {/* Subtle clinical tags matching reference positions */}
-              <div className="absolute left-[7%] top-[15%] z-20 hidden rounded-xl border border-[#8be0d5]/45 bg-[#062a35]/85 px-3.5 py-2 text-xs font-semibold text-white shadow-xl backdrop-blur-md sm:block">
-                <span className="text-[#8be0d5]">01.</span> Hermann Surgical &amp; Endoscopy
-              </div>
-              <div className="absolute bottom-[16%] left-[10%] z-20 hidden rounded-xl border border-[#8be0d5]/45 bg-[#062a35]/85 px-3.5 py-2 text-xs font-semibold text-white shadow-xl backdrop-blur-md sm:block">
-                <span className="text-[#8be0d5]">03.</span> Mobile Workstation &amp; Viewing Monitor
-              </div>
-            </div>
+            <div className="relative pointer-events-none min-h-[460px] sm:min-h-[540px] lg:min-h-[630px]" />
           </div>
 
         </section>
 
         <section id="snapshot" className="border-b border-[#dce7eb] bg-[#062a35] px-4 py-5 sm:px-8 lg:px-12">
-          <div className="mx-auto max-w-[1180px] rounded-2xl border border-white/20 bg-white/[.12] px-4 py-4 shadow-xl backdrop-blur-xl sm:px-6">
-            <div className="flex flex-col gap-4 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-5">
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 sm:gap-x-5">
+          <div className="mx-auto max-w-[1240px] rounded-2xl border border-white/20 bg-white/[.12] px-4 py-3 shadow-xl backdrop-blur-xl sm:px-6 lg:px-7">
+            <div className="flex flex-col gap-3 text-sm lg:flex-row lg:items-center lg:gap-5">
+              <div className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-2 sm:gap-x-4">
                 <span className="text-xs font-bold uppercase tracking-[.16em] text-white/70">Authorized Partners:</span>
-                <img src={partnerLogos.italray} alt="Italray official partner logo" loading="lazy" decoding="async" className="h-10 w-[145px] object-contain object-left" />
+                <img src={partnerLogos.italray} alt="Italray official partner logo" loading="lazy" decoding="async" className="h-8 w-[105px] object-contain object-left" />
                 <span className="text-xs font-bold text-white/55" aria-hidden="true">&amp;</span>
-                <img src={partnerLogos.hermann} alt="Hermann Medizintechnik official partner logo" loading="lazy" decoding="async" className="h-10 w-[145px] object-contain object-left" />
+                <img src={partnerLogos.hermann} alt="Hermann Medizintechnik official partner logo" loading="lazy" decoding="async" className="h-8 w-[105px] object-contain object-left" />
               </div>
-            </div>
-            <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 border-t border-white/20 pt-3 sm:grid-cols-4 sm:gap-x-5">
-              {page.stats?.map(stat => <div key={stat.label} className="min-w-0"><p className="text-lg font-extrabold tracking-tight text-white sm:text-xl">{stat.value}</p><p className="mt-0.5 text-[11px] font-bold text-white/90 sm:text-xs">{stat.label}</p><p className="mt-0.5 hidden text-[10px] leading-4 text-white/65 sm:block">{stat.description}</p></div>)}
+              <div className="hidden h-9 w-px shrink-0 bg-white/25 lg:block" aria-hidden="true" />
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2 border-t border-white/20 pt-3 sm:grid-cols-4 sm:gap-x-5 lg:min-w-0 lg:flex-1 lg:border-t-0 lg:pt-0">
+                {page.stats?.map(stat => <div key={stat.label} className="min-w-0"><p className="text-lg font-extrabold tracking-tight text-white sm:text-xl">{stat.value}</p><p className="mt-0.5 text-[11px] font-bold text-white/90 sm:text-xs lg:whitespace-nowrap">{stat.label}</p><p className="mt-0.5 hidden text-[10px] leading-4 text-white/65 sm:block lg:truncate">{stat.description}</p></div>)}
+              </div>
             </div>
           </div>
         </section>

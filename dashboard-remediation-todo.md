@@ -198,3 +198,8 @@ The public product preview and build/test suite are available for verification. 
   - Removed redundant inline lifecycle tagline from the partner bar.
   - Standardized Italray and Hermann partner logos to identical optical sizes with clean left-alignment across both the Snapshot bar and the Strategic Partnerships cards.
   - Passed TypeScript check, all presentation tests, and full production build.
+- [x] Streamlined About Hero and unified Snapshot bar into a single continuous row:
+  - Removed remaining floating badges (01. Hermann Surgical & 03. Mobile Workstation) so the Hero clinical background is completely unobstructed.
+  - Rebuilt the Snapshot bar layout so Authorized Partners and the 4 primary impact metrics sit together in one horizontal row on desktop.
+  - Maintained responsive wrapping on tablet and mobile viewports to prevent cramped text or horizontal overflow.
+  - Passed TypeScript check, all presentation tests, and full production build.

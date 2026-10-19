@@ -19,6 +19,8 @@ describe("About presentation", () => {
     expect(aboutSource).toContain('value: "48h"');
     expect(aboutSource).toContain('label: "Maximum Response"');
     expect(aboutSource).not.toContain("02.</span> Italray Mobile C-Arm System");
+    expect(aboutSource).not.toContain("01.</span> Hermann Surgical &amp; Endoscopy");
+    expect(aboutSource).not.toContain("03.</span> Mobile Workstation &amp; Viewing Monitor");
     expect(aboutSource).toContain('id="visual-story"');
     expect(aboutSource).toContain("spm-carmex-maintenance-card-optimized_fde07293.jpg");
     expect(aboutSource).toContain("Engineering continuity for critical imaging systems.");
