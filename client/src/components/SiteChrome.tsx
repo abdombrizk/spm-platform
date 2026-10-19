@@ -9,7 +9,7 @@ import { italrayCategoryLinks } from "@/lib/italrayCategories";
 const logo = "/manus-storage/spm-logo-transparent_ed0588dc.png";
 const darkNavLogo = "/manus-storage/spm-logo-header-transparent_f3f257c9.png";
 const italrayLogo = "/manus-storage/italray-transparent-cropped_1f5d097e.png";
-const hermannLogo = "/manus-storage/hermann-mark-transparent-nav-tight_88ea2ffc.png";
+const hermannLogo = "/manus-storage/hermann-logo_7f4be603.png";
 
 const italrayCategoryDescriptions: Record<string, string> = {
   "DRF REMOTE CONTROLLED TABLES": "Dynamic fluoroscopy and controlled table systems",
@@ -158,16 +158,16 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
               <div
                 id="products-menu"
                 role="menu"
-                className={`absolute left-1/2 top-full w-[900px] max-w-[calc(100vw-2rem)] -translate-x-1/2 overflow-hidden rounded-[28px] border border-[#dce7eb] bg-[#f5f9fb] p-2 shadow-[0_24px_70px_rgba(6,31,43,.22)] backdrop-blur-xl transition-[opacity,transform,visibility] duration-250 ease-out ${
+                className={`absolute left-1/2 top-full w-[840px] max-w-[calc(100vw-2rem)] -translate-x-1/2 overflow-hidden rounded-[26px] border border-[#dce7eb] bg-[#f5f9fb] p-2 shadow-[0_24px_70px_rgba(6,31,43,.22)] backdrop-blur-xl transition-[opacity,transform,visibility] duration-250 ease-out ${
                   activeMega ? "pointer-events-auto visible translate-y-1 opacity-100" : "pointer-events-none invisible translate-y-3 opacity-0"
                 }`}
               >
-                <div className="grid grid-cols-[260px_1fr] gap-2">
+                <div className="grid grid-cols-[235px_1fr] gap-2">
                   {/* Brand rail */}
-                  <div className="space-y-2 rounded-[22px] bg-[linear-gradient(145deg,#0f5264_0%,#164968_52%,#263b68_100%)] p-3 text-white shadow-inner shadow-white/10">
-                    <div className="px-3 pb-2 pt-1">
+                  <div className="space-y-1.5 rounded-[22px] bg-[linear-gradient(145deg,#eef8f8_0%,#e9f1f8_100%)] p-2.5 text-[#0a4052] shadow-inner shadow-white">
+                    <div className="px-2.5 pb-1.5 pt-1">
                       <p className="text-[10px] font-extrabold uppercase tracking-[.2em] text-[#83e5d4]">SPM portfolio</p>
-                      <p className="mt-1 text-xs leading-5 text-white/75">Choose a technology partner</p>
+                      <p className="mt-1 text-xs leading-5 text-[#607d8b]">Choose a technology partner</p>
                     </div>
 
                     {/* Italray */}
@@ -175,18 +175,18 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                       href="/catalogue?brand=italray"
                       onMouseEnter={() => setActiveProductTab("italray")}
                       onClick={() => setActiveMega(false)}
-                      className={`group flex items-center justify-between rounded-2xl p-3 transition duration-200 ${
-                        activeProductTab === "italray" ? "bg-white/20 text-white shadow-lg shadow-black/10 ring-1 ring-white/25" : "text-white/85 hover:bg-white/12 hover:text-white"
+                      className={`group relative flex flex-col items-start rounded-2xl p-2.5 transition duration-200 ${
+                        activeProductTab === "italray" ? "bg-white text-[#0a4052] shadow-lg shadow-[#0a4052]/10 ring-1 ring-[#c8e3e8]" : "text-[#0a4052]/85 hover:bg-white/75 hover:text-[#0a4052]"
                       }`}
                     >
-                      <div className="flex items-center gap-2.5">
-                        <span className="flex h-16 w-28 shrink-0 items-center justify-start"><img src={italrayLogo} alt="Italray logo" className="max-h-14 max-w-24 object-contain brightness-0 invert drop-shadow-[0_3px_10px_rgba(255,255,255,.16)]" /></span>
-                        <div>
-                          <p className="text-sm font-bold">Italray</p>
-                          <p className="text-xs text-white/75">Exclusive Agent in Egypt</p>
-                        </div>
+                      <div className="flex h-10 w-full items-center justify-start">
+                        <img src={italrayLogo} alt="Italray logo" className="max-h-10 max-w-24 object-contain drop-shadow-[0_3px_10px_rgba(255,255,255,.16)]" />
                       </div>
-                      <ChevronRight className={`h-4 w-4 transition-transform ${activeProductTab === "italray" ? "translate-x-1" : ""}`} />
+                      <div className="mt-2 pr-6">
+                        <p className="text-sm font-bold">Italray</p>
+                        <p className="mt-0.5 text-[11px] leading-4 text-[#607d8b]">Exclusive Agent in Egypt</p>
+                      </div>
+                      <ChevronRight className={`absolute right-2.5 top-3 h-4 w-4 transition-transform ${activeProductTab === "italray" ? "translate-x-1" : ""}`} />
                     </Link>
 
                     {/* Hermann */}
@@ -194,18 +194,18 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                       href="/catalogue?brand=hermann"
                       onClick={() => setActiveMega(false)}
                       onMouseEnter={() => setActiveProductTab("hermann")}
-                      className={`group flex cursor-pointer items-center justify-between rounded-2xl p-3 transition duration-200 ${
-                        activeProductTab === "hermann" ? "bg-white/20 text-white shadow-lg shadow-black/10 ring-1 ring-white/25" : "text-white/85 hover:bg-white/12 hover:text-white"
+                      className={`group relative flex cursor-pointer flex-col items-start rounded-2xl p-2.5 transition duration-200 ${
+                        activeProductTab === "hermann" ? "bg-white text-[#0a4052] shadow-lg shadow-[#0a4052]/10 ring-1 ring-[#c8e3e8]" : "text-[#0a4052]/85 hover:bg-white/75 hover:text-[#0a4052]"
                       }`}
                     >
-                      <div className="flex items-center gap-2.5">
-                        <span className="flex h-16 w-28 shrink-0 items-center justify-start"><img src={hermannLogo} alt="Hermann Medizintechnik logo" className="max-h-14 max-w-24 object-contain drop-shadow-[0_3px_10px_rgba(255,255,255,.16)]" /></span>
-                        <div>
-                          <p className="text-sm font-bold">Hermann</p>
-                          <p className="text-xs text-white/75">Hermann portfolio</p>
-                        </div>
+                      <div className="flex h-10 w-full items-center justify-start">
+                        <img src={hermannLogo} alt="Hermann Medizintechnik logo" className="max-h-10 max-w-24 object-contain drop-shadow-[0_3px_10px_rgba(255,255,255,.16)]" />
                       </div>
-                      <ChevronRight className={`h-4 w-4 transition-transform ${activeProductTab === "hermann" ? "translate-x-1" : ""}`} />
+                      <div className="mt-2 pr-6">
+                        <p className="text-sm font-bold">Hermann</p>
+                        <p className="mt-0.5 text-[11px] leading-4 text-[#607d8b]">Hermann portfolio</p>
+                      </div>
+                      <ChevronRight className={`absolute right-2.5 top-3 h-4 w-4 transition-transform ${activeProductTab === "hermann" ? "translate-x-1" : ""}`} />
                     </Link>
 
                     {/* 3. Spare Parts Module */}
@@ -213,18 +213,18 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                       href="/spare-parts"
                       onClick={() => setActiveMega(false)}
                       onMouseEnter={() => setActiveProductTab("parts")}
-                      className={`group flex cursor-pointer items-center justify-between rounded-2xl p-3 transition duration-200 ${
-                        activeProductTab === "parts" ? "bg-white/20 text-white shadow-lg shadow-black/10 ring-1 ring-white/25" : "text-white/85 hover:bg-white/12 hover:text-white"
+                      className={`group relative flex cursor-pointer flex-col items-start rounded-2xl p-2.5 transition duration-200 ${
+                        activeProductTab === "parts" ? "bg-white text-[#0a4052] shadow-lg shadow-[#0a4052]/10 ring-1 ring-[#c8e3e8]" : "text-[#0a4052]/85 hover:bg-white/75 hover:text-[#0a4052]"
                       }`}
                     >
-                      <div className="flex items-center gap-2.5">
-                          <span className="flex h-16 w-28 shrink-0 items-center justify-start"><img src={darkNavLogo} alt="SPM logo" className="max-h-14 max-w-24 object-contain drop-shadow-[0_3px_10px_rgba(255,255,255,.16)]" /></span>
-                        <div>
-                          <p className="text-sm font-bold">Spare Parts</p>
-                          <p className="text-xs text-white/75">Genuine parts & support</p>
-                        </div>
+                      <div className="flex h-10 w-full items-center justify-start">
+                        <img src={logo} alt="SPM logo" className="max-h-10 max-w-24 object-contain drop-shadow-[0_3px_10px_rgba(255,255,255,.16)]" />
                       </div>
-                      <ChevronRight className={`h-4 w-4 transition-transform ${activeProductTab === "parts" ? "translate-x-1" : ""}`} />
+                      <div className="mt-2 pr-6">
+                        <p className="text-sm font-bold">Spare Parts</p>
+                        <p className="mt-0.5 text-[11px] leading-4 text-[#607d8b]">Genuine parts & support</p>
+                      </div>
+                      <ChevronRight className={`absolute right-2.5 top-3 h-4 w-4 transition-transform ${activeProductTab === "parts" ? "translate-x-1" : ""}`} />
                     </Link>
                   </div>
 

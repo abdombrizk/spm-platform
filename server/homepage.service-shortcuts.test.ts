@@ -59,10 +59,11 @@ describe("homepage service shortcuts and trust badges", () => {
   it("keeps global navigation stable while moving between menus", () => {
     expect(siteChromeSource).toContain("scheduleMenuClose(() => setActiveCompany(false))");
     expect(siteChromeSource).toContain("scheduleMenuClose(() => setActiveMega(false))");
-    expect(siteChromeSource).toContain("max-h-14 max-w-24 object-contain");
+    expect(siteChromeSource).toContain("max-h-10 max-w-24 object-contain");
     expect(siteChromeSource).not.toContain("mix-blend-multiply");
     expect(siteChromeSource).toContain("italray-transparent-cropped_1f5d097e.png");
-    expect(siteChromeSource).toContain("hermann-mark-transparent-nav-tight_88ea2ffc.png");
+    expect(siteChromeSource).toContain("hermann-logo_7f4be603.png");
+    expect(siteChromeSource).not.toContain("brightness-0 invert drop-shadow-[0_3px_10px_rgba(255,255,255,.16)]");
     expect(siteChromeSource).not.toContain('activeProductTab === "italray" ? "bg-white/95"');
     expect(siteChromeSource).not.toContain('activeProductTab === "hermann" ? "bg-white/95"');
     expect(siteChromeSource).not.toContain('activeProductTab === "parts" ? "bg-white/95"');
