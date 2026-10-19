@@ -240,3 +240,9 @@ The public product preview and build/test suite are available for verification. 
   - Added the bottom glass status pill: "AUTHORIZED PARTNER & SERVICE PROVIDER: Italray | Powered by SPM".
   - Enforced exact brand filtering so when `brand=italray` is active, the equipment grid strictly displays only Italray systems.
   - Verified TypeScript compilation, all 46 automated regression tests, and full production build.
+- [x] Refined and polished the Italray Hero presentation on Catalogue (`/catalogue?brand=italray`):
+  - Balanced the typography scale (`clamp(2.75rem,5vw,4.5rem)`) and line height so headlines remain punchy without crowding.
+  - Enhanced the top partnership pill badge to explicitly feature the official Italray mark, strategic partnership text, and SPM mark.
+  - Added a floating glass engineering panel on desktop summarizing the clinical workflow alignment across C-Arm, DR, and DRF.
+  - Compacted the hero vertical footprint to 700px-760px so the full stage, CTAs, and bottom status bar are visible comfortably above the fold.
+  - Passed TypeScript check, all 46 regression tests, and full production build.
