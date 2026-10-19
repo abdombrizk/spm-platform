@@ -1,4 +1,4 @@
-# تقرير الفحص والتحليل الشامل لمنصة SPM Medical Imaging Technology
+# تقرير الفحص والتحليل الشامل لمنصة SPM Medical Imaging and Surgical Technology
 **تاريخ التحليل:** 1 أكتوبر 2026  
 **النطاق المفحوص:** الكود البرمجي بالكامل (`client/`، `server/`، `shared/`، `drizzle/`)، خادم التطوير الحي، واجهات برمجة التطبيقات (tRPC)، قواعد البيانات (MySQL/Drizzle)، وتكامل المتجر الإلكتروني (Shopify Storefront API).
 
@@ -81,7 +81,7 @@
 
 2. **البيانات الوصفية والعنوان لكل صفحة (Dynamic Title & Meta Tags):**
    - تطبيق الويب مبني كـ Single Page Application (SPA).
-   - عند الانتقال بين صفحة المتجر، وصفحة Italray، وصفحات الخدمات، يظل عنوان التبويب `SPM | Medical Imaging Technology, Service and Spare Parts` ثابتاً ولا يتغير لاسم الجهاز أو نوع الخدمة إلا إذا تم ضبط `document.title` برمجياً.
+   - عند الانتقال بين صفحة المتجر، وصفحة Italray، وصفحات الخدمات، يظل عنوان التبويب `SPM | Medical Imaging and Surgical Technology, Service and Spare Parts` ثابتاً ولا يتغير لاسم الجهاز أو نوع الخدمة إلا إذا تم ضبط `document.title` برمجياً.
    - غياب وسوم `Open Graph` المخصصة لكل جهاز يجعل مشاركة الرابط على WhatsApp أو LinkedIn تظهر بالصورة العامة للموقع بدلاً من صورة الجهاز المعني وسعره ومواصفاته.
    - **الحل المقترح:** إضافة مكون `<SEOHead title={...} description={...} image={...} />` يحدث عنوان الصفحة ووسوم الـ Meta تلقائياً مع كل تغيير للمسار.
 

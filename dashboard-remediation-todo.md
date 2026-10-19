@@ -47,7 +47,7 @@ The public product preview and build/test suite are available for verification. 
 
 ## Global brand language update
 
-- [x] Replaced public website and SEO occurrences of “Medical Imaging Technology” with “Medical Imaging and Surgical Technology”, preserving the appropriate uppercase/title/lowercase treatment.
+- [x] Replaced public website and SEO occurrences of the former imaging-only title with “Medical Imaging and Surgical Technology”, preserving the appropriate uppercase/title/lowercase treatment.
 - [x] Published the same wording in Home content (`hero.eyebrow`, `highlight.1.title`) and the About CMS page.
 - [x] Confirmed the legacy phrase is absent from `client`, `shared`, and `server` source files.
 
@@ -208,3 +208,7 @@ The public product preview and build/test suite are available for verification. 
   - Removed the solid border line beneath Hero, allowing the clinical room background to extend cleanly across the section transition.
   - Softened the background gradients (`opacity-95` on the clinical image, reduced overlay opacity to `0.82` and `0.25`) so operating room details and equipment are more visible.
   - Verified with full test suite, TypeScript check, and production build.
+- [x] Standardized the institutional naming across the full project:
+  - Updated public copy, navigation/footer branding, page titles, Open Graph metadata, SEO defaults, product descriptions, About/Home content, audit documentation, and project notes to use “Medical Imaging and Surgical Technology”.
+  - Confirmed zero remaining matches for the former “Medical Imaging Technology” phrase across tracked project files.
+  - Passed TypeScript check, 17 test files / 46 tests, diff validation, and production build.
