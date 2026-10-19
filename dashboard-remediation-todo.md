@@ -251,3 +251,6 @@ The public product preview and build/test suite are available for verification. 
   - Removed the "Quick comparison" selection panel and state to give immediate focus to the actual equipment cards.
   - Preserved the full equipment cards grid, search functionality, brand filtering, status tags, and quotation CTAs.
   - Passed TypeScript compilation, 46 regression tests, and full production build.
+- [x] Rebuilt the Catalogue product area as a premium Product Showcase inspired by the supplied reference: added a centered Products label and editorial headline, introduced a light blue-grey technical background with soft geometry, rebuilt each product card with brand color, category pill, uppercase system title, dedicated image stage, concise description, specification chips, status line, and clear Explore/Request CTA, with responsive three-column-to-single-column behavior.
+- [x] Replaced five external Shopify image references in the Italray registry with managed uploaded CDN assets so the Italray catalogue cards consistently resolve images for Clinodigit FLO, CORSIX DR, XFM Mobile DR, Mammograph, and Clinodigit C-Arm.
+- [x] Added regression coverage for the Product Showcase and confirmed the removed comparison UI does not return. Verified TypeScript, 17 test files / 47 tests, diff check, browser rendering, and production build.

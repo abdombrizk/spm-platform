@@ -1,5 +1,4 @@
 import {
-  Activity,
   ArrowRight,
   ArrowUpRight,
   BadgeCheck,
@@ -9,7 +8,6 @@ import {
   PackageSearch,
   Search,
   ShieldCheck,
-  Stethoscope,
   Truck,
   Wrench,
   X,
@@ -244,9 +242,16 @@ export default function Catalogue() {
           </div>
         </section>
 
-        {/* Unified device grid */}
-        <section id="catalogue-grid" className="mx-auto max-w-[1280px] px-5 py-16 lg:px-8 lg:py-20">
-
+        {/* Product showcase */}
+        <section id="catalogue-grid" className="relative overflow-hidden bg-[#edf2f8] px-5 py-16 lg:px-10 lg:py-24">
+          <div className="pointer-events-none absolute -left-32 top-20 h-96 w-96 rounded-full bg-[#cbd7e6]/45 blur-3xl" aria-hidden="true" />
+          <div className="pointer-events-none absolute -right-32 bottom-0 h-[30rem] w-[30rem] rounded-full bg-[#d9e3ef]/70 blur-3xl" aria-hidden="true" />
+          <div className="relative z-10 mx-auto max-w-[1280px]">
+            <div className="mx-auto mb-12 max-w-4xl text-center">
+              <span className="inline-flex rounded-full border border-[#f0a08d]/40 bg-[#fff3ef] px-4 py-2 text-xs font-extrabold uppercase tracking-[.18em] text-[#c2410c] shadow-sm">Products</span>
+              <h2 className="mt-5 text-4xl font-black leading-[1.04] tracking-[-.045em] text-[#0a2448] sm:text-5xl lg:text-6xl">{isItalray ? "Italian imaging systems, built for confident clinical decisions." : isHermann ? "Surgical precision, prepared for the operating room." : "The pinnacle of surgical & diagnostic technology."}</h2>
+              <p className="mx-auto mt-5 max-w-3xl text-base leading-7 text-[#4f6075] sm:text-lg">{isItalray ? "Explore Italray C-Arms and radiography systems with SPM engineering support, documentation and lifecycle continuity." : "Equip Egypt’s leading operating rooms with documented German and Italian-engineered systems, supported from selection through lifecycle care."}</p>
+            </div>
           {isLoading ? (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3, 4, 5, 6].map(index => (
@@ -254,54 +259,32 @@ export default function Catalogue() {
               ))}
             </div>
           ) : products.length > 0 ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
               {products.map(item => (
-                  <Card key={item.id} className="group flex h-full flex-col overflow-hidden rounded-3xl border border-[#dce7eb] bg-white shadow-xs transition-all duration-300 hover:-translate-y-1.5 hover:border-[#0a4052] hover:shadow-2xl">
-                    <Link href={item.href} className="relative block aspect-[16/10] overflow-hidden bg-[#eef7fa]">
-                      {item.image ? (
-                        <img
-                        src={item.image}
-                        alt={item.title}
-                        loading="lazy"
-                        decoding="async"
-                        className="h-full w-full object-contain bg-[#f6fafb] p-5 transition duration-700 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-[#94a3b8]"><PackageSearch className="h-14 w-14" /></div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#061f2b]/65 via-transparent to-transparent" />
-                    <div className="absolute left-4 top-4 flex flex-wrap gap-2">
-                      <Badge className="rounded-full bg-[#0a4052] text-[10px] font-bold text-white shadow-sm">{item.category}</Badge>
-                      {item.kind === "shopify" ? <Badge className="rounded-full bg-white/90 text-[10px] font-bold text-[#c2410c] shadow-sm">Storefront</Badge> : null}
-                      {item.updated ? <Badge className="rounded-full bg-[#dff7ef]/95 text-[10px] font-bold text-[#047857] shadow-sm"><CheckCircle2 className="mr-1 h-3 w-3" /> Updated documentation</Badge> : null}
+                <Card key={item.id} className="group flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-[#c8d2df] bg-[#f8fbff] shadow-[0_14px_35px_rgba(30,55,85,.10)] transition-all duration-300 hover:-translate-y-1.5 hover:border-[#8fa8c4] hover:shadow-[0_22px_45px_rgba(30,55,85,.16)]">
+                  <Link href={item.href} className="block px-6 pt-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6fae] focus-visible:ring-inset">
+                    <div className="flex items-center justify-between gap-3">
+                      <p className={`text-sm font-extrabold uppercase tracking-[.12em] ${item.brand.toLowerCase().includes("hermann") ? "text-[#c2410c]" : "text-[#365b86]"}`}>{item.brand}</p>
+                      <Badge className="rounded-full bg-[#edf2f8] text-[10px] font-bold text-[#4f6075] shadow-none">{item.category}</Badge>
                     </div>
-                    <span className={`absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold shadow-sm backdrop-blur-sm ${item.statusTone === "green" ? "bg-[#ecfdf5]/95 text-[#047857]" : item.statusTone === "amber" ? "bg-[#fff7ed]/95 text-[#c2410c]" : "bg-white/90 text-[#64748b]"}`}>
-                      {item.statusTone === "green" ? <CheckCircle2 className="h-3.5 w-3.5" /> : <BadgeCheck className="h-3.5 w-3.5" />}
-                      {item.status}
-                    </span>
+                    <h3 className="mt-3 min-h-[3.8rem] text-[1.85rem] font-black uppercase leading-[.98] tracking-[-.035em] text-[#08172d] transition-colors group-hover:text-[#0f6fae]">{item.title}</h3>
+                    {item.model ? <p className="mt-2 text-[11px] font-semibold uppercase tracking-[.12em] text-[#8a99ab]">{item.model}</p> : null}
                   </Link>
 
-                  <CardContent className="flex flex-1 flex-col p-6">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="text-[11px] font-bold uppercase tracking-[.16em] text-[#0f6fae]">{item.brand}</p>
-                        <h3 className="mt-2 line-clamp-2 text-xl font-extrabold leading-snug text-[#0a4052] transition-colors group-hover:text-[#0f6fae]">{item.title}</h3>
-                      </div>
-                      <div className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#eaf4fa] text-[#0a4052] sm:flex">
-                        {item.category.toLowerCase().includes("surgical") || item.category.toLowerCase().includes("c-arm") ? <Stethoscope className="h-4 w-4" /> : <Activity className="h-4 w-4" />}
-                      </div>
+                  <Link href={item.href} className="relative mx-6 mt-5 block aspect-[1.18] overflow-hidden rounded-2xl bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6fae]">
+                    {item.image ? <img src={item.image} alt={item.title} decoding="async" className="h-full w-full object-contain p-4 transition duration-500 ease-out group-hover:scale-105" /> : <div className="flex h-full items-center justify-center text-[#94a3b8]"><PackageSearch className="h-14 w-14" /></div>}
+                    <div className="absolute bottom-3 left-3 flex flex-wrap gap-2">
+                      {item.kind === "shopify" ? <Badge className="rounded-full bg-white/95 text-[10px] font-bold text-[#c2410c] shadow-sm">Storefront</Badge> : null}
+                      {item.updated ? <Badge className="rounded-full bg-[#dff7ef]/95 text-[10px] font-bold text-[#047857] shadow-sm"><CheckCircle2 className="mr-1 h-3 w-3" /> Updated documentation</Badge> : null}
                     </div>
-                    {item.model ? <p className="mt-2 text-xs font-semibold text-[#94a3b8]">Model / reference: {item.model}</p> : null}
-                    <p className="mt-4 line-clamp-3 text-sm leading-6 text-[#617180]">{item.description}</p>
-                    {item.specs.length > 0 ? (
-                      <div className="mt-5 flex flex-wrap gap-2 border-t border-[#f1f5f9] pt-4">
-                        {item.specs.map(spec => <span key={spec} className="rounded-lg bg-[#f8fafc] px-2.5 py-1.5 text-[11px] font-semibold text-[#64748b]">{spec}</span>)}
-                      </div>
-                    ) : null}
-                    <div className="mt-auto pt-6">
-                      <Button className={`w-full rounded-xl text-sm font-bold text-white shadow-xs ${item.statusTone === "amber" ? "bg-[#c2410c] hover:bg-[#9a3412]" : "bg-[#0a4052] hover:bg-[#063545]"}`} asChild><Link href={item.href}>
-                          {item.cta} <ArrowUpRight className="ml-2 h-4 w-4" />
-                        </Link></Button>
+                  </Link>
+
+                  <CardContent className="flex flex-1 flex-col px-6 pb-6 pt-5">
+                    <p className="line-clamp-3 min-h-[4.5rem] text-sm leading-6 text-[#34465d]">{item.description}</p>
+                    {item.specs.length > 0 ? <div className="mt-4 flex flex-wrap gap-2">{item.specs.slice(0, 3).map(spec => <span key={spec} className="rounded-full bg-[#edf2f8] px-2.5 py-1.5 text-[10px] font-bold text-[#64748b]">{spec}</span>)}</div> : null}
+                    <div className="mt-5 flex items-center justify-between border-t border-[#dce4ee] pt-4">
+                      <span className={`inline-flex items-center gap-1.5 text-[11px] font-bold ${item.statusTone === "green" ? "text-[#047857]" : item.statusTone === "amber" ? "text-[#c2410c]" : "text-[#64748b]"}`}>{item.statusTone === "green" ? <CheckCircle2 className="h-3.5 w-3.5" /> : <BadgeCheck className="h-3.5 w-3.5" />} {item.status}</span>
+                      <Button variant="ghost" className="h-auto rounded-none p-0 text-sm font-extrabold text-[#c2410c] hover:bg-transparent hover:text-[#9a3412]" asChild><Link href={item.href}>{item.cta === "Request a quote" ? "Request quote" : "Explore system"} <ArrowUpRight className="ml-1.5 h-4 w-4" /></Link></Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -320,6 +303,7 @@ export default function Catalogue() {
             <div className="flex items-start gap-3"><ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-[#0f6fae]" /><div><p className="text-sm font-bold text-[#0a4052]">Document-led sourcing</p><p className="mt-1 text-xs leading-5 text-[#64748b]">Manufacturer, compliance and technical information are reviewed before quotation.</p></div></div>
             <div className="flex items-start gap-3"><Truck className="mt-0.5 h-5 w-5 shrink-0 text-[#0f6fae]" /><div><p className="text-sm font-bold text-[#0a4052]">Site-ready coordination</p><p className="mt-1 text-xs leading-5 text-[#64748b]">SPM coordinates delivery, installation, commissioning and operator handover.</p></div></div>
             <div className="flex items-start gap-3"><Layers className="mt-0.5 h-5 w-5 shrink-0 text-[#0f6fae]" /><div><p className="text-sm font-bold text-[#0a4052]">Lifecycle support</p><p className="mt-1 text-xs leading-5 text-[#64748b]">Service contracts, genuine parts and biomedical engineering remain connected after delivery.</p></div></div>
+          </div>
           </div>
         </section>
       </main>

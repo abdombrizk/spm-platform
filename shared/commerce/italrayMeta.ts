@@ -400,7 +400,7 @@ export const ITALRAY_CATALOG_REGISTRY: Record<string, ItalrayProductMeta> = {
     brochureUrl: "/manus-storage/CLINODIGIT_FLO_ING_TROK_d30c23b8.pdf",
     brochureTitle: "Italray Clinodigit FLO Official Brochure",
     readingMinutes: 4,
-    heroImage: "https://cdn.shopify.com/s/files/1/1002/9672/0673/files/wejcrXXYEfSGIMQj.jpg?v=1790775811",
+    heroImage: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663057093629/jLVQdXWYeuLkCymU.jpg",
     descriptionImage: "https://cdn.shopify.com/s/files/1/1002/9672/0673/files/CynPHMVwZLyWxJZE.jpg?v=1790775792",
     highlights: [
       "+90° to -90° motorized table tilting with continuous speed regulation",
@@ -582,7 +582,7 @@ export const ITALRAY_CATALOG_REGISTRY: Record<string, ItalrayProductMeta> = {
     brochureUrl: "/manus-storage/CORSIXDR_ENG_00_PRINT_e141edfa.pdf",
     brochureTitle: "Italray CORSIX DR Official Brochure",
     readingMinutes: 3,
-    heroImage: "https://cdn.shopify.com/s/files/1/1002/9672/0673/files/YAxKxvwVnZrleBJR.jpg?v=1790775779",
+    heroImage: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663057093629/iLiybDolIBAvkWzJ.jpg",
     descriptionImage: "https://cdn.shopify.com/s/files/1/1002/9672/0673/files/dnKHBpoyOLIKqRpH.jpg?v=1790775771",
     highlights: [
       "Motorized drive with independent dual-wheel electric traction",
@@ -764,7 +764,7 @@ export const ITALRAY_CATALOG_REGISTRY: Record<string, ItalrayProductMeta> = {
     brochureUrl: "/manus-storage/XFM_ENG_00_PRINT_74d937f9.pdf",
     brochureTitle: "Italray XFM Technical Brochure",
     readingMinutes: 3,
-    heroImage: "https://cdn.shopify.com/s/files/1/1002/9672/0673/files/dnKHBpoyOLIKqRpH.jpg?v=1790775771",
+    heroImage: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663057093629/XGsxORIdhFLGIJDm.jpg",
     descriptionImage: "https://cdn.shopify.com/s/files/1/1002/9672/0673/files/YAxKxvwVnZrleBJR.jpg?v=1790775779",
     highlights: [
       "Ultra-compact footprint: fits inside standard passenger elevators and tight doorways",
@@ -915,7 +915,7 @@ export const ITALRAY_CATALOG_REGISTRY: Record<string, ItalrayProductMeta> = {
     brochureUrl: "/manus-storage/MAMMO_ENG_00_PRINT_e82d1856.pdf",
     brochureTitle: "Italray Mammograph Official Brochure",
     readingMinutes: 4,
-    heroImage: "https://cdn.shopify.com/s/files/1/1002/9672/0673/files/dKJcMRMKIYfePkTa.jpg?v=1790775762",
+    heroImage: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663057093629/yFEBVewbkUZewSXQ.jpg",
     descriptionImage: "https://cdn.shopify.com/s/files/1/1002/9672/0673/files/luCkupRtQevzQFoC.jpg?v=1790775850",
     highlights: [
       "Direct conversion Amorphous Selenium (a-Se) detector with 85 µm pixel pitch",
@@ -1178,7 +1178,7 @@ export const ITALRAY_CATALOG_REGISTRY: Record<string, ItalrayProductMeta> = {
     brochureUrl: "/manus-storage/CARMEXFP_ENG_TR_6d332bd1.pdf",
     brochureTitle: "Italray Clinodigit C-Arm Brochure",
     readingMinutes: 3,
-    heroImage: "https://cdn.shopify.com/s/files/1/1002/9672/0673/files/MsiwLyhyWlEjDsPK.jpg?v=1790773853",
+    heroImage: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663057093629/ohxOqQyhObvyLAUh.jpg",
     descriptionImage: "https://cdn.shopify.com/s/files/1/1002/9672/0673/files/ZQUPAJOOFlsXsxEP.jpg?v=1790775799",
     highlights: [
       "High-resolution digital image chain with low-dose pulsed fluoroscopy",

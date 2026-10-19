@@ -13,4 +13,12 @@ describe("Catalogue search presentation", () => {
     expect(catalogueSource).not.toContain("All clinical categories");
     expect(catalogueSource).not.toContain("Sort systems");
   });
+
+  it("presents products as a visual showcase without the removed comparison panels", () => {
+    expect(catalogueSource).toContain("Product showcase");
+    expect(catalogueSource).toContain("Explore system");
+    expect(catalogueSource).not.toContain("Quick comparison");
+    expect(catalogueSource).not.toContain("Equipment finder");
+    expect(catalogueSource).not.toContain("Compare system");
+  });
 });
