@@ -136,7 +136,6 @@ export default function Catalogue() {
   const [selectedBrand, setSelectedBrand] = useState(initialBrandParam.toLowerCase());
   const [searchTerm, setSearchTerm] = useState(initialSearchParam);
   const [selectedSort, setSelectedSort] = useState(initialSortParam);
-  const [compareIds, setCompareIds] = useState<string[]>([]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -188,11 +187,6 @@ export default function Catalogue() {
   };
 
   const isLoading = query.isLoading || storeQuery.isLoading;
-  const compareItems = products.filter(item => compareIds.includes(item.id));
-  const toggleCompare = (id: string) => {
-    setCompareIds(current => current.includes(id) ? current.filter(itemId => itemId !== id) : current.length < 2 ? [...current, id] : current);
-  };
-  const clearCompare = () => setCompareIds([]);
 
   return (
     <SiteChrome>
@@ -252,38 +246,6 @@ export default function Catalogue() {
 
         {/* Unified device grid */}
         <section id="catalogue-grid" className="mx-auto max-w-[1280px] px-5 py-16 lg:px-8 lg:py-20">
-          <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#bcdde2] bg-[#eaf4fa] px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[#0a4052]">
-                <Layers className="h-3.5 w-3.5 text-[#0f6fae]" />
-                Equipment finder
-              </div>
-              <h2 className="mt-4 text-3xl font-extrabold tracking-[-.03em] text-[#0a4052] sm:text-4xl">Explore every published system</h2>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-[#617180]">Compare the equipment portfolio at a glance, then open technical details or start a project quotation with the SPM team.</p>
-            </div>
-            <p className="text-sm font-semibold text-[#64748b]">Showing <span className="text-[#0a4052]">{products.length}</span> of {allItems.length} systems</p>
-          </div>
-          <div className="mb-8 rounded-3xl border border-[#bcdde2] bg-[#eaf4fa] p-5 sm:p-6">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-              <div>
-                <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[.18em] text-[#0f6fae]"><Layers className="h-4 w-4" /> Quick comparison</div>
-                <p className="mt-2 text-sm font-semibold text-[#0a4052]">Select up to two systems to compare their commercial and clinical overview.</p>
-                <p className="mt-1 text-xs text-[#617180]">{compareItems.length === 0 ? "Choose Compare on any two cards below." : `${compareItems.length} of 2 systems selected.`}</p>
-              </div>
-              {compareItems.length > 0 ? <Button type="button" variant="outline" onClick={clearCompare} className="rounded-xl border-[#9ecbd3] bg-white text-xs font-bold text-[#0a4052] hover:bg-white/70"><X className="mr-1.5 h-4 w-4" /> Clear selection</Button> : null}
-            </div>
-            {compareItems.length === 2 ? (
-              <div className="mt-5 grid gap-3 border-t border-[#c7e2e6] pt-5 md:grid-cols-2">
-                {compareItems.map(item => (
-                  <div key={item.id} className="rounded-2xl border border-white bg-white p-4 shadow-sm">
-                    <div className="flex items-start justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[.16em] text-[#0f6fae]">{item.brand}</p><h3 className="mt-1 text-base font-extrabold text-[#0a4052]">{item.title}</h3></div><Badge className="bg-[#0a4052] text-[10px] text-white">{item.category}</Badge></div>
-                    <div className="mt-4 grid gap-2 text-xs text-[#617180] sm:grid-cols-2"><p><span className="font-bold text-[#0a4052]">Model:</span> {item.model || "Configured on request"}</p><p><span className="font-bold text-[#0a4052]">Commercial:</span> {item.status}</p></div>
-                    {item.specs.length > 0 ? <div className="mt-3 flex flex-wrap gap-2">{item.specs.map(spec => <span key={spec} className="rounded-lg bg-[#f1f5f9] px-2.5 py-1.5 text-[11px] font-semibold text-[#64748b]">{spec}</span>)}</div> : null}
-                  </div>
-                ))}
-              </div>
-            ) : null}
-          </div>
 
           {isLoading ? (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -330,15 +292,6 @@ export default function Catalogue() {
                       </div>
                     </div>
                     {item.model ? <p className="mt-2 text-xs font-semibold text-[#94a3b8]">Model / reference: {item.model}</p> : null}
-                    <button
-                      type="button"
-                      aria-pressed={compareIds.includes(item.id)}
-                      disabled={!compareIds.includes(item.id) && compareIds.length >= 2}
-                      onClick={() => toggleCompare(item.id)}
-                      className={`mt-3 inline-flex w-fit items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[11px] font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6fae] ${compareIds.includes(item.id) ? "border-[#0a4052] bg-[#0a4052] text-white" : "border-[#cfe1e5] bg-white text-[#0a4052] hover:border-[#0f6fae] hover:bg-[#eaf4fa]"} disabled:cursor-not-allowed disabled:opacity-40`}
-                    >
-                      <Layers className="h-3.5 w-3.5" /> {compareIds.includes(item.id) ? "Selected for compare" : "Compare system"}
-                    </button>
                     <p className="mt-4 line-clamp-3 text-sm leading-6 text-[#617180]">{item.description}</p>
                     {item.specs.length > 0 ? (
                       <div className="mt-5 flex flex-wrap gap-2 border-t border-[#f1f5f9] pt-4">

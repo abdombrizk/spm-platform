@@ -246,3 +246,8 @@ The public product preview and build/test suite are available for verification. 
   - Added a floating glass engineering panel on desktop summarizing the clinical workflow alignment across C-Arm, DR, and DRF.
   - Compacted the hero vertical footprint to 700px-760px so the full stage, CTAs, and bottom status bar are visible comfortably above the fold.
   - Passed TypeScript check, all 46 regression tests, and full production build.
+- [x] Streamlined Catalogue layout by removing the redundant top sections:
+  - Removed the "Equipment finder / Explore every published system" heading and descriptor block.
+  - Removed the "Quick comparison" selection panel and state to give immediate focus to the actual equipment cards.
+  - Preserved the full equipment cards grid, search functionality, brand filtering, status tags, and quotation CTAs.
+  - Passed TypeScript compilation, 46 regression tests, and full production build.
