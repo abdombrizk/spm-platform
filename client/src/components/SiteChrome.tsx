@@ -11,6 +11,16 @@ const darkNavLogo = "/manus-storage/spm-logo-header-transparent_f3f257c9.png";
 const italrayLogo = "/manus-storage/italray-transparent-cropped_1f5d097e.png";
 const hermannLogo = "/manus-storage/hermann-mark-transparent-nav-tight_88ea2ffc.png";
 
+const italrayCategoryDescriptions: Record<string, string> = {
+  "DRF REMOTE CONTROLLED TABLES": "Dynamic fluoroscopy and controlled table systems",
+  "DIGITAL RADIOGRAPHY": "Fixed rooms and workflow-ready DR platforms",
+  "DIGITAL PORTABLE": "Bedside digital radiography for mobile teams",
+  MAMMOGRAPH: "FFDM and tomosynthesis imaging platforms",
+  "C ARM": "Mobile surgical imaging for critical procedures",
+  "TRADITIONAL PORTABLE": "Portable radiography for dependable daily use",
+  "SOLAR X-RAY": "Field-ready imaging for flexible deployment",
+};
+
 export default function SiteChrome({ children, transparentHeader = false }: { children: React.ReactNode; transparentHeader?: boolean }) {
   const [open, setOpen] = useState(false);
   const [activeMega, setActiveMega] = useState(false);
@@ -219,24 +229,32 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                   </div>
 
                   {/* Right Column: Dynamic Content Pane */}
-                  <div className="flex min-h-[330px] flex-col justify-between rounded-[22px] bg-white p-5">
+                  <div className="flex min-h-[330px] flex-col rounded-[22px] bg-white p-5">
                     {activeProductTab === "italray" ? (
                       <div className="animate-in fade-in slide-in-from-right-2 duration-250">
-                        <div className="mb-3 flex items-center justify-between border-b border-[#eef3f5] pb-2">
-                          <span className="text-xs font-bold uppercase tracking-wider text-[#0a4052]">Italray Product Categories</span>
+                        <div className="mb-4 flex items-end justify-between border-b border-[#eef3f5] pb-3">
+                          <div>
+                            <span className="text-[10px] font-extrabold uppercase tracking-[.18em] text-[#0f6fae]">Italray systems</span>
+                            <p className="mt-1 text-sm font-bold text-[#0a2448]">Imaging built around the clinical workflow.</p>
+                          </div>
                           <Link href="/catalogue?brand=italray" onClick={() => setActiveMega(false)} className="text-xs font-semibold text-[#d95316] hover:underline">
                             View all systems
                           </Link>
                         </div>
-                        <div className="grid grid-cols-2 gap-2">
-                          {italrayCategoryLinks.map(({ label, href }) => (
+                        <div className="grid grid-cols-2 gap-2.5">
+                          {italrayCategoryLinks.map(({ label, href }, index) => (
                             <Link
                               key={href}
                               href={href}
                               onClick={() => setActiveMega(false)}
-                              className="group rounded-xl border border-[#e2e8f0] bg-[#fafcfd] px-3.5 py-3 transition hover:-translate-y-0.5 hover:border-[#0a4052] hover:bg-white hover:shadow-sm"
+                              className="group flex min-h-[74px] items-start gap-3 rounded-2xl border border-[#e2e8f0] bg-[#fafcfd] px-3.5 py-3 transition duration-200 hover:-translate-y-0.5 hover:border-[#0a4052] hover:bg-white hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f6fae] focus-visible:ring-offset-2"
                             >
-                              <span className="text-[11px] font-extrabold uppercase tracking-[0.08em] text-[#334155] group-hover:text-[#0f6fae]">{label}</span>
+                              <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#e4f2f5] text-[10px] font-extrabold text-[#0f6fae]">{String(index + 1).padStart(2, "0")}</span>
+                              <span className="min-w-0 flex-1">
+                                <span className="block text-[11px] font-extrabold leading-4 tracking-[0.06em] text-[#334155] group-hover:text-[#0f6fae]">{label}</span>
+                                <span className="mt-1 block text-[10px] leading-4 text-[#64748b]">{italrayCategoryDescriptions[label]}</span>
+                              </span>
+                              <ArrowUpRight className="mt-1 h-3.5 w-3.5 shrink-0 text-[#94a3b8] transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[#d95316]" aria-hidden="true" />
                             </Link>
                           ))}
                         </div>
