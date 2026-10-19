@@ -26,6 +26,7 @@ import type { Product } from "@shared/commerce/types";
 
 const fallbackHeroImage = "/manus-storage/italray-portfolio-hero_858b8677.webp";
 const italrayLogo = "/manus-storage/italray-transparent-cropped_1f5d097e.png";
+const spmMark = "/manus-storage/spm-mark-transparent-clean_35e8eb5b.png";
 
 type Family = {
   id: string;
@@ -139,36 +140,74 @@ export default function ItalrayPortfolio() {
         </div>
 
         {/* Brand hero */}
-        <section className="relative isolate min-h-[760px] overflow-hidden bg-[#061f2b] text-white lg:min-h-[820px]">
-          <img loading="eager" decoding="async" src={heroImage} alt="Italray C-Arm imaging system in a modern operating room" className="absolute inset-0 h-full w-full object-cover object-[68%_center]" />
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,#061f2b_0%,rgba(6,31,43,.97)_25%,rgba(6,31,43,.78)_42%,rgba(6,31,43,.22)_69%,rgba(6,31,43,.16)_100%)]" aria-hidden="true" />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,31,43,.2)_0%,transparent_52%,rgba(6,31,43,.78)_100%)]" aria-hidden="true" />
-          <div className="absolute inset-y-0 left-0 hidden w-[42%] [background-image:linear-gradient(rgba(139,224,213,.1)_1px,transparent_1px),linear-gradient(90deg,rgba(139,224,213,.1)_1px,transparent_1px)] [background-size:56px_56px] lg:block" aria-hidden="true" />
-          <div className="absolute -right-28 -top-24 h-72 w-72 rounded-full border border-[#8be0d5]/20 sm:h-[34rem] sm:w-[34rem]" aria-hidden="true" />
-          <div className="relative mx-auto flex min-h-[760px] max-w-[1440px] items-center px-5 pb-32 pt-20 sm:px-8 sm:pb-36 lg:min-h-[820px] lg:px-12 lg:pb-40 lg:pt-24">
-            <div className="max-w-[720px]">
-              <div className="inline-flex items-center gap-3 rounded-full border border-[#8be0d5]/35 bg-[#062a35]/70 px-4 py-2 text-xs font-bold uppercase tracking-[.16em] text-[#b9f1e7] shadow-lg backdrop-blur-md">
-                <span className="h-2 w-2 rounded-full bg-[#67e5c0] shadow-[0_0_0_5px_rgba(103,229,192,.12)]" />
-                Authorized Italray Partner
-                <span className="h-5 w-px bg-white/25" aria-hidden="true" />
-                <img src={italrayLogo} alt="Italray official logo" loading="eager" decoding="async" className="h-7 w-[92px] object-contain object-left" />
+        <section className="relative isolate min-h-[780px] overflow-hidden bg-[#061f2b] text-white lg:min-h-[860px]">
+          <img loading="eager" decoding="async" src={heroImage} alt="Italray C-Arm imaging system in a modern operating room" className="absolute inset-0 h-full w-full object-cover object-[72%_center]" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,#061f2b_0%,rgba(6,31,43,.98)_32%,rgba(6,31,43,.82)_46%,rgba(6,31,43,.25)_68%,rgba(6,31,43,.14)_100%)]" aria-hidden="true" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,31,43,.25)_0%,transparent_48%,rgba(6,31,43,.82)_100%)]" aria-hidden="true" />
+          <div className="absolute inset-y-0 left-0 hidden w-[44%] [background-image:linear-gradient(rgba(139,224,213,.08)_1px,transparent_1px),linear-gradient(90deg,rgba(139,224,213,.08)_1px,transparent_1px)] [background-size:52px_52px] lg:block" aria-hidden="true" />
+
+          <div className="relative mx-auto flex min-h-[780px] max-w-[1440px] items-center px-5 pb-32 pt-16 sm:px-8 sm:pb-36 lg:min-h-[860px] lg:px-12 lg:pb-36 lg:pt-20">
+            <div className="max-w-[700px]">
+              {/* Top Pill Badge matching reference exactly */}
+              <div className="inline-flex items-center gap-3 rounded-full border border-[#8be0d5]/40 bg-[#07252f]/85 px-4 py-2 text-xs font-bold uppercase tracking-[.18em] text-[#b9f1e7] shadow-xl backdrop-blur-md">
+                <span className="h-2 w-2 rounded-full bg-[#34d399] shadow-[0_0_8px_rgba(52,211,153,.7)]" />
+                <span>AUTHORIZED EGYPTIAN PARTNER</span>
+                <span className="h-4 w-px bg-white/20" aria-hidden="true" />
+                <div className="inline-flex items-center gap-1.5 text-white">
+                  <img src={spmMark} alt="SPM" className="h-4 w-4 object-contain brightness-0 invert" />
+                  <span className="font-extrabold tracking-wider">SPM</span>
+                </div>
               </div>
-              <h1 className="mt-7 max-w-3xl text-5xl font-extrabold leading-[.98] tracking-[-.055em] text-white sm:text-6xl lg:text-[5.2rem]">ITALRAY: Medical imaging, engineered for clinical confidence.</h1>
-              <p className="mt-7 max-w-2xl text-base leading-8 text-white/80 sm:text-lg">A complete portfolio of mobile C-Arms, digital radiography, radio-fluoroscopy and mammography systems—presented, configured and supported by SPM in Egypt.</p>
-              <div className="mt-6 flex flex-wrap gap-2 text-xs font-semibold text-white/85">
-                <span className="rounded-full border border-white/20 bg-white/10 px-3.5 py-2 backdrop-blur-sm">Italian imaging systems</span>
-                <span className="rounded-full border border-white/20 bg-white/10 px-3.5 py-2 backdrop-blur-sm">24/7 SPM engineering support</span>
-                <span className="rounded-full border border-white/20 bg-white/10 px-3.5 py-2 backdrop-blur-sm">Genuine parts &amp; documentation</span>
+
+              {/* Main Headline matching reference */}
+              <h1 className="mt-6 text-5xl font-black leading-[1.0] tracking-[-.045em] text-white sm:text-6xl lg:text-[76px]">
+                ITALRAY: Visionary Medical Imaging, <span className="text-[#8be0d5]">Engineered for Life.</span>
+              </h1>
+
+              {/* Subtitle paragraph matching reference */}
+              <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/85 sm:text-lg">
+                Discover the pinnacle of Italian X-ray innovation—from <strong className="text-white">high-definition mobile C-Arms</strong> to advanced digital radiography—exclusively supported, installed, and maintained across Egypt by SPM’s expert biomedical engineering team.
+              </p>
+
+              {/* Feature Chips matching reference */}
+              <div className="mt-6 flex flex-wrap gap-2.5 text-xs font-semibold text-white/90">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-[#07252f]/70 px-4 py-2 backdrop-blur-md">
+                  <span className="text-sm">🇮🇹</span> Italian Design &amp; Innovation Since 1974
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-[#07252f]/70 px-4 py-2 backdrop-blur-md">
+                  <Wrench className="h-3.5 w-3.5 text-[#8be0d5]" /> 24/7 SPM Engineering Support
+                </span>
               </div>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Button size="lg" className="h-12 rounded-xl bg-[#c2410c] px-6 text-sm font-bold text-white shadow-xl shadow-[#c2410c]/25 hover:bg-[#9a3412]" asChild><a href="#italray-families">Explore Italray systems <ArrowRight className="ml-2 h-4 w-4" /></a></Button>
-                <Button size="lg" variant="outline" className="h-12 rounded-xl border-white/40 bg-white/10 px-6 text-sm font-bold text-white hover:bg-white/20" asChild><Link href="/request-a-quote?brand=Italray">Request technical specs <ArrowUpRight className="ml-2 h-4 w-4" /></Link></Button>
+
+              {/* Action Buttons matching reference */}
+              <div className="mt-8 flex flex-wrap items-center gap-3.5">
+                <Button size="lg" className="h-13 rounded-xl bg-[#f97316] px-7 text-sm font-bold text-white shadow-xl shadow-[#f97316]/30 hover:bg-[#ea580c]" asChild>
+                  <a href="#italray-families">
+                    Explore Systems <ArrowRight className="ml-2 h-4 w-4" />
+                  </a>
+                </Button>
+                <Button size="lg" variant="outline" className="h-13 rounded-xl border-white/40 bg-[#07252f]/60 px-6 text-sm font-bold text-white shadow-lg backdrop-blur-md hover:bg-white/15" asChild>
+                  <Link href="/request-a-quote?brand=Italray">
+                    Request Tech Specs <ArrowUpRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
               </div>
             </div>
           </div>
-          <div className="absolute bottom-5 left-5 right-5 z-10 mx-auto flex max-w-[1320px] flex-col gap-3 text-xs font-semibold text-white/80 sm:bottom-7 sm:left-8 sm:right-8 lg:flex-row lg:items-center lg:justify-between lg:px-4">
-            <div className="flex flex-wrap gap-x-5 gap-y-2 uppercase tracking-[.14em] text-white/65"><span>Italian X-ray heritage</span><span className="hidden h-4 w-px bg-white/30 sm:block" aria-hidden="true" /><span>Full lifecycle support</span></div>
-            <div className="inline-flex w-fit items-center gap-2 rounded-xl border border-white/25 bg-[#062a35]/65 px-4 py-2.5 text-sm backdrop-blur-md"><span className="text-[#b9f1e7]">Authorized partner &amp; service provider:</span><strong className="text-white">Italray</strong><span className="text-white/45">|</span><span>Powered by SPM</span></div>
+
+          {/* Bottom Bar matching reference layout and wording */}
+          <div className="absolute bottom-6 left-5 right-5 z-10 mx-auto flex max-w-[1360px] flex-col gap-4 text-xs font-semibold text-white/85 sm:bottom-7 sm:left-8 sm:right-8 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 uppercase tracking-[.16em] text-white/70">
+              <span>50+ YEARS OF X-RAY EXCELLENCE</span>
+              <span className="hidden h-3.5 w-px bg-white/25 sm:block" aria-hidden="true" />
+              <span>FULL LIFECYCLE SUPPORT</span>
+            </div>
+            <div className="inline-flex w-fit items-center gap-2.5 rounded-2xl border border-white/25 bg-[#051c24]/80 px-5 py-3 text-sm shadow-xl backdrop-blur-md">
+              <span className="text-white/75">AUTHORIZED PARTNER &amp; SERVICE PROVIDER:</span>
+              <strong className="text-base font-extrabold text-white">Italray</strong>
+              <span className="text-white/35">|</span>
+              <span className="text-white/80">Powered by SPM</span>
+            </div>
           </div>
         </section>
 

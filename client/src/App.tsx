@@ -41,6 +41,7 @@ function Router() {
         <Route path="/owner/services" component={ServiceManager} />
         <Route path="/catalogue" component={Catalogue} />
         <Route path="/catalogue/italray" component={ItalrayPortfolio} />
+        <Route path="/partners/italray" component={ItalrayPortfolio} />
         <Route path="/catalogue/:slug" component={ProductDetails} />
         <Route path="/store" component={StoreCatalog} />
         <Route path="/store/products/:handle" component={StoreProductDetail} />

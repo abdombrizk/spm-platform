@@ -223,3 +223,13 @@ The public product preview and build/test suite are available for verification. 
   - Added the bottom status bar with "Authorized partner & service provider: Italray | Powered by SPM".
   - Enforced strict vendor filtering to ensure the portfolio exclusively presents Italray equipment families (Mobile C-Arms, Digital Radiography, Radio-Fluoroscopy, Mammography).
   - Passed TypeScript check, all 46 automated regression tests, and full production build.
+- [x] Perfected Italray Product Portfolio Hero to match reference screenshot:
+  - Header pill badge: green dot, "AUTHORIZED EGYPTIAN PARTNER", separator line, and SPM white brand icon + text.
+  - Headline: "ITALRAY: Visionary Medical Imaging, Engineered for Life." with teal accent highlight on "Engineered for Life."
+  - Paragraph: exact wording detailing Italian X-ray innovation from mobile C-Arms to digital radiography supported across Egypt by SPM.
+  - Feature pills: Italian flag emoji with "Italian Design & Innovation Since 1974" and wrench icon with "24/7 SPM Engineering Support".
+  - Actions: Orange "Explore Systems" primary button with arrow and glassmorphic "Request Tech Specs" button with diagonal arrow.
+  - Bottom bar: "50+ YEARS OF X-RAY EXCELLENCE" and "FULL LIFECYCLE SUPPORT" on the left, paired with the glass status pill "AUTHORIZED PARTNER & SERVICE PROVIDER: Italray | Powered by SPM" on the right.
+  - Routing: added explicit `/partners/italray` route alias in addition to `/catalogue/italray`.
+  - Confirmed the page exclusively showcases Italray equipment families.
+  - Passed TypeScript check, all 46 tests, and full production build.
