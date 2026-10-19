@@ -167,7 +167,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
-                        <span className={`flex h-12 w-20 items-center justify-center rounded-lg px-1 ${activeProductTab === "italray" ? "bg-white/95" : "bg-transparent"}`}><img src={italrayLogo} alt="Italray logo" className="max-h-9 max-w-16 object-contain mix-blend-multiply" /></span>
+                        <span className="flex h-14 w-28 shrink-0 items-center justify-center"><img src={italrayLogo} alt="Italray logo" className={`max-h-12 max-w-24 object-contain drop-shadow-sm ${activeProductTab === "italray" ? "brightness-0 invert" : ""}`} /></span>
                         <div>
                           <p className="text-sm font-bold">Italray</p>
                           <p className={`text-xs ${activeProductTab === "italray" ? "text-white/80" : "text-[#64748b]"}`}>Exclusive Agent in Egypt</p>
@@ -186,7 +186,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
-                        <span className={`flex h-12 w-20 items-center justify-center rounded-lg px-1 ${activeProductTab === "hermann" ? "bg-white/95" : "bg-transparent"}`}><img src={hermannLogo} alt="Hermann Medizintechnik logo" className="max-h-9 max-w-16 object-contain mix-blend-multiply" /></span>
+                        <span className="flex h-14 w-28 shrink-0 items-center justify-center"><img src={hermannLogo} alt="Hermann Medizintechnik logo" className={`max-h-12 max-w-24 object-contain drop-shadow-sm ${activeProductTab === "hermann" ? "brightness-0 invert" : ""}`} /></span>
                         <div>
                           <p className="text-sm font-bold">Hermann</p>
                           <p className={`text-xs ${activeProductTab === "hermann" ? "text-white/80" : "text-[#64748b]"}`}>Hermann portfolio</p>
@@ -205,7 +205,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
-                          <span className={`flex h-12 w-20 items-center justify-center rounded-lg px-1 ${activeProductTab === "parts" ? "bg-white/95" : "bg-transparent"}`}><img src={logo} alt="SPM logo" className="max-h-9 max-w-16 object-contain mix-blend-multiply" /></span>
+                          <span className="flex h-14 w-28 shrink-0 items-center justify-center"><img src={logo} alt="SPM logo" className={`max-h-12 max-w-24 object-contain drop-shadow-sm ${activeProductTab === "parts" ? "brightness-0 invert" : ""}`} /></span>
                         <div>
                           <p className="text-sm font-bold">Spare Parts</p>
                           <p className={`text-xs ${activeProductTab === "parts" ? "text-white/80" : "text-[#64748b]"}`}>Genuine parts & support</p>

@@ -59,7 +59,11 @@ describe("homepage service shortcuts and trust badges", () => {
   it("keeps global navigation stable while moving between menus", () => {
     expect(siteChromeSource).toContain("scheduleMenuClose(() => setActiveCompany(false))");
     expect(siteChromeSource).toContain("scheduleMenuClose(() => setActiveMega(false))");
-    expect(siteChromeSource).toContain("max-h-9 max-w-16 object-contain mix-blend-multiply");
+    expect(siteChromeSource).toContain("max-h-12 max-w-24 object-contain drop-shadow-sm");
+    expect(siteChromeSource).not.toContain("mix-blend-multiply");
+    expect(siteChromeSource).not.toContain('activeProductTab === "italray" ? "bg-white/95"');
+    expect(siteChromeSource).not.toContain('activeProductTab === "hermann" ? "bg-white/95"');
+    expect(siteChromeSource).not.toContain('activeProductTab === "parts" ? "bg-white/95"');
   });
 
   it("exposes a visual Hero Studio for all ten managed media slides", () => {
