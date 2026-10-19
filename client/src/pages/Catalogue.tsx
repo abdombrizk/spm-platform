@@ -208,8 +208,8 @@ export default function Catalogue() {
           <div className="relative mx-auto flex max-w-[1280px] px-5 py-12 sm:py-16 lg:min-h-[560px] lg:items-center lg:px-8 lg:py-20">
             <div className="max-w-2xl lg:max-w-[760px]">
               <div className="mb-6 flex flex-wrap items-center gap-4">
-                <div className="flex h-20 w-[190px] items-center justify-center rounded-2xl bg-white px-5 shadow-xl shadow-black/10">
-                  <img src={isHermann ? "/manus-storage/hermann-logo_204aa669.png" : "/manus-storage/italray-logo_57cfff13.png"} alt={isHermann ? "Hermann official logo" : "Italray official logo"} className="max-h-12 w-auto max-w-full object-contain" />
+                <div className="flex h-24 w-[240px] items-center justify-start px-0">
+                  <img src={isHermann ? "/manus-storage/hermann-mark-cropped_40aa4cf3.png" : "/manus-storage/italray-transparent-cropped_1f5d097e.png"} alt={isHermann ? "Hermann official logo" : "Italray official logo"} className="h-20 w-[220px] object-contain object-left drop-shadow-[0_4px_14px_rgba(0,0,0,.28)]" />
                 </div>
                 <div>
                   <p className="text-[11px] font-bold uppercase tracking-[.2em] text-[#b9f1e7]">{isHermann ? "Official-source portfolio" : "Strategic partnership"}</p>

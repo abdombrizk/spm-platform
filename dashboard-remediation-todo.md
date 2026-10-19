@@ -212,3 +212,8 @@ The public product preview and build/test suite are available for verification. 
   - Updated public copy, navigation/footer branding, page titles, Open Graph metadata, SEO defaults, product descriptions, About/Home content, audit documentation, and project notes to use “Medical Imaging and Surgical Technology”.
   - Confirmed zero remaining matches for the former “Medical Imaging Technology” phrase across tracked project files.
   - Passed TypeScript check, 17 test files / 46 tests, diff validation, and production build.
+- [x] Enhanced Catalogue partner brand logo presentation:
+  - Removed the solid white rounded container box behind the brand logo in the Catalogue hero header.
+  - Enlarged the official brand mark rendering (using cropped transparent assets for Italray and Hermann) to 220px width with subtle drop shadow directly on the dark technical hero background.
+  - Verified responsive presentation for both Italray and Hermann brand filters.
+  - Passed TypeScript check, all 46 automated tests, and full production build.
