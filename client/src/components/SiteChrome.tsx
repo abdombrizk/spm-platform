@@ -41,6 +41,38 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
     menuCloseTimer.current = window.setTimeout(close, 180);
   };
 
+  const openCompanyMenu = () => {
+    cancelMenuClose();
+    setActiveCompany(true);
+    setActiveMega(false);
+    setActiveServices(false);
+    setActiveNews(false);
+  };
+
+  const openProductsMenu = () => {
+    cancelMenuClose();
+    setActiveCompany(false);
+    setActiveMega(true);
+    setActiveServices(false);
+    setActiveNews(false);
+  };
+
+  const openServicesMenu = () => {
+    cancelMenuClose();
+    setActiveCompany(false);
+    setActiveMega(false);
+    setActiveServices(true);
+    setActiveNews(false);
+  };
+
+  const openNewsMenu = () => {
+    cancelMenuClose();
+    setActiveCompany(false);
+    setActiveMega(false);
+    setActiveServices(false);
+    setActiveNews(true);
+  };
+
   const brandsQuery = trpc.menu.productBrands.useQuery();
   const itemsQuery = trpc.menu.productItems.useQuery();
   const storeProductsQuery = trpc.commerce.products.list.useQuery({ first: 12 });
@@ -95,7 +127,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
             {/* 1. Company Dropdown */}
             <div
               className="relative"
-              onMouseEnter={() => { cancelMenuClose(); setActiveCompany(true); }}
+              onMouseEnter={openCompanyMenu}
               onMouseLeave={() => scheduleMenuClose(() => setActiveCompany(false))}
             >
               <Link
@@ -105,7 +137,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                     ? navActive
                     : navIdle
                 }`}
-                onFocus={() => { cancelMenuClose(); setActiveCompany(true); }}
+                onFocus={openCompanyMenu}
                 aria-expanded={activeCompany}
                 aria-haspopup="menu"
                 aria-controls="company-menu"
@@ -136,7 +168,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
             {/* Products - text-first category flyout */}
             <div
               className="relative"
-              onMouseEnter={() => { cancelMenuClose(); setActiveMega(true); }}
+              onMouseEnter={openProductsMenu}
               onMouseLeave={() => scheduleMenuClose(() => setActiveMega(false))}
             >
               <Link
@@ -144,7 +176,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                 className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-4 text-sm font-semibold transition ${
                   location.startsWith("/catalogue") || location.startsWith("/spare-parts") ? navActive : navIdle
                 }`}
-                onFocus={() => { cancelMenuClose(); setActiveMega(true); }}
+                onFocus={openProductsMenu}
                 aria-expanded={activeMega}
                 aria-haspopup="menu"
                 aria-controls="products-menu"
@@ -327,7 +359,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
             {/* 3. Services */}
             <div
               className="relative"
-              onMouseEnter={() => setActiveServices(true)}
+              onMouseEnter={openServicesMenu}
               onMouseLeave={() => setActiveServices(false)}
             >
               <Link
@@ -335,7 +367,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                 className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-4 text-sm font-semibold transition ${
                   location.startsWith("/services") ? navActive : navIdle
                 }`}
-                onFocus={() => setActiveServices(true)}
+                onFocus={openServicesMenu}
                 aria-expanded={activeServices}
                 aria-haspopup="menu"
                 aria-controls="services-menu"
@@ -366,7 +398,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
             {/* 4. Events & News */}
             <div
               className="relative"
-              onMouseEnter={() => setActiveNews(true)}
+              onMouseEnter={openNewsMenu}
               onMouseLeave={() => setActiveNews(false)}
             >
               <Link
@@ -376,7 +408,7 @@ export default function SiteChrome({ children, transparentHeader = false }: { ch
                     ? navActive
                     : navIdle
                 }`}
-                onFocus={() => setActiveNews(true)}
+                onFocus={openNewsMenu}
                 aria-expanded={activeNews}
                 aria-haspopup="menu"
                 aria-controls="news-menu"

@@ -59,6 +59,12 @@ describe("homepage service shortcuts and trust badges", () => {
   it("keeps global navigation stable while moving between menus", () => {
     expect(siteChromeSource).toContain("scheduleMenuClose(() => setActiveCompany(false))");
     expect(siteChromeSource).toContain("scheduleMenuClose(() => setActiveMega(false))");
+    expect(siteChromeSource).toContain("const openCompanyMenu = () =>");
+    expect(siteChromeSource).toContain("const openProductsMenu = () =>");
+    expect(siteChromeSource).toContain("const openServicesMenu = () =>");
+    expect(siteChromeSource).toContain("const openNewsMenu = () =>");
+    expect(siteChromeSource).toContain("onMouseEnter={openCompanyMenu}");
+    expect(siteChromeSource).toContain("onMouseEnter={openProductsMenu}");
     expect(siteChromeSource).toContain("max-h-10 max-w-24 object-contain");
     expect(siteChromeSource).not.toContain("mix-blend-multiply");
     expect(siteChromeSource).toContain("italray-transparent-cropped_1f5d097e.png");
